@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Trip Planner Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a fixed 1280x810 stage scaled to fit the screen like a slide. Step rail on top,
+   architecture canvas in the middle (input left, engine centre, output right), gap board and
+   takeaway at the bottom. Below 900px the stage unrolls into a single column. */
+:root {
+  --bg: #F2F4F8;
+  --surface: #FFFFFF;
+  --sunk: #EAEDF4;
+  --ink: #141A31;
+  --ink-2: #4C5572;
+  --ink-3: #8790A9;
+  --line: #D7DCE8;
+  --edge: #9AA2B9;
+  --accent: #3949C9;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E3E7FA;
+  --red: #C42F3E;
+  --red-soft: #FBEAEC;
+  --red-line: #EFB8BF;
+  --green: #17804C;
+  --green-soft: #E1F2E8;
+  --green-line: #A6D9BC;
+  --shadow: 0 1px 2px rgb(20 26 49 / .05), 0 6px 18px rgb(20 26 49 / .06);
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1020; --surface: #151A2D; --sunk: #1D2338; --ink: #E6E9F3; --ink-2: #A4ACC4; --ink-3: #6B7490;
+    --line: #283049; --edge: #525C7A; --accent: #8D9AFF; --accent-ink: #0C1020; --accent-soft: #222A52;
+    --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
+    --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
+    --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1020; --surface: #151A2D; --sunk: #1D2338; --ink: #E6E9F3; --ink-2: #A4ACC4; --ink-3: #6B7490;
+  --line: #283049; --edge: #525C7A; --accent: #8D9AFF; --accent-ink: #0C1020; --accent-soft: #222A52;
+  --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
+  --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
+  --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 14px/1.4 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+h2, h3, p { margin: 0; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ic {
+  width: 18px; height: 18px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+}
+.label {
+  font: 500 10px/1.2 var(--f-mono);
+  text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3);
+}
+
+/* ---------- Stage ---------- */
+.viewport { min-height: 100%; display: grid; place-items: center; }
+.stage-wrap { position: relative; }
+.stage {
+  position: absolute; left: 0; top: 0;
+  width: 1280px; height: 810px;
+  padding: 18px 32px 22px;
+  display: flex; flex-direction: column; gap: 18px;
+  transform-origin: 0 0;
+}
+
+/* ---------- Top bar + step rail ---------- */
+.topbar { flex: none; height: 56px; display: flex; align-items: center; gap: 28px; }
+.brand { display: flex; align-items: center; gap: 10px; width: 190px; flex: none; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+  background: var(--ink); color: var(--bg);
+}
+.brand-name { font: 700 15px/1.1 var(--f-display); font-stretch: 118%; letter-spacing: .01em; }
+.rail { flex: 1; display: flex; list-style: none; margin: 0; padding: 0; }
+.st { flex: 1; position: relative; display: flex; justify-content: center; }
+.st:not(:last-child)::after {
+  content: ""; position: absolute; top: 13px; left: calc(50% + 21px); width: calc(100% - 42px);
+  height: 3px; border-radius: 3px; background: var(--line); transition: background-color .5s;
+}
+.st.is-done::after { background: var(--accent); }
+.st-btn {
+  appearance: none; border: 0; background: none; padding: 0; color: inherit; font: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+}
+.st-btn:disabled { cursor: default; }
+.st-btn:focus-visible { outline: none; }
+.st-btn:focus-visible .st-dot { outline: 2px solid var(--accent); outline-offset: 3px; }
+.st-dot {
+  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 12px/1 var(--f-mono); color: var(--ink-3);
+  background: var(--surface); border: 2px solid var(--line);
+  transition: background-color .4s, border-color .4s, color .4s, box-shadow .4s;
+}
+.is-done .st-dot, .is-current .st-dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.is-current .st-dot { box-shadow: 0 0 0 5px var(--accent-soft); }
+.st-name { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.is-current .st-name { color: var(--ink); font-weight: 650; }
+.st-code { font: 600 11px var(--f-mono); color: var(--accent); margin-right: 5px; }
+.nav { display: flex; gap: 8px; flex: none; }
+.navbtn {
+  width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.navbtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.navbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.navbtn:disabled { color: var(--ink-3); opacity: .45; cursor: default; }
+.now { display: none; }
+
+/* ---------- Canvas ---------- */
+.canvas { position: relative; flex: none; height: 420px; }
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.wire { fill: none; stroke: var(--edge); stroke-width: 1.75; transition: opacity .35s; }
+.wire.dashed { stroke-dasharray: 4 5; }
+.wire.off { opacity: 0; }
+.arrowhead { fill: none; stroke: var(--edge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.dot { opacity: 0; transition: opacity .3s; }
+.dot-halo { fill: var(--accent); opacity: .2; }
+.dot-core { fill: var(--accent); }
+.elabel {
+  position: absolute; transform: translate(-50%, -50%);
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  font: 500 11px/1 var(--f-mono); color: var(--ink-2);
+  background: var(--bg); padding: 4px 6px; border-radius: 6px;
+  transition: opacity .35s;
+}
+.elabel.side { transform: translate(0, -50%); }
+.elabel.off { opacity: 0; visibility: hidden; }
+
+.node {
+  position: absolute;
+  transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s,
+              opacity .35s, visibility .35s, transform .35s;
+}
+.node.off { opacity: 0; visibility: hidden; transform: scale(.97); pointer-events: none; }
+.enter { animation: enter .55s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes enter { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+#n-input  { left: 0;     top: 22px;  width: 316px; }
+#n-web    { left: 438px; top: 0;     width: 340px; }
+#n-llm    { left: 458px; top: 168px; width: 300px; }
+#n-output { left: 900px; top: 22px;  width: 316px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 14px 16px 16px;
+}
+.node-h { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.node-h h2 { font: 650 15px/1.2 var(--f-display); font-stretch: 112%; }
+.node-ic {
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--sunk); color: var(--ink-2);
+}
+.node-ic .ic { width: 16px; height: 16px; }
+
+/* Input */
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px 12px; margin: 0; }
+.fact { min-width: 0; border-radius: 8px; }
+.fact.span2 { grid-column: span 2; }
+.fact.span3 { grid-column: 1 / -1; }
+.fact dt { margin-bottom: 5px; }
+.fact dd { margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; }
+.fact dd .ic { width: 15px; height: 15px; color: var(--ink-3); }
+.chips { flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 999px;
+  background: var(--sunk); font-size: 12.5px; font-weight: 550;
+}
+.chip .ic { width: 14px; height: 14px; color: var(--ink-2); }
+.prompt {
+  margin-top: 13px; padding: 10px 12px 11px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.prompt .label { margin-bottom: 5px; }
+.prompt p { font-size: 13px; line-height: 1.55; }
+.prompt mark {
+  color: var(--ink); font-weight: 650; padding: 0 1px; border-radius: 3px;
+  background: linear-gradient(transparent 56%, var(--accent-soft) 56%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+
+/* Web */
+.web { padding: 10px 12px 12px; border: 1.5px dashed var(--edge); border-radius: 14px; }
+.web-h { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.web-h .ic { width: 15px; height: 15px; }
+.web-h .gx { margin-left: auto; }
+.pages { display: flex; gap: 8px; }
+.page {
+  flex: 1; min-width: 0; padding-bottom: 8px; border-radius: 8px; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.pg-bar { display: block; position: relative; height: 10px; background: var(--sunk); }
+.pg-bar::before {
+  content: ""; position: absolute; left: 6px; top: 3px; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--ink-3); box-shadow: 6px 0 var(--ink-3), 12px 0 var(--ink-3); opacity: .55;
+}
+.pg-t { display: block; padding: 6px 8px 6px; font-size: 11.5px; font-weight: 600; line-height: 1.2; }
+.pg-l { display: block; height: 4px; margin: 0 8px 4px; border-radius: 2px; background: var(--sunk); }
+.pg-l.short { width: 50%; }
+
+/* LLM */
+.llm {
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 18px; padding: 14px 16px 16px;
+  box-shadow: 0 0 0 6px var(--accent-soft), var(--shadow);
+}
+.llm-h { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+.llm-ic {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink);
+}
+.llm-ic .ic { width: 25px; height: 25px; }
+.llm h2 { font: 760 23px/1 var(--f-display); font-stretch: 125%; letter-spacing: .01em; }
+.llm-h p { margin-top: 5px; display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2); }
+.llm-h p .ic { width: 14px; height: 14px; }
+.llm .label { margin-bottom: 7px; }
+.jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.jobs li {
+  padding: 4px 9px; border-radius: 7px; font-size: 12.5px; font-weight: 550;
+  background: var(--accent-soft); color: var(--ink);
+}
+
+/* Output */
+.out .ghost {
+  position: absolute; inset: 0; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.out .ghost.g2 { transform: translate(14px, -14px); opacity: .85; }
+.out .ghost.g3 { transform: translate(28px, -28px); opacity: .6; }
+.out .ghost span { position: absolute; top: 1px; right: 12px; font: 500 10px/12px var(--f-mono); color: var(--ink-3); }
+.out-card { position: relative; z-index: 1; }
+.out-tags { margin-left: auto; display: flex; align-items: center; gap: 6px; border-radius: 6px; }
+.tag {
+  font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3);
+  border: 1px solid var(--line); padding: 4px 6px; border-radius: 5px;
+}
+.days { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.day {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-areas: "d city gx" "d what what";
+  column-gap: 6px; row-gap: 2px; align-items: center; padding: 6px 6px; border-radius: 8px;
+}
+.day .d { grid-area: d; align-self: start; padding-top: 2px; font: 600 11px/1.2 var(--f-mono); color: var(--ink-3); }
+.day .city { grid-area: city; font-size: 13.5px; font-weight: 650; }
+.day .gxs { grid-area: gx; display: flex; gap: 4px; }
+.day .what { grid-area: what; font-size: 12.5px; color: var(--ink-2); }
+.day.rest { grid-template-areas: "d what what"; }
+.day.rest .what { color: var(--ink-3); }
+.bad {
+  text-decoration: underline wavy var(--red); text-decoration-thickness: 1px;
+  text-underline-offset: 3px; text-decoration-skip-ink: none;
+}
+.extras { margin: 8px 0 0; padding-top: 8px; border-top: 1px dashed var(--line); display: grid; gap: 2px; }
+.extra { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 8px; }
+.extra dt { display: flex; align-items: center; gap: 6px; }
+.extra dt .ic { width: 14px; height: 14px; }
+.extra dd { margin: 0; font-size: 13px; font-weight: 550; }
+
+/* Gap code chip, used wherever a gap shows up */
+.gx {
+  display: inline-flex; align-items: center; height: 18px; padding: 0 5px; border-radius: 5px;
+  font: 600 10.5px/1 var(--f-mono); color: var(--red); background: var(--red-soft); border: 1px solid var(--red-line);
+  transition: color .5s, background-color .5s, border-color .5s;
+}
+.gx.is-closed { color: var(--green); background: var(--green-soft); border-color: var(--green-line); }
+
+/* ---------- Gap board ---------- */
+.board { flex: none; }
+.board-h { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.eyebrow { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-2); }
+.count {
+  font: 600 11px/1 var(--f-mono); padding: 4px 8px; border-radius: 999px;
+  color: var(--red); background: var(--red-soft); border: 1px solid var(--red-line);
+}
+.count.all-closed { color: var(--green); background: var(--green-soft); border-color: var(--green-line); }
+.legend { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-3); }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; }
+.sw-open { background: var(--red-soft); border: 1.5px solid var(--red); }
+.sw-closed { background: var(--green-soft); border: 1.5px solid var(--green); margin-left: 8px; }
+.gaps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.gap {
+  --c: var(--red); --c-soft: var(--red-soft); --c-line: var(--red-line);
+  display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 11px; align-items: start;
+  padding: 11px 12px 12px; border-radius: 12px; background: var(--c-soft); border: 1px solid var(--c-line);
+  transition: background-color .5s, border-color .5s, opacity .25s, box-shadow .2s; outline: none;
+}
+.gap.is-closed { --c: var(--green); --c-soft: var(--green-soft); --c-line: var(--green-line); }
+.gap:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.gap-ic {
+  position: relative; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+  background: var(--surface); color: var(--c); transition: color .5s;
+}
+.gap-ic .st {
+  position: absolute; right: -5px; bottom: -5px; width: 16px; height: 16px; stroke-width: 2.2;
+  border-radius: 50%; background: var(--surface); color: var(--c);
+}
+.gap h3 { font-size: 13.5px; font-weight: 650; line-height: 1.25; text-wrap: balance; overflow-wrap: break-word; hyphens: auto; }
+.gcode { font: 600 11px var(--f-mono); color: var(--c); margin-right: 6px; transition: color .5s; }
+.gap p { margin-top: 3px; font-size: 12px; line-height: 1.3; color: var(--ink-2); }
+.gap.pop { animation: pop .6s ease-out; }
+@keyframes pop { 40% { transform: scale(1.04); } }
+
+/* ---------- Takeaway ---------- */
+.takeaway {
+  margin-top: auto; display: flex; align-items: baseline; gap: 16px;
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.takeaway .label { color: var(--accent); font-weight: 600; letter-spacing: .14em; flex: none; }
+.takeaway p { font: 720 24px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
+
+/* ---------- Linking a gap to where it shows up ---------- */
+[data-gaps] { transition: background-color .2s, box-shadow .2s; }
+[data-gaps].lit { background: var(--red-soft) !important; box-shadow: 0 0 0 1.5px var(--red); }
+.linking .gap:not(.lit) { opacity: .4; }
+.gap.lit { box-shadow: 0 0 0 2px var(--c); }
+
+/* ---------- Narrow screens: unroll into one column ---------- */
+@media (max-width: 899px) {
+  .viewport { display: block; }
+  .stage-wrap { width: auto !important; height: auto !important; }
+  .stage { position: static; width: auto; height: auto; transform: none !important; padding: 16px 16px 28px; gap: 22px; }
+  .topbar { height: auto; flex-wrap: wrap; gap: 14px 12px; }
+  .brand { width: auto; flex: 1; }
+  .nav { order: 2; }
+  .rail { order: 3; flex-basis: 100%; }
+  .st-name { display: none; }
+  .now { display: block; order: 4; flex-basis: 100%; font-size: 13px; font-weight: 650; }
+  .now .st-code { font-size: 12px; }
+  .canvas { height: auto; display: flex; flex-direction: column; gap: 40px; padding-top: 18px; }
+  .node { position: relative; left: auto !important; top: auto !important; width: auto !important; }
+  .node.off { display: none; }
+  .canvas > .node:not(.off) ~ .node:not(.off)::before {
+    content: "\2193"; position: absolute; left: 50%; top: -33px; transform: translateX(-50%);
+    font: 600 18px/1 var(--f-mono); color: var(--ink-3);
+  }
+  .canvas > #n-llm:not(.off)::before { content: "\2195"; }
+  .wires, .elabel { display: none; }
+  .out .ghost.g2 { transform: translateY(-9px) scale(.96); }
+  .out .ghost.g3 { transform: translateY(-18px) scale(.92); }
+  .gaps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .gap { grid-template-columns: 28px minmax(0, 1fr); gap: 9px; padding: 10px; }
+  .gap-ic { width: 28px; height: 28px; border-radius: 8px; }
+  .gap-ic .ic:first-child { width: 16px; height: 16px; }
+  .gap h3 { font-size: 12.5px; }
+  .gap p { font-size: 11.5px; }
+  .board-h { flex-wrap: wrap; }
+  .takeaway { flex-direction: column; gap: 6px; margin-top: 0; }
+  .takeaway p { font-size: 21px; }
+}
+@media (max-width: 380px) {
+  .gaps { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact.span2 { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<!-- Icons: Lucide (ISC licence), lucide.dev -->
+<svg class="sprite" aria-hidden="true"><defs>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-earth" viewBox="0 0 24 24"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"/><path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"/><path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"/><circle cx="12" cy="12" r="10"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></symbol>
+<symbol id="i-plane-takeoff" viewBox="0 0 24 24"><path d="M2 22h20"/><path d="M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2l4.19-2.06a2.41 2.41 0 0 1 1.73-.17L21 7a1.4 1.4 0 0 1 .87 1.99l-.38.76c-.23.46-.6.84-1.07 1.08L7.58 17.2a2 2 0 0 1-1.22.18Z"/></symbol>
+<symbol id="i-utensils" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+<symbol id="i-landmark" viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></symbol>
+<symbol id="i-brain-circuit" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M9 13a4.5 4.5 0 0 0 3-4"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M16 8V5a2 2 0 0 1 2-2"/><circle cx="16" cy="13" r=".5"/><circle cx="18" cy="3" r=".5"/><circle cx="20" cy="21" r=".5"/><circle cx="20" cy="8" r=".5"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+<symbol id="i-scroll-text" viewBox="0 0 24 24"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
+<symbol id="i-map-pin-off" viewBox="0 0 24 24"><path d="M12.75 7.09a3 3 0 0 1 2.16 2.16"/><path d="M17.072 17.072c-1.634 2.17-3.527 3.912-4.471 4.727a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 1.432-4.568"/><path d="m2 2 20 20"/><path d="M8.475 2.818A8 8 0 0 1 20 10c0 1.183-.31 2.377-.81 3.533"/><path d="M9.13 9.13a3 3 0 0 0 3.74 3.74"/></symbol>
+<symbol id="i-calendar-x" viewBox="0 0 24 24"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="m14 13-4 4"/><path d="m10 13 4 4"/></symbol>
+<symbol id="i-shield-alert" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+<symbol id="i-ticket-x" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="m9.5 14.5 5-5"/><path d="m9.5 9.5 5 5"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24"><path d="M13.744 17.736a6 6 0 1 1-7.48-7.48"/><path d="M15 6h1v4"/><path d="m6.134 14.768.866-.5 2 3.464"/><circle cx="16" cy="8" r="6"/></symbol>
+<symbol id="i-filter-x" viewBox="0 0 24 24"><path d="M12.531 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14v6a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341l.427-.473"/><path d="m16.5 3.5 5 5"/><path d="m21.5 3.5-5 5"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
+<symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></symbol>
+<symbol id="i-circle-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+<symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></symbol>
+<symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol>
+<symbol id="i-banknote" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+</defs></svg>
+
+<div class="viewport">
+  <div class="stage-wrap" id="wrap">
+    <main class="stage" id="stage">
+
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"><svg class="ic" aria-hidden="true"><use href="#i-route"/></svg></span>
+          <span class="brand-name">AI Trip Planner</span>
+        </div>
+        <ol class="rail" id="rail" aria-label="Steps"></ol>
+        <div class="nav">
+          <button type="button" class="navbtn" id="prev" aria-label="Previous step"><svg class="ic" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <button type="button" class="navbtn" id="next" aria-label="Next step"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+        </div>
+        <p class="now" id="now"></p>
+      </header>
+
+      <section class="canvas" id="canvas" aria-label="Architecture">
+        <svg class="wires" id="wires" aria-hidden="true">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+              <path class="arrowhead" d="M2 1.5 8.5 5 2 8.5"/>
+            </marker>
+          </defs>
+          <g id="wire-layer"></g>
+          <g class="dot" id="dot"><circle class="dot-halo" r="9"/><circle class="dot-core" r="4"/></g>
+        </svg>
+
+        <!-- Input: structured trip facts + free-text prompt -->
+        <article class="node card" id="n-input" data-in="1">
+          <header class="node-h">
+            <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
+            <h2>Trip input</h2>
+          </header>
+          <dl class="facts">
+            <div class="fact"><dt class="label">Country</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-earth"/></svg>Japan</dd></div>
+            <div class="fact"><dt class="label">Travelers</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>2 adults</dd></div>
+            <div class="fact"><dt class="label">Days</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>7</dd></div>
+            <div class="fact"><dt class="label">From</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-plane-takeoff"/></svg>Bengaluru</dd></div>
+            <div class="fact span2" data-gaps="G2"><dt class="label">Dates</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-calendar-days"/></svg>28 Apr – 4 May</dd></div>
+            <div class="fact span3"><dt class="label">Interests</dt>
+              <dd class="chips">
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-utensils"/></svg>Food</span>
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-landmark"/></svg>Temples</span>
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Photography</span>
+              </dd>
+            </div>
+          </dl>
+          <div class="prompt">
+            <p class="label">Prompt</p>
+            <p>“We're <mark data-gaps="G8">vegetarian</mark>, one of us has a <mark data-gaps="G8">bad knee</mark>, we <mark data-gaps="G2">hate crowds</mark>, and we want it to feel like <mark data-gaps="G7">old Japan</mark>.”</p>
+          </div>
+        </article>
+
+        <!-- Open web the LLM searches -->
+        <div class="node web" id="n-web" data-in="1">
+          <div class="web-h"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>Open web<span class="gx">G3</span></div>
+          <div class="pages">
+            <div class="page" data-gaps="G3"><span class="pg-bar"></span><span class="pg-t">Top 10 Kyoto</span><span class="pg-l"></span><span class="pg-l short"></span></div>
+            <div class="page" data-gaps="G3 G1"><span class="pg-bar"></span><span class="pg-t">Blog · 2019</span><span class="pg-l"></span><span class="pg-l short"></span></div>
+            <div class="page" data-gaps="G3"><span class="pg-bar"></span><span class="pg-t">Forum</span><span class="pg-l"></span><span class="pg-l short"></span></div>
+          </div>
+        </div>
+
+        <!-- The LLM does every job -->
+        <article class="node llm" id="n-llm" data-in="1" data-wgap="9">
+          <header class="llm-h">
+            <span class="llm-ic"><svg class="ic" aria-hidden="true"><use href="#i-brain-circuit"/></svg></span>
+            <div>
+              <h2>LLM</h2>
+              <p><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>with web search</p>
+            </div>
+          </header>
+          <p class="label">Does every job</p>
+          <ul class="jobs">
+            <li>Understand</li><li>Remember facts</li><li>Search</li><li>Judge</li><li>Arrange</li><li>Narrate</li><li>Revise</li>
+          </ul>
+        </article>
+
+        <!-- Output: a prose itinerary, different on every run -->
+        <div class="node out" id="n-output" data-in="1">
+          <div class="ghost g3" data-gaps="G9" aria-hidden="true"><span>run 3</span></div>
+          <div class="ghost g2" data-gaps="G9" aria-hidden="true"><span>run 2</span></div>
+          <article class="card out-card">
+            <header class="node-h">
+              <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-scroll-text"/></svg></span>
+              <h2>Itinerary</h2>
+              <span class="out-tags" data-gaps="G9"><span class="tag">Prose</span><span class="gx">G9</span></span>
+            </header>
+            <ol class="days">
+              <li class="day" data-gaps="G7 G2"><span class="d">D1</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G7</span><span class="gx">G2</span></span><span class="what"><span class="bad">Senso-ji, Shibuya Crossing</span></span></li>
+              <li class="day" data-gaps="G8"><span class="d">D2</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G8</span></span><span class="what">Tsukiji, <span class="bad">tonkotsu ramen</span></span></li>
+              <li class="day" data-gaps="G6 G8"><span class="d">D3</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G6</span><span class="gx">G8</span></span><span class="what"><span class="bad">Arashiyama → Inari summit → Kinkaku-ji</span></span></li>
+              <li class="day" data-gaps="G1"><span class="d">D4</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G1</span></span><span class="what">Lunch at <span class="bad">Lotus Zen Café</span></span></li>
+              <li class="day rest"><span class="d">D5–7</span><span class="what">Nara, Osaka, fly home</span></li>
+            </ol>
+            <dl class="extras">
+              <div class="extra" data-gaps="G4"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Stay</dt><dd class="bad">a ryokan in Gion</dd><span class="gx">G4</span></div>
+              <div class="extra" data-gaps="G5"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-banknote"/></svg>Cost</dt><dd class="bad">≈ ₹2.5 L total</dd><span class="gx">G5</span></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="board" aria-labelledby="gaps-h">
+        <div class="board-h">
+          <h2 class="eyebrow" id="gaps-h">Gaps</h2>
+          <span class="count" id="count">10 open</span>
+          <span class="legend"><i class="sw sw-open"></i>Open<i class="sw sw-closed"></i>Closed</span>
+        </div>
+        <div class="gaps" id="gaps">
+          <article class="gap" data-gap="G1" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-map-pin-off"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G1</span>Invented or stale places</h3><p>Closed, renamed, old hours</p></div>
+          </article>
+          <article class="gap" data-gap="G2" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-calendar-x"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G2</span>Blind to time</h3><p>Misses Golden Week crowds</p></div>
+          </article>
+          <article class="gap" data-gap="G3" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-shield-alert"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G3</span>Untrusted sources</h3><p>SEO listicles, no provenance</p></div>
+          </article>
+          <article class="gap" data-gap="G4" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-ticket-x"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G4</span>Not bookable</h3><p>Out of scope for now</p></div>
+          </article>
+          <article class="gap" data-gap="G5" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-coins"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G5</span>Cost is a guess</h3><p>No real prices or budget</p></div>
+          </article>
+          <article class="gap" data-gap="G6" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-route"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G6</span>Geographically sloppy</h3><p>Zigzag routes, hidden transit</p></div>
+          </article>
+          <article class="gap" data-gap="G7" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G7</span>Generic, popularity-biased</h3><p>Same top 10 for everyone</p></div>
+          </article>
+          <article class="gap" data-gap="G8" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-filter-x"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G8</span>Constraints silently dropped</h3><p>Veg and bad knee ignored</p></div>
+          </article>
+          <article class="gap" data-gap="G9" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-dices"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G9</span>Unrepeatable, unmeasurable</h3><p>New trip every run, prose only</p></div>
+          </article>
+          <article class="gap" data-gap="G10" tabindex="0">
+            <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-hourglass"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
+            <div><h3><span class="gcode">G10</span>Slow and expensive</h3><p>Re-searches the web each time</p></div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="takeaway">
+        <span class="label">Takeaway</span>
+        <p id="takeaway">AI needs factual data to plan and act.</p>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(() => {
+  // Steps on the rail. A step is built once it has a takeaway; the rest are placeholders.
+  const STEPS = [
+    { code: 'L0', name: 'Basic AI Search', takeaway: 'AI needs factual data to plan and act.' },
+    { name: 'Step 2' },
+    { name: 'Step 3' },
+    { name: 'Step 4' },
+    { name: 'Step 5' },
+  ];
+  // Step (1-based) at which each gap turns green.
+  const CLOSED_AT = {};
+  // Wires between nodes. `in`/`out` = first/last step a wire is shown. Nodes use data-in/data-out.
+  const WIRES = [
+    { id: 'w-in-llm',  from: 'n-input', to: 'n-llm',    label: 'form + prompt', in: 1 },
+    { id: 'w-llm-web', from: 'n-llm',   to: 'n-web',    dx: -9, dashed: true, in: 1 },
+    { id: 'w-web-llm', from: 'n-web',   to: 'n-llm',    dx: 9,  dashed: true, label: 'every request', gaps: 'G10', side: true, in: 1 },
+    { id: 'w-llm-out', from: 'n-llm',   to: 'n-output', label: 'prose', in: 1 },
+  ];
+  // Route the dot travels when a step opens.
+  const FLOW = { 1: ['w-in-llm', 'w-llm-web', 'w-web-llm', 'w-llm-out'] };
+
+  const W = 1280, H = 810;
+  const BUILT = STEPS.filter(s => s.takeaway).length;
+  const $ = id => document.getElementById(id);
+  const stage = $('stage'), wrap = $('wrap'), canvas = $('canvas'), layer = $('wire-layer'), dot = $('dot');
+  const narrow = matchMedia('(max-width: 899px)');
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  const SVG = 'http://www.w3.org/2000/svg';
+  let step = 0;
+
+  const shown = (o, s) => s >= (+o.in || 1) && s <= (o.out ? +o.out : Infinity);
+  const range = el => ({ in: el.dataset.in, out: el.dataset.out });
+
+  // ---- Step rail ----
+  const rail = $('rail');
+  rail.innerHTML = STEPS.map((s, i) => `
+    <li class="st"><button type="button" class="st-btn" data-go="${i + 1}" ${i + 1 > BUILT ? 'disabled' : ''}
+      aria-label="Step ${i + 1}: ${s.name}${i + 1 > BUILT ? ' (not built yet)' : ''}">
+      <span class="st-dot">${i + 1}</span>
+      <span class="st-name">${s.code ? `<span class="st-code">${s.code}</span>` : ''}${s.name}</span>
+    </button></li>`).join('');
+  rail.addEventListener('click', e => {
+    const b = e.target.closest('[data-go]');
+    if (!b) return;
+    const n = +b.dataset.go;
+    n === step ? flow(step) : go(n);
+  });
+  $('prev').addEventListener('click', () => go(step - 1));
+  $('next').addEventListener('click', () => go(step + 1));
+  addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { go(step + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { go(step - 1); e.preventDefault(); }
+  });
+
+  // ---- Wires ----
+  const wires = {};
+  WIRES.forEach(w => {
+    const p = document.createElementNS(SVG, 'path');
+    p.setAttribute('class', 'wire' + (w.dashed ? ' dashed' : ''));
+    p.setAttribute('marker-end', 'url(#arrow)');
+    layer.appendChild(p);
+    let label = null;
+    if (w.label) {
+      label = document.createElement('span');
+      label.className = 'elabel' + (w.side ? ' side' : '');
+      label.innerHTML = w.label + (w.gaps ? w.gaps.split(' ').map(g => ` <span class="gx">${g}</span>`).join('') : '');
+      if (w.gaps) label.dataset.gaps = w.gaps;
+      canvas.appendChild(label);
+    }
+    wires[w.id] = { w, p, label };
+  });
+
+  function box(el) {
+    let x = 0, y = 0, n = el;
+    while (n && n !== canvas) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight, g: +(el.dataset.wgap || 3) };
+  }
+  function geom(w) {
+    const A = box($(w.from)), B = box($(w.to));
+    if (A.x + A.w <= B.x || B.x + B.w <= A.x) {           // side by side: horizontal wire
+      const ltr = A.x + A.w <= B.x;
+      const by = B.y + B.h / 2;
+      const ay = Math.min(Math.max(by, A.y + 18), A.y + A.h - 18);
+      const x1 = ltr ? A.x + A.w + A.g : A.x - A.g;
+      const x2 = ltr ? B.x - B.g - 1 : B.x + B.w + B.g + 1;
+      const c = (x2 - x1) / 2;
+      return { d: `M${x1} ${ay}C${x1 + c} ${ay} ${x2 - c} ${by} ${x2} ${by}`, mx: (x1 + x2) / 2, my: (ay + by) / 2 };
+    }
+    const down = A.y + A.h <= B.y;                        // stacked: vertical wire
+    const x = (Math.max(A.x, B.x) + Math.min(A.x + A.w, B.x + B.w)) / 2 + (w.dx || 0);
+    const y1 = down ? A.y + A.h + A.g : A.y - A.g;
+    const y2 = down ? B.y - B.g - 1 : B.y + B.h + B.g + 1;
+    return { d: `M${x} ${y1}L${x} ${y2}`, mx: x, my: (y1 + y2) / 2 };
+  }
+  function layout() {
+    if (narrow.matches) return;
+    Object.values(wires).forEach(({ w, p, label }) => {
+      const on = shown(w, step) && !$(w.from).classList.contains('off') && !$(w.to).classList.contains('off');
+      p.classList.toggle('off', !on);
+      if (label) label.classList.toggle('off', !on);
+      if (!on) return;
+      const g = geom(w);
+      p.setAttribute('d', g.d);
+      if (label) {
+        label.style.left = (w.side ? g.mx + 12 : g.mx) + 'px';
+        label.style.top = g.my + 'px';
+      }
+    });
+  }
+  // Keep wires attached while nodes glide between positions.
+  let followUntil = 0;
+  function follow(ms) {
+    const start = !followUntil || performance.now() > followUntil;
+    followUntil = performance.now() + ms;
+    if (!start) return;
+    const tick = () => { layout(); if (performance.now() < followUntil) requestAnimationFrame(tick); else followUntil = 0; };
+    requestAnimationFrame(tick);
+  }
+
+  // ---- Travelling dot ----
+  let token = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  function travel(p, ms, my) {
+    return new Promise(res => {
+      const L = p.getTotalLength(), t0 = performance.now();
+      const tick = t => {
+        if (my !== token) return res();
+        const k = Math.min(1, (t - t0) / ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+        const pt = p.getPointAtLength(e * L);
+        dot.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+        k < 1 ? requestAnimationFrame(tick) : res();
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+  async function flow(s) {
+    const my = ++token;
+    dot.style.opacity = 0;
+    if (still.matches || narrow.matches) return;
+    await wait(450);
+    for (const id of FLOW[s] || []) {
+      const { p } = wires[id];
+      if (my !== token) return;
+      if (p.classList.contains('off')) continue;
+      dot.style.opacity = 1;
+      await travel(p, 620, my);
+    }
+    if (my === token) dot.style.opacity = 0;
+  }
+
+  // ---- Gaps ----
+  function paintGaps(s, animate) {
+    let open = 0;
+    document.querySelectorAll('.gap').forEach(g => {
+      const at = CLOSED_AT[g.dataset.gap];
+      const closed = at != null && s >= at;
+      const was = g.classList.contains('is-closed');
+      g.classList.toggle('is-closed', closed);
+      g.querySelector('.st use').setAttribute('href', closed ? '#i-circle-check' : '#i-circle-x');
+      g.setAttribute('aria-label', `${g.dataset.gap} ${g.querySelector('h3').textContent.replace(g.dataset.gap, '')}: ${closed ? 'closed' : 'open'}`);
+      if (closed && !was && animate) { g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop'); }
+      if (!closed) open++;
+    });
+    document.querySelectorAll('.gx').forEach(x => {
+      const at = CLOSED_AT[x.textContent.trim()];
+      x.classList.toggle('is-closed', at != null && s >= at);
+    });
+    const total = document.querySelectorAll('.gap').length;
+    const count = $('count');
+    count.textContent = open === total ? `${total} open` : `${open} open · ${total - open} closed`;
+    count.classList.toggle('all-closed', open === 0);
+  }
+
+  // Hover or focus a gap to see where it shows up, and the reverse.
+  let pinned = [];
+  function light(codes) {
+    document.querySelectorAll('.lit').forEach(e => e.classList.remove('lit'));
+    stage.classList.toggle('linking', codes.length > 0);
+    codes.forEach(c => {
+      document.querySelectorAll(`[data-gaps~="${c}"]`).forEach(e => { if (!e.closest('.off')) e.classList.add('lit'); });
+      document.querySelector(`.gap[data-gap="${c}"]`)?.classList.add('lit');
+    });
+  }
+  function bindLinks(root) {
+    root.querySelectorAll('.gap').forEach(g => {
+      const c = [g.dataset.gap];
+      g.addEventListener('pointerenter', () => light(c));
+      g.addEventListener('pointerleave', () => light(pinned));
+      g.addEventListener('focus', () => light(c));
+      g.addEventListener('blur', () => light(pinned));
+      g.addEventListener('click', () => { pinned = pinned[0] === c[0] ? [] : c; light(pinned); });
+    });
+    root.querySelectorAll('[data-gaps]').forEach(el => {
+      const c = el.dataset.gaps.split(' ');
+      el.addEventListener('pointerenter', () => light(c));
+      el.addEventListener('pointerleave', () => light(pinned));
+    });
+  }
+  bindLinks(document);
+  document.addEventListener('click', e => { if (!e.target.closest('.gap')) { pinned = []; light(pinned); } });
+
+  // ---- Step change ----
+  function go(n) {
+    n = Math.max(1, Math.min(BUILT, n));
+    if (n === step) return;
+    const prev = step;
+    step = n;
+    stage.dataset.step = n;
+    document.querySelectorAll('[data-in]').forEach(el => {
+      const on = shown(range(el), n);
+      el.classList.toggle('off', !on);
+      if (on && prev && !shown(range(el), prev)) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+    });
+    rail.querySelectorAll('.st').forEach((li, i) => {
+      li.classList.toggle('is-done', i + 1 < n);
+      li.classList.toggle('is-current', i + 1 === n);
+      li.querySelector('button').toggleAttribute('aria-current', i + 1 === n);
+      if (i + 1 === n) li.querySelector('button').setAttribute('aria-current', 'step');
+    });
+    const s = STEPS[n - 1];
+    $('now').innerHTML = `Step ${n} of ${STEPS.length} · ${s.code ? `<span class="st-code">${s.code}</span>` : ''}${s.name}`;
+    $('prev').disabled = n <= 1;
+    $('next').disabled = n >= BUILT;
+    $('takeaway').textContent = s.takeaway || '';
+    paintGaps(n, prev > 0);
+    pinned = [];
+    light(pinned);
+    layout();
+    follow(700);
+    if (prev) flow(n);
+  }
+
+  // ---- Fit the stage to the screen ----
+  function fit() {
+    if (narrow.matches) {
+      wrap.style.width = wrap.style.height = '';
+      stage.style.transform = '';
+      return;
+    }
+    const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+    const s = Math.min(vw / W, Math.max(vh / H, .75));
+    stage.style.transform = `scale(${s})`;
+    wrap.style.width = W * s + 'px';
+    wrap.style.height = H * s + 'px';
+    layout();
+  }
+  addEventListener('resize', fit);
+  narrow.addEventListener('change', fit);
+
+  go(1);
+  fit();
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { layout(); flow(step); });
+})();
+</script>
+</body>
+</html>
