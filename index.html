@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: a fixed 1280x810 stage scaled to fit the screen like a slide. Step rail on top,
+/* Layout: a fixed 1440x900 stage scaled to fit the screen like a slide. Step rail on top,
    architecture canvas in the middle (input left, engine centre, output right), gap board and
-   takeaway at the bottom. Below 900px the stage unrolls into a single column. */
+   takeaway at the bottom. Below 1000px the stage unrolls into a single column. */
 :root {
   --bg: #F2F4F8;
   --surface: #FFFFFF;
@@ -23,6 +23,7 @@
   --accent: #3949C9;
   --accent-ink: #FFFFFF;
   --accent-soft: #E3E7FA;
+  --accent-ring: rgb(57 73 201 / .35);
   --red: #C42F3E;
   --red-soft: #FBEAEC;
   --red-line: #EFB8BF;
@@ -30,6 +31,7 @@
   --green-soft: #E1F2E8;
   --green-line: #A6D9BC;
   --shadow: 0 1px 2px rgb(20 26 49 / .05), 0 6px 18px rgb(20 26 49 / .06);
+  --pop-shadow: 0 2px 6px rgb(20 26 49 / .08), 0 16px 44px rgb(20 26 49 / .18);
   --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --f-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -38,18 +40,22 @@
   :root:not([data-theme="light"]) {
     --bg: #0C1020; --surface: #151A2D; --sunk: #1D2338; --ink: #E6E9F3; --ink-2: #A4ACC4; --ink-3: #6B7490;
     --line: #283049; --edge: #525C7A; --accent: #8D9AFF; --accent-ink: #0C1020; --accent-soft: #222A52;
+    --accent-ring: rgb(141 154 255 / .35);
     --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
     --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
     --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
+    --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0C1020; --surface: #151A2D; --sunk: #1D2338; --ink: #E6E9F3; --ink-2: #A4ACC4; --ink-3: #6B7490;
   --line: #283049; --edge: #525C7A; --accent: #8D9AFF; --accent-ink: #0C1020; --accent-soft: #222A52;
+  --accent-ring: rgb(141 154 255 / .35);
   --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
   --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
   --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
+  --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
   color-scheme: dark;
 }
 
@@ -64,6 +70,7 @@ body {
 }
 [hidden] { display: none !important; }
 h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; }
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 .ic {
   width: 18px; height: 18px; flex: none;
@@ -79,15 +86,15 @@ h2, h3, p { margin: 0; }
 .stage-wrap { position: relative; }
 .stage {
   position: absolute; left: 0; top: 0;
-  width: 1280px; height: 810px;
-  padding: 18px 32px 22px;
-  display: flex; flex-direction: column; gap: 18px;
+  width: 1440px; height: 900px;
+  padding: 16px 32px 20px;
+  display: flex; flex-direction: column; gap: 14px;
   transform-origin: 0 0;
 }
 
 /* ---------- Top bar + step rail ---------- */
-.topbar { flex: none; height: 56px; display: flex; align-items: center; gap: 28px; }
-.brand { display: flex; align-items: center; gap: 10px; width: 190px; flex: none; }
+.topbar { flex: none; height: 62px; display: flex; align-items: flex-start; gap: 28px; padding-top: 4px; }
+.brand { display: flex; align-items: center; gap: 10px; width: 200px; flex: none; padding-top: 0; }
 .brand-mark {
   width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
   background: var(--ink); color: var(--bg);
@@ -95,14 +102,26 @@ h2, h3, p { margin: 0; }
 .brand-name { font: 700 15px/1.1 var(--f-display); font-stretch: 118%; letter-spacing: .01em; }
 .rail { flex: 1; display: flex; list-style: none; margin: 0; padding: 0; }
 .st { flex: 1; position: relative; display: flex; justify-content: center; }
-.st:not(:last-child)::after {
-  content: ""; position: absolute; top: 13px; left: calc(50% + 21px); width: calc(100% - 42px);
-  height: 3px; border-radius: 3px; background: var(--line); transition: background-color .5s;
+.seg {
+  position: absolute; top: 13px; left: calc(50% + 21px); width: calc(100% - 42px);
+  height: 3px; border-radius: 3px; background: var(--line);
 }
-.st.is-done::after { background: var(--accent); }
+.seg-fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 3px; background: var(--accent);
+  transition: width .5s cubic-bezier(.3,.7,.2,1);
+}
+.tick {
+  position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; padding: 0;
+  border-radius: 50%; border: 2px solid var(--line); background: var(--surface); cursor: pointer;
+  transition: background-color .3s, border-color .3s, box-shadow .3s, transform .3s;
+}
+.tick::before { content: ""; position: absolute; inset: -9px; }
+.tick.on { background: var(--accent); border-color: var(--accent); }
+.tick.now { transform: scale(1.2); box-shadow: 0 0 0 4px var(--accent-soft); }
+.tick:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .st-btn {
-  appearance: none; border: 0; background: none; padding: 0; color: inherit; font: inherit;
-  display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+  appearance: none; border: 0; background: none; padding: 0; position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;
 }
 .st-btn:disabled { cursor: default; }
 .st-btn:focus-visible { outline: none; }
@@ -117,7 +136,9 @@ h2, h3, p { margin: 0; }
 .is-current .st-dot { box-shadow: 0 0 0 5px var(--accent-soft); }
 .st-name { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
 .is-current .st-name { color: var(--ink); font-weight: 650; }
+.is-done .st-name { color: var(--ink-2); }
 .st-code { font: 600 11px var(--f-mono); color: var(--accent); margin-right: 5px; }
+.st-beat { font: 500 10.5px/1 var(--f-mono); color: var(--accent); white-space: nowrap; min-height: 11px; }
 .nav { display: flex; gap: 8px; flex: none; }
 .navbtn {
   width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
@@ -129,17 +150,18 @@ h2, h3, p { margin: 0; }
 .now { display: none; }
 
 /* ---------- Canvas ---------- */
-.canvas { position: relative; flex: none; height: 420px; }
+.canvas { position: relative; flex: none; height: 528px; }
 .wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .wire { fill: none; stroke: var(--edge); stroke-width: 1.75; transition: opacity .35s; }
 .wire.dashed { stroke-dasharray: 4 5; }
+.wire.broken { stroke: var(--red); stroke-dasharray: 3 6; stroke-width: 2; }
 .wire.off { opacity: 0; }
 .arrowhead { fill: none; stroke: var(--edge); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .dot { opacity: 0; transition: opacity .3s; }
 .dot-halo { fill: var(--accent); opacity: .2; }
 .dot-core { fill: var(--accent); }
 .elabel {
-  position: absolute; transform: translate(-50%, -50%);
+  position: absolute; z-index: 5; transform: translate(-50%, -50%);
   display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
   font: 500 11px/1 var(--f-mono); color: var(--ink-2);
   background: var(--bg); padding: 4px 6px; border-radius: 6px;
@@ -150,17 +172,18 @@ h2, h3, p { margin: 0; }
 
 .node {
   position: absolute;
-  transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s,
+  transition: left .7s cubic-bezier(.3,.7,.2,1), top .7s cubic-bezier(.3,.7,.2,1), width .7s cubic-bezier(.3,.7,.2,1),
               opacity .35s, visibility .35s, transform .35s;
 }
 .node.off { opacity: 0; visibility: hidden; transform: scale(.97); pointer-events: none; }
+.off:not(.node):not(.jobs > .job) { display: none !important; }
 .enter { animation: enter .55s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes enter { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
-
-#n-input  { left: 0;     top: 22px;  width: 316px; }
-#n-web    { left: 438px; top: 0;     width: 340px; }
-#n-llm    { left: 458px; top: 168px; width: 300px; }
-#n-output { left: 900px; top: 22px;  width: 316px; }
+.hint { animation: hint 2s ease-out infinite; }
+@keyframes hint {
+  0% { box-shadow: var(--shadow), 0 0 0 0 var(--accent-ring); }
+  70%, 100% { box-shadow: var(--shadow), 0 0 0 12px transparent; }
+}
 
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
@@ -169,20 +192,24 @@ h2, h3, p { margin: 0; }
 .node-h { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .node-h h2 { font: 650 15px/1.2 var(--f-display); font-stretch: 112%; }
 .node-ic {
-  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; flex: none;
   background: var(--sunk); color: var(--ink-2);
 }
 .node-ic .ic { width: 16px; height: 16px; }
+.more { width: 15px; height: 15px; color: var(--ink-3); }
+.clickable { cursor: pointer; }
+.clickable:hover { border-color: var(--edge); }
+.clickable:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* Input */
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px 12px; margin: 0; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px 10px; margin: 0; }
 .fact { min-width: 0; border-radius: 8px; }
 .fact.span2 { grid-column: span 2; }
 .fact.span3 { grid-column: 1 / -1; }
 .fact dt { margin-bottom: 5px; }
-.fact dd { margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; }
+.fact dd { margin: 0; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .fact dd .ic { width: 15px; height: 15px; color: var(--ink-3); }
-.chips { flex-wrap: wrap; }
+.chips { flex-wrap: wrap; white-space: normal; }
 .chip {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 999px;
   background: var(--sunk); font-size: 12.5px; font-weight: 550;
@@ -200,7 +227,7 @@ h2, h3, p { margin: 0; }
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 
-/* Web */
+/* Open web (step 1) */
 .web { padding: 10px 12px 12px; border: 1.5px dashed var(--edge); border-radius: 14px; }
 .web-h { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
 .web-h .ic { width: 15px; height: 15px; }
@@ -215,16 +242,130 @@ h2, h3, p { margin: 0; }
   content: ""; position: absolute; left: 6px; top: 3px; width: 4px; height: 4px; border-radius: 50%;
   background: var(--ink-3); box-shadow: 6px 0 var(--ink-3), 12px 0 var(--ink-3); opacity: .55;
 }
-.pg-t { display: block; padding: 6px 8px 6px; font-size: 11.5px; font-weight: 600; line-height: 1.2; }
+.pg-t { display: block; padding: 6px 8px; font-size: 11.5px; font-weight: 600; line-height: 1.2; }
 .pg-l { display: block; height: 4px; margin: 0 8px 4px; border-radius: 2px; background: var(--sunk); }
 .pg-l.short { width: 50%; }
 
+/* Data feeds (step 2) */
+.feeds {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 10px 12px 12px;
+}
+.feeds-h { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-size: 12.5px; font-weight: 650; border-radius: 6px; }
+.feeds-h .ic { width: 15px; height: 15px; color: var(--accent); }
+.fresh { margin-left: auto; font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.feed-list { display: flex; gap: 6px; }
+.feed {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 8px;
+  border-radius: 8px; background: var(--sunk); font-size: 12.5px; font-weight: 550; white-space: nowrap;
+}
+.feed .ic { width: 15px; height: 15px; color: var(--ink-2); }
+
+/* Travel knowledge repository */
+.tkr { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 14px; }
+.db {
+  width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center;
+  background: var(--ink); color: var(--bg); transition: background-color .5s, color .5s;
+}
+.db .ic { width: 22px; height: 22px; }
+.tkr.is-empty .db { background: transparent; color: var(--ink-3); box-shadow: inset 0 0 0 1.5px var(--edge); }
+.tkr h2 { font: 650 15px/1.2 var(--f-display); font-stretch: 106%; }
+.tkr p { margin-top: 3px; font-size: 12px; color: var(--ink-2); }
+.tkr-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.state {
+  font: 600 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  padding: 4px 7px; border-radius: 999px; border: 1px dashed var(--edge); color: var(--ink-3);
+}
+.state.full { border-style: solid; border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* The broken link */
+.breaker {
+  position: absolute; z-index: 6; transform: translate(-15px, -50%);
+  display: inline-flex; flex-direction: row-reverse; align-items: center; gap: 8px;
+  padding: 0; border: 0; background: none; cursor: pointer; color: var(--red);
+}
+.bk-ic {
+  position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--surface); border: 1.5px solid var(--red); box-shadow: 0 0 0 4px var(--bg);
+}
+.bk-ic .ic { width: 15px; height: 15px; }
+.bk-ic::after {
+  content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--red);
+  opacity: 0; animation: ping 2.2s ease-out infinite;
+}
+@keyframes ping { 0% { transform: scale(.85); opacity: .55; } 80%, 100% { transform: scale(1.45); opacity: 0; } }
+.bk-t {
+  position: absolute; right: 38px; white-space: nowrap; font-size: 12.5px; font-weight: 650;
+  background: var(--bg); padding: 3px 7px; border-radius: 6px;
+}
+.breaker:hover .bk-ic { background: var(--red-soft); }
+.breaker:focus-visible { outline: none; }
+.breaker:focus-visible .bk-ic { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* The right way: three inputs */
+.query {
+  background: var(--surface); border: 1.5px solid var(--accent); border-radius: 16px;
+  padding: 16px 10px 10px; box-shadow: var(--shadow);
+}
+.q-h {
+  position: absolute; top: -10px; left: 14px; display: flex; align-items: center; gap: 5px;
+  padding: 3px 8px; border-radius: 999px; color: var(--accent);
+  background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.q-h .ic { width: 14px; height: 14px; }
+.q-parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.qpart {
+  appearance: none; border: 0; text-align: left; cursor: pointer; position: relative;
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 10px 11px; border-radius: 10px;
+  background: var(--sunk); transition: background-color .2s;
+}
+.qpart:hover { background: var(--accent-soft); }
+.qpart:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.q-ic {
+  width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; margin-bottom: 5px;
+  background: var(--surface); color: var(--accent);
+}
+.q-ic .ic { width: 15px; height: 15px; }
+.qpart b { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+.qpart .role { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; }
+.qpart .more { position: absolute; top: 10px; right: 9px; }
+
+/* Find candidates */
+.proc .node-h { margin-bottom: 10px; }
+.proc .node-h .more { margin-left: 2px; }
+.node-ic.solid { background: var(--ink); color: var(--bg); }
+.steps { display: flex; align-items: center; gap: 5px; margin-bottom: 12px; }
+.steps span {
+  display: inline-flex; align-items: baseline; gap: 5px; padding: 4px 7px; border-radius: 7px;
+  background: var(--sunk); font-size: 12px; font-weight: 550; white-space: nowrap;
+}
+.steps b { font: 600 11px var(--f-mono); color: var(--accent); }
+.steps .ic { width: 13px; height: 13px; color: var(--ink-3); }
+.ranks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ranks ol { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; counter-reset: r; }
+.ranks li {
+  counter-increment: r; display: grid; grid-template-columns: 10px minmax(0, 1fr) 34px; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 550; white-space: nowrap;
+}
+.ranks li::before { content: counter(r); font: 600 10.5px/1 var(--f-mono); color: var(--ink-3); }
+.ranks li i, .bars i, .weights i {
+  display: block; height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0);
+}
+
+/* Jobs: on the LLM, and on whatever takes a job over */
+.job {
+  display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px;
+  font-size: 11.5px; font-weight: 550; line-height: 1.35; white-space: nowrap;
+  background: var(--accent-soft); color: var(--ink);
+}
+
 /* LLM */
 .llm {
-  background: var(--surface); border: 2px solid var(--accent); border-radius: 18px; padding: 14px 16px 16px;
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 18px; padding: 14px 16px 15px;
   box-shadow: 0 0 0 6px var(--accent-soft), var(--shadow);
 }
-.llm-h { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+.llm-h { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .llm-ic {
   width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
   background: var(--accent); color: var(--accent-ink);
@@ -234,11 +375,12 @@ h2, h3, p { margin: 0; }
 .llm-h p { margin-top: 5px; display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2); }
 .llm-h p .ic { width: 14px; height: 14px; }
 .llm .label { margin-bottom: 7px; }
-.jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.jobs li {
-  padding: 4px 9px; border-radius: 7px; font-size: 12.5px; font-weight: 550;
-  background: var(--accent-soft); color: var(--ink);
+.jobs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; }
+.jobs > .job {
+  margin: 0 5px 5px 0; max-width: 140px; overflow: hidden;
+  transition: max-width .45s ease, padding .45s ease, margin .45s ease, opacity .3s;
 }
+.jobs > .job.off { max-width: 0; padding-left: 0; padding-right: 0; margin-right: 0; opacity: 0; }
 
 /* Output */
 .out .ghost {
@@ -248,7 +390,8 @@ h2, h3, p { margin: 0; }
 .out .ghost.g2 { transform: translate(14px, -14px); opacity: .85; }
 .out .ghost.g3 { transform: translate(28px, -28px); opacity: .6; }
 .out .ghost span { position: absolute; top: 1px; right: 12px; font: 500 10px/12px var(--f-mono); color: var(--ink-3); }
-.out-card { position: relative; z-index: 1; }
+.out-card { position: relative; z-index: 1; min-height: 400px; display: flex; flex-direction: column; }
+.out-card .days { margin-bottom: 8px; }
 .out-tags { margin-left: auto; display: flex; align-items: center; gap: 6px; border-radius: 6px; }
 .tag {
   font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3);
@@ -266,11 +409,7 @@ h2, h3, p { margin: 0; }
 .day .what { grid-area: what; font-size: 12.5px; color: var(--ink-2); }
 .day.rest { grid-template-areas: "d what what"; }
 .day.rest .what { color: var(--ink-3); }
-.bad {
-  text-decoration: underline wavy var(--red); text-decoration-thickness: 1px;
-  text-underline-offset: 3px; text-decoration-skip-ink: none;
-}
-.extras { margin: 8px 0 0; padding-top: 8px; border-top: 1px dashed var(--line); display: grid; gap: 2px; }
+.extras { margin: auto 0 0; padding-top: 8px; border-top: 1px dashed var(--line); display: grid; gap: 2px; }
 .extra { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 8px; }
 .extra dt { display: flex; align-items: center; gap: 6px; }
 .extra dt .ic { width: 14px; height: 14px; }
@@ -278,11 +417,114 @@ h2, h3, p { margin: 0; }
 
 /* Gap code chip, used wherever a gap shows up */
 .gx {
-  display: inline-flex; align-items: center; height: 18px; padding: 0 5px; border-radius: 5px;
+  display: inline-flex; align-items: center; height: 18px; padding: 0 5px; border-radius: 5px; cursor: default;
   font: 600 10.5px/1 var(--f-mono); color: var(--red); background: var(--red-soft); border: 1px solid var(--red-line);
   transition: color .5s, background-color .5s, border-color .5s;
 }
 .gx.is-closed { color: var(--green); background: var(--green-soft); border-color: var(--green-line); }
+
+/* ---------- Explanation popovers ---------- */
+.pop {
+  position: absolute; z-index: 30;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: var(--pop-shadow); padding: 16px 18px 18px;
+}
+.pop.show { animation: popin .22s ease-out; }
+@keyframes popin { from { opacity: 0; transform: translateY(6px); } }
+.pop-x {
+  position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 8px;
+  border: 0; background: none; color: var(--ink-3); cursor: pointer; display: grid; place-items: center;
+}
+.pop-x:hover { background: var(--sunk); color: var(--ink); }
+.pop-x:focus-visible { outline: 2px solid var(--accent); }
+.pop h3 { margin: 0 0 12px; padding-right: 30px; font: 680 16px/1.25 var(--f-display); font-stretch: 108%; text-wrap: balance; }
+.pop .lead { margin-bottom: 10px; font-size: 13px; color: var(--ink-2); }
+.pop .note { margin-top: 12px; font-size: 12.5px; color: var(--ink-2); }
+.pop .label { margin-bottom: 6px; }
+
+.opts { display: grid; gap: 6px; }
+.opt {
+  appearance: none; text-align: left; cursor: pointer;
+  display: grid; grid-template-columns: 30px minmax(0, 1fr) 18px; align-items: center; gap: 10px;
+  padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
+  transition: background-color .2s, border-color .2s;
+}
+.opt:hover { border-color: var(--edge); }
+.opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.opt.sel { border-color: var(--red-line); background: var(--red-soft); }
+.opt-ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--sunk); color: var(--ink-2); }
+.opt-ic .ic { width: 16px; height: 16px; }
+.opt-t b { display: block; font-size: 13.5px; font-weight: 650; }
+.opt-t span { font-size: 11.5px; color: var(--ink-2); }
+.opt-v { color: var(--red); opacity: 0; transition: opacity .2s; }
+.opt.tried .opt-v { opacity: 1; }
+.opt.right { border-color: var(--accent); background: var(--accent-soft); }
+.opt.right .opt-ic { background: var(--accent); color: var(--accent-ink); }
+.opt.right .opt-v { opacity: 1; color: var(--accent); }
+.why { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--sunk); }
+.why-q { margin-bottom: 8px; font-size: 12.5px; }
+.why-q .label { display: inline; margin-right: 8px; }
+.hits { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.hits li { display: grid; grid-template-columns: minmax(0, 1fr) 36px 92px; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 550; }
+.sim { font: 500 11px var(--f-mono); color: var(--ink-2); text-align: right; }
+.no {
+  justify-self: start; font: 600 10.5px/1 var(--f-mono); white-space: nowrap; padding: 3px 6px; border-radius: 5px;
+  color: var(--red); background: var(--red-soft); border: 1px solid var(--red-line);
+}
+.verdict { margin-top: 10px; font-size: 12.5px; font-weight: 650; color: var(--red); }
+.code {
+  display: inline-block; padding: 5px 8px; border-radius: 7px; font: 500 12px/1.4 var(--f-mono);
+  background: var(--surface); border: 1px solid var(--line);
+}
+.why .code + p { margin-top: 6px; font-size: 12.5px; }
+.cons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: 12.5px; }
+.cons li { display: flex; gap: 7px; align-items: baseline; }
+.cons li::before { content: "\2715"; color: var(--red); font-size: 10px; }
+
+.maps { display: grid; gap: 6px; margin: 0; }
+.maps div { display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 12.5px; }
+.maps dt { display: flex; justify-content: space-between; gap: 6px; font-weight: 600; }
+.maps dt::after { content: "\2192"; color: var(--ink-3); font-weight: 400; }
+.maps dd { margin: 0; padding: 4px 7px; border-radius: 6px; font: 500 11.5px/1.35 var(--f-mono); background: var(--sunk); }
+.maps .soft dd { background: none; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+
+.dial { margin-bottom: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); }
+.dial-n { margin-bottom: 8px; font: 600 12px var(--f-mono); color: var(--accent); }
+.dial-f { display: flex; flex-wrap: wrap; gap: 6px; }
+.dial-f span { display: flex; flex-direction: column; gap: 3px; padding: 5px 8px; border-radius: 7px; background: var(--sunk); }
+.dial-f b { font-size: 12.5px; font-weight: 650; }
+.dial-f i { font: 500 9.5px/1 var(--f-mono); font-style: normal; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.groups { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.groups span { padding: 3px 8px; border-radius: 999px; font-size: 11.5px; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+
+.bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.bars li { display: grid; grid-template-columns: 160px minmax(0, 1fr) 36px; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 550; }
+.bars i { height: 8px; border-radius: 4px; }
+.bars i.neg { background: linear-gradient(90deg, var(--red) calc(var(--v) * 100%), var(--sunk) 0); }
+.bars b { font: 600 11.5px var(--f-mono); text-align: right; }
+.bars em { grid-column: 2 / -1; margin-top: -4px; font-size: 11.5px; font-style: normal; color: var(--red); }
+
+.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.pipe li { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 12px; border-radius: 10px; background: var(--sunk); }
+.pipe li:not(:last-child)::after {
+  content: ""; position: absolute; right: -11px; top: 20px; width: 7px; height: 7px;
+  border-top: 1.75px solid var(--edge); border-right: 1.75px solid var(--edge); transform: rotate(45deg);
+}
+.pipe-ic { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; margin-bottom: 4px; background: var(--surface); color: var(--accent); }
+.pipe-ic .ic { width: 15px; height: 15px; }
+.pipe b { font-size: 13px; }
+.pipe span { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
+.pipe.nums b { font: 650 18px/1 var(--f-mono); color: var(--accent); }
+.record { margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); }
+.rec-h { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.rec-h span:last-child { color: var(--ink-2); }
+.rec-id { font: 600 11px var(--f-mono); color: var(--accent); }
+.rec-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.rec-tags span { padding: 3px 7px; border-radius: 6px; font: 500 11px/1.3 var(--f-mono); background: var(--sunk); color: var(--ink-2); }
+.weights { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; margin-bottom: 14px; }
+.weights div { display: grid; grid-template-columns: 110px minmax(0, 1fr) 30px; align-items: center; gap: 8px; font-size: 12px; }
+.weights i { height: 6px; }
+.weights b { font: 600 11px var(--f-mono); text-align: right; color: var(--ink-2); }
 
 /* ---------- Gap board ---------- */
 .board { flex: none; }
@@ -300,7 +542,7 @@ h2, h3, p { margin: 0; }
 .gaps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .gap {
   --c: var(--red); --c-soft: var(--red-soft); --c-line: var(--red-line);
-  display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 11px; align-items: start;
+  display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 11px; align-items: start; cursor: default;
   padding: 11px 12px 12px; border-radius: 12px; background: var(--c-soft); border: 1px solid var(--c-line);
   transition: background-color .5s, border-color .5s, opacity .25s, box-shadow .2s; outline: none;
 }
@@ -314,49 +556,65 @@ h2, h3, p { margin: 0; }
   position: absolute; right: -5px; bottom: -5px; width: 16px; height: 16px; stroke-width: 2.2;
   border-radius: 50%; background: var(--surface); color: var(--c);
 }
-.gap h3 { font-size: 13.5px; font-weight: 650; line-height: 1.25; text-wrap: balance; overflow-wrap: break-word; hyphens: auto; }
+.gap h3 { font-size: 14px; font-weight: 650; line-height: 1.25; text-wrap: balance; overflow-wrap: break-word; hyphens: auto; }
 .gcode { font: 600 11px var(--f-mono); color: var(--c); margin-right: 6px; transition: color .5s; }
-.gap p { margin-top: 3px; font-size: 12px; line-height: 1.3; color: var(--ink-2); }
-.gap.pop { animation: pop .6s ease-out; }
-@keyframes pop { 40% { transform: scale(1.04); } }
+.gap p { margin-top: 3px; font-size: 12.5px; line-height: 1.3; color: var(--ink-2); }
+.gap.pop-in { animation: popgap .6s ease-out; }
+@keyframes popgap { 40% { transform: scale(1.04); } }
 
 /* ---------- Takeaway ---------- */
 .takeaway {
   margin-top: auto; display: flex; align-items: baseline; gap: 16px;
-  padding-top: 14px; border-top: 1px solid var(--line);
+  padding-top: 13px; border-top: 1px solid var(--line);
 }
 .takeaway .label { color: var(--accent); font-weight: 600; letter-spacing: .14em; flex: none; }
-.takeaway p { font: 720 24px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
+.takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
 /* ---------- Linking a gap to where it shows up ---------- */
 [data-gaps] { transition: background-color .2s, box-shadow .2s; }
-[data-gaps].lit { background: var(--red-soft) !important; box-shadow: 0 0 0 1.5px var(--red); }
+[data-gaps].lit { background: var(--red-soft) !important; box-shadow: 0 0 0 1.5px var(--red) !important; }
+[data-gaps].lit.ok { background: var(--green-soft) !important; box-shadow: 0 0 0 1.5px var(--green) !important; }
 .linking .gap:not(.lit) { opacity: .4; }
 .gap.lit { box-shadow: 0 0 0 2px var(--c); }
 
 /* ---------- Narrow screens: unroll into one column ---------- */
-@media (max-width: 899px) {
+@media (max-width: 999px) {
   .viewport { display: block; }
   .stage-wrap { width: auto !important; height: auto !important; }
   .stage { position: static; width: auto; height: auto; transform: none !important; padding: 16px 16px 28px; gap: 22px; }
-  .topbar { height: auto; flex-wrap: wrap; gap: 14px 12px; }
+  .topbar { height: auto; flex-wrap: wrap; gap: 14px 12px; padding-top: 0; }
   .brand { width: auto; flex: 1; }
   .nav { order: 2; }
   .rail { order: 3; flex-basis: 100%; }
-  .st-name { display: none; }
+  .st-name, .st-beat, .tick { display: none; }
   .now { display: block; order: 4; flex-basis: 100%; font-size: 13px; font-weight: 650; }
   .now .st-code { font-size: 12px; }
+  .now .now-beat { display: block; margin-top: 3px; font: 500 11.5px var(--f-mono); color: var(--accent); }
   .canvas { height: auto; display: flex; flex-direction: column; gap: 40px; padding-top: 18px; }
   .node { position: relative; left: auto !important; top: auto !important; width: auto !important; }
   .node.off { display: none; }
-  .canvas > .node:not(.off) ~ .node:not(.off)::before {
+  .canvas > .node:not(.off) ~ .node:not(.off):not(.no-arrow)::before {
     content: "\2193"; position: absolute; left: 50%; top: -33px; transform: translateX(-50%);
     font: 600 18px/1 var(--f-mono); color: var(--ink-3);
   }
-  .canvas > #n-llm:not(.off)::before { content: "\2195"; }
+  .canvas > .feeds.no-arrow { margin-top: -30px; }
   .wires, .elabel { display: none; }
+  .breaker { position: relative; left: auto !important; top: auto !important; transform: none; align-self: center; flex-direction: row; margin: -16px 0; }
+  .bk-t { position: static; }
+  .feed-list { flex-wrap: wrap; }
   .out .ghost.g2 { transform: translateY(-9px) scale(.96); }
   .out .ghost.g3 { transform: translateY(-18px) scale(.92); }
+  .pop {
+    position: fixed; left: 8px !important; right: 8px; top: auto !important; bottom: 8px; width: auto !important;
+    max-height: 78vh; overflow: auto; z-index: 50;
+  }
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pipe li::after { display: none; }
+  .weights { grid-template-columns: 1fr; }
+  .bars li { grid-template-columns: 118px minmax(0, 1fr) 34px; }
+  .hits li { grid-template-columns: minmax(0, 1fr) 34px auto; }
+  .maps div { grid-template-columns: 1fr; gap: 3px; }
+  .maps dt { justify-content: flex-start; }
   .gaps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .gap { grid-template-columns: 28px minmax(0, 1fr); gap: 9px; padding: 10px; }
   .gap-ic { width: 28px; height: 28px; border-radius: 8px; }
@@ -371,6 +629,8 @@ h2, h3, p { margin: 0; }
   .gaps { grid-template-columns: 1fr; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fact.span2 { grid-column: 1 / -1; }
+  .q-parts { grid-template-columns: 1fr; }
+  .ranks { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -408,6 +668,30 @@ h2, h3, p { margin: 0; }
 <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
 <symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol>
 <symbol id="i-banknote" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></symbol>
+<symbol id="i-refresh-cw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+<symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+<symbol id="i-cloud-sun" viewBox="0 0 24 24"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
+<symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
+<symbol id="i-party-popper" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></symbol>
+<symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></symbol>
+<symbol id="i-link-2-off" viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7"/><path d="M15 7h2a5 5 0 0 1 4 8"/><line x1="8" x2="12" y1="12" y2="12"/><line x1="2" x2="22" y1="2" y2="22"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-sliders-horizontal" viewBox="0 0 24 24"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></symbol>
+<symbol id="i-text-search" viewBox="0 0 24 24"><path d="M21 5H3"/><path d="M10 12H3"/><path d="M10 19H3"/><circle cx="17" cy="15" r="3"/><path d="m21 19-1.9-1.9"/></symbol>
+<symbol id="i-funnel" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
+<symbol id="i-scan-search" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></symbol>
+<symbol id="i-braces" viewBox="0 0 24 24"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
 </defs></svg>
 
 <div class="viewport">
@@ -421,8 +705,8 @@ h2, h3, p { margin: 0; }
         </div>
         <ol class="rail" id="rail" aria-label="Steps"></ol>
         <div class="nav">
-          <button type="button" class="navbtn" id="prev" aria-label="Previous step"><svg class="ic" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
-          <button type="button" class="navbtn" id="next" aria-label="Next step"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+          <button type="button" class="navbtn" id="prev" aria-label="Previous"><svg class="ic" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+          <button type="button" class="navbtn" id="next" aria-label="Next"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
         </div>
         <p class="now" id="now"></p>
       </header>
@@ -435,11 +719,11 @@ h2, h3, p { margin: 0; }
             </marker>
           </defs>
           <g id="wire-layer"></g>
-          <g class="dot" id="dot"><circle class="dot-halo" r="9"/><circle class="dot-core" r="4"/></g>
+          <g id="dot-layer"></g>
         </svg>
 
         <!-- Input: structured trip facts + free-text prompt -->
-        <article class="node card" id="n-input" data-in="1">
+        <article class="node card" id="n-input">
           <header class="node-h">
             <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
             <h2>Trip input</h2>
@@ -464,8 +748,8 @@ h2, h3, p { margin: 0; }
           </div>
         </article>
 
-        <!-- Open web the LLM searches -->
-        <div class="node web" id="n-web" data-in="1">
+        <!-- Step 1: the open web the LLM searches -->
+        <div class="node web" id="n-web" data-out="1">
           <div class="web-h"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>Open web<span class="gx">G3</span></div>
           <div class="pages">
             <div class="page" data-gaps="G3"><span class="pg-bar"></span><span class="pg-t">Top 10 Kyoto</span><span class="pg-l"></span><span class="pg-l short"></span></div>
@@ -474,23 +758,123 @@ h2, h3, p { margin: 0; }
           </div>
         </div>
 
-        <!-- The LLM does every job -->
-        <article class="node llm" id="n-llm" data-in="1" data-wgap="9">
+        <!-- Step 2: data feeds -->
+        <div class="node feeds" id="n-feeds-rt" data-in="2.1">
+          <div class="feeds-h" data-gaps="G3"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>Real-time<span class="fresh">Minutes</span></div>
+          <div class="feed-list">
+            <span class="feed"><svg class="ic" aria-hidden="true"><use href="#i-plane"/></svg>Flights</span>
+            <span class="feed"><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Hotels</span>
+            <span class="feed"><svg class="ic" aria-hidden="true"><use href="#i-cloud-sun"/></svg>Weather</span>
+          </div>
+        </div>
+        <div class="node feeds no-arrow" id="n-feeds-pd" data-in="2.1">
+          <div class="feeds-h" data-gaps="G3"><svg class="ic" aria-hidden="true"><use href="#i-refresh-cw"/></svg>Periodic<span class="fresh">Days to months</span></div>
+          <div class="feed-list">
+            <span class="feed"><svg class="ic" aria-hidden="true"><use href="#i-map-pin"/></svg>POIs</span>
+            <span class="feed"><svg class="ic" aria-hidden="true"><use href="#i-map"/></svg>Maps</span>
+            <span class="feed" data-gaps="G2"><svg class="ic" aria-hidden="true"><use href="#i-party-popper"/></svg>Festivals</span>
+          </div>
+        </div>
+
+        <!-- Step 2: travel knowledge repository -->
+        <div class="node card tkr clickable" id="n-tkr" data-in="2.1" data-act="tkr" role="button" tabindex="0" aria-label="Travel knowledge repository: how it is built" data-gaps="G1 G3 G10">
+          <span class="db"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg></span>
+          <div>
+            <h2>Travel knowledge repository</h2>
+            <p>Normalized · enriched · indexed</p>
+          </div>
+          <div class="tkr-side">
+            <span class="state" data-out="2.3">Empty</span>
+            <span class="state full" data-in="2.4">~100k places</span>
+            <span class="job" data-in="2.4">Remember facts</span>
+          </div>
+        </div>
+
+        <!-- Step 2: the broken link between the repository and the AI -->
+        <button type="button" class="breaker" id="breaker" data-in="2.1" data-out="2.2" data-act="access">
+          <span class="bk-ic"><svg class="ic" aria-hidden="true"><use href="#i-link-2-off"/></svg></span>
+          <span class="bk-t">How does the AI read this?</span>
+        </button>
+
+        <!-- Step 2: the right way, three inputs -->
+        <div class="node query" id="n-query" data-in="2.3">
+          <div class="q-h label"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>The right way</div>
+          <div class="q-parts">
+            <button type="button" class="qpart" data-pop="pop-facts" data-gaps="G8">
+              <span class="q-ic"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span>
+              <b>Trip facts</b><span class="role">Hard filters</span>
+              <svg class="ic more" aria-hidden="true"><use href="#i-info"/></svg>
+            </button>
+            <button type="button" class="qpart" data-pop="pop-dials" data-gaps="G8">
+              <span class="q-ic"><svg class="ic" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg></span>
+              <b>Trip dials</b><span class="role">Inferred config</span>
+              <svg class="ic more" aria-hidden="true"><use href="#i-info"/></svg>
+            </button>
+            <button type="button" class="qpart" data-pop="pop-residual" data-gaps="G7">
+              <span class="q-ic"><svg class="ic" aria-hidden="true"><use href="#i-text-search"/></svg></span>
+              <b>Residual text</b><span class="role">Semantic match</span>
+              <svg class="ic more" aria-hidden="true"><use href="#i-info"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: filter, score, select -->
+        <div class="node card proc clickable" id="n-proc" data-in="2.5" data-pop="pop-proc" role="button" tabindex="0" aria-label="Find candidates: how scoring works" data-gaps="G1 G7">
+          <header class="node-h">
+            <span class="node-ic solid"><svg class="ic" aria-hidden="true"><use href="#i-funnel"/></svg></span>
+            <h2>Find candidates</h2>
+            <span class="job" style="margin-left:auto">Search</span>
+            <svg class="ic more" aria-hidden="true"><use href="#i-info"/></svg>
+          </header>
+          <div class="steps">
+            <span>Filter <b>5k</b></span><svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            <span>Score <b>800</b></span><svg class="ic" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            <span>Select <b>200</b></span>
+          </div>
+          <div class="ranks">
+            <div>
+              <p class="label">Ranked cities</p>
+              <ol>
+                <li><span>Kanazawa</span><i style="--v:.81"></i></li>
+                <li><span>Kyoto</span><i style="--v:.77"></i></li>
+                <li><span>Tokyo</span><i style="--v:.72"></i></li>
+              </ol>
+            </div>
+            <div>
+              <p class="label">Ranked activities</p>
+              <ol>
+                <li><span>Nishi Chaya</span><i style="--v:.86"></i></li>
+                <li><span>Yanaka walk</span><i style="--v:.83"></i></li>
+                <li><span>Shojin lunch</span><i style="--v:.80"></i></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- The LLM. Jobs leave it as other parts take them over. -->
+        <article class="node llm" id="n-llm" data-wgap="9">
           <header class="llm-h">
             <span class="llm-ic"><svg class="ic" aria-hidden="true"><use href="#i-brain-circuit"/></svg></span>
             <div>
               <h2>LLM</h2>
-              <p><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>with web search</p>
+              <p data-out="1"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>with web search</p>
             </div>
           </header>
-          <p class="label">Does every job</p>
+          <p class="label" data-out="2.3">Does every job</p>
+          <p class="label" data-in="2.4">Jobs left</p>
           <ul class="jobs">
-            <li>Understand</li><li>Remember facts</li><li>Search</li><li>Judge</li><li>Arrange</li><li>Narrate</li><li>Revise</li>
+            <li class="job">Understand</li>
+            <li class="job" data-out="2.3">Remember facts</li>
+            <li class="job" data-out="2.4">Search</li>
+            <li class="job">Judge</li>
+            <li class="job">Arrange</li>
+            <li class="job">Narrate</li>
+            <li class="job">Revise</li>
           </ul>
         </article>
 
         <!-- Output: a prose itinerary, different on every run -->
-        <div class="node out" id="n-output" data-in="1">
+        <div class="node out" id="n-output">
           <div class="ghost g3" data-gaps="G9" aria-hidden="true"><span>run 3</span></div>
           <div class="ghost g2" data-gaps="G9" aria-hidden="true"><span>run 2</span></div>
           <article class="card out-card">
@@ -499,18 +883,160 @@ h2, h3, p { margin: 0; }
               <h2>Itinerary</h2>
               <span class="out-tags" data-gaps="G9"><span class="tag">Prose</span><span class="gx">G9</span></span>
             </header>
-            <ol class="days">
-              <li class="day" data-gaps="G7 G2"><span class="d">D1</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G7</span><span class="gx">G2</span></span><span class="what"><span class="bad">Senso-ji, Shibuya Crossing</span></span></li>
-              <li class="day" data-gaps="G8"><span class="d">D2</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G8</span></span><span class="what">Tsukiji, <span class="bad">tonkotsu ramen</span></span></li>
-              <li class="day" data-gaps="G6 G8"><span class="d">D3</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G6</span><span class="gx">G8</span></span><span class="what"><span class="bad">Arashiyama → Inari summit → Kinkaku-ji</span></span></li>
-              <li class="day" data-gaps="G1"><span class="d">D4</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G1</span></span><span class="what">Lunch at <span class="bad">Lotus Zen Café</span></span></li>
+            <ol class="days" data-out="2.4">
+              <li class="day" data-gaps="G7 G2"><span class="d">D1</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G7</span><span class="gx">G2</span></span><span class="what">Senso-ji, Shibuya Crossing</span></li>
+              <li class="day" data-gaps="G8"><span class="d">D2</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G8</span></span><span class="what">Tsukiji, tonkotsu ramen</span></li>
+              <li class="day" data-gaps="G6 G8"><span class="d">D3</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G6</span><span class="gx">G8</span></span><span class="what">Arashiyama → Inari summit → Kinkaku-ji</span></li>
+              <li class="day" data-gaps="G1"><span class="d">D4</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G1</span></span><span class="what">Lunch at Lotus Zen Café</span></li>
               <li class="day rest"><span class="d">D5–7</span><span class="what">Nara, Osaka, fly home</span></li>
             </ol>
+            <ol class="days" data-in="2.5">
+              <li class="day" data-gaps="G7 G8"><span class="d">D1</span><span class="city">Tokyo</span><span class="gxs"><span class="gx">G7</span><span class="gx">G8</span></span><span class="what">Yanaka old town, shojin lunch</span></li>
+              <li class="day" data-gaps="G1 G2"><span class="d">D2</span><span class="city">Kanazawa</span><span class="gxs"><span class="gx">G1</span><span class="gx">G2</span></span><span class="what">Nishi Chaya teahouses</span></li>
+              <li class="day" data-gaps="G6"><span class="d">D3</span><span class="city">Kyoto</span><span class="gxs"><span class="gx">G6</span></span><span class="what">Ohara → Fushimi → Arashiyama</span></li>
+              <li class="day rest"><span class="d">D4–7</span><span class="what">Kyoto, Osaka, fly home</span></li>
+            </ol>
             <dl class="extras">
-              <div class="extra" data-gaps="G4"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Stay</dt><dd class="bad">a ryokan in Gion</dd><span class="gx">G4</span></div>
-              <div class="extra" data-gaps="G5"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-banknote"/></svg>Cost</dt><dd class="bad">≈ ₹2.5 L total</dd><span class="gx">G5</span></div>
+              <div class="extra" data-gaps="G4"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Stay</dt><dd>a ryokan in Gion</dd><span class="gx">G4</span></div>
+              <div class="extra" data-gaps="G5"><dt class="label"><svg class="ic" aria-hidden="true"><use href="#i-banknote"/></svg>Cost</dt><dd>≈ ₹2.5 L total</dd><span class="gx">G5</span></div>
             </dl>
           </article>
+        </div>
+
+        <!-- ===== Explanations ===== -->
+        <div class="pop" id="pop-access" role="dialog" aria-labelledby="pop-access-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-access-h">How does the AI read the repository?</h3>
+          <div class="opts">
+            <button type="button" class="opt" data-opt="rag">
+              <span class="opt-ic"><svg class="ic" aria-hidden="true"><use href="#i-scan-search"/></svg></span>
+              <span class="opt-t"><b>RAG</b><span>Embed everything, fetch the nearest matches</span></span>
+              <svg class="ic opt-v" aria-hidden="true"><use href="#i-x"/></svg>
+            </button>
+            <button type="button" class="opt" data-opt="typed">
+              <span class="opt-ic"><svg class="ic" aria-hidden="true"><use href="#i-braces"/></svg></span>
+              <span class="opt-t"><b>Typed constraints</b><span>LLM fills a schema, an exact query runs it</span></span>
+              <svg class="ic opt-v" aria-hidden="true"><use href="#i-x"/></svg>
+            </button>
+            <button type="button" class="opt" data-opt="agentic">
+              <span class="opt-ic"><svg class="ic" aria-hidden="true"><use href="#i-repeat"/></svg></span>
+              <span class="opt-t"><b>Agentic search</b><span>LLM calls search tools in a loop</span></span>
+              <svg class="ic opt-v" aria-hidden="true"><use href="#i-x"/></svg>
+            </button>
+            <button type="button" class="opt right" data-opt="right">
+              <span class="opt-ic"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+              <span class="opt-t"><b>The right way</b><span>Filter by facts, then rank by dials and text</span></span>
+              <svg class="ic opt-v" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+            </button>
+          </div>
+          <div class="why" data-why="rag" hidden>
+            <p class="why-q"><span class="label">Query</span>“vegetarian, old Japan, no crowds”</p>
+            <ol class="hits">
+              <li><span>Ramen alley</span><span class="sim">0.91</span><span class="no">not veg</span></li>
+              <li><span>Kinkaku-ji</span><span class="sim">0.89</span><span class="no">peak crowds</span></li>
+              <li><span>Machiya café</span><span class="sim">0.88</span><span class="no">closed</span></li>
+            </ol>
+            <p class="verdict">Similar is not the same as valid, and nothing flags it.</p>
+          </div>
+          <div class="why" data-why="typed" hidden>
+            <span class="code">veg = yes AND stairs = low</span>
+            <p>Returns about 5k places, in no order.</p>
+            <ul class="cons"><li>“Feels like old Japan” has no field</li><li>Too strict, and it returns nothing</li></ul>
+            <p class="verdict">Valid, but not ranked.</p>
+          </div>
+          <div class="why" data-why="agentic" hidden>
+            <span class="code">search → read → search → read → …</span>
+            <ul class="cons"><li>Many calls, so slow and costly</li><li>Different result every run</li><li>Drifts and forgets constraints</li></ul>
+            <p class="verdict">Useful later, not as the core.</p>
+          </div>
+        </div>
+
+        <div class="pop" id="pop-facts" role="dialog" aria-labelledby="pop-facts-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-facts-h">Trip facts become hard filters</h3>
+          <dl class="maps">
+            <div><dt>Japan</dt><dd>country = JP</dd></div>
+            <div><dt>28 Apr – 4 May</dt><dd>open on these dates, events in window</dd></div>
+            <div><dt>2 adults</dt><dd>rooms for 2</dd></div>
+            <div><dt>Bengaluru</dt><dd>entry and exit airports</dd></div>
+            <div class="soft"><dt>Interests</dt><dd>ranking weights, not filters</dd></div>
+          </dl>
+          <p class="note">Typed by the user, never guessed, so they skip the parser.</p>
+        </div>
+
+        <div class="pop" id="pop-dials" role="dialog" aria-labelledby="pop-dials-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-dials-h">Trip dials set the trip config</h3>
+          <p class="lead">Intent classification turns each phrase into a dial.</p>
+          <div class="dial">
+            <p class="dial-n">max_walk_km_per_day</p>
+            <div class="dial-f">
+              <span><b>4</b><i>value</i></span>
+              <span><b>hard</b><i>strictness</i></span>
+              <span><b>trip</b><i>scope</i></span>
+              <span><b>“bad knee”</b><i>source</i></span>
+              <span><b>0.8</b><i>confidence</i></span>
+            </div>
+          </div>
+          <dl class="maps">
+            <div><dt>“vegetarian”</dt><dd>dietary = vegetarian · hard</dd></div>
+            <div><dt>“hate crowds”</dt><dd>crowd_tolerance = low · soft</dd></div>
+          </dl>
+          <div class="groups"><span>Time</span><span>Load</span><span>Movement</span><span>Structure</span><span>Filters</span><span>Ranking</span></div>
+          <p class="note">The LLM picks a level. The PM's catalog turns it into a number.</p>
+        </div>
+
+        <div class="pop" id="pop-residual" role="dialog" aria-labelledby="pop-residual-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-residual-h">Residual text drives semantic search</h3>
+          <p class="why-q"><span class="label">Left over</span>“feel like old Japan”</p>
+          <ol class="bars">
+            <li><span>Nishi Chaya teahouses</span><i style="--v:.86"></i><b>0.86</b></li>
+            <li><span>Yanaka old town</span><i style="--v:.83"></i><b>0.83</b></li>
+            <li><span>Shibuya Sky deck</span><i style="--v:.21"></i><b>0.21</b></li>
+          </ol>
+          <p class="note">It only re-ranks places that already passed the filters. It never removes one.</p>
+        </div>
+
+        <div class="pop" id="pop-tkr" role="dialog" aria-labelledby="pop-tkr-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-tkr-h">How the repository gets filled</h3>
+          <ol class="pipe">
+            <li><span class="pipe-ic"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span><b>Ingest</b><span>Scheduled pulls, stamped with source and time</span></li>
+            <li><span class="pipe-ic"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg></span><b>Normalize</b><span>One schema and taxonomy, stable IDs, duplicates merged</span></li>
+            <li><span class="pipe-ic"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg></span><b>Enrich</b><span>Fill gaps like veg-friendly or stairs, with a confidence</span></li>
+            <li><span class="pipe-ic"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><b>Index</b><span>Filters, geo, embeddings, city profiles</span></li>
+          </ol>
+          <div class="record">
+            <div class="rec-h"><span class="rec-id">P-20418</span><b>Nishi Chaya teahouses</b><span>Kanazawa</span></div>
+            <div class="rec-tags"><span>historic street</span><span>stairs: none</span><span>veg nearby: yes · 0.7</span><span>crowds in May: medium</span><span>places feed · 3 days ago</span></div>
+          </div>
+          <p class="note">Fares, rates and weather go stale in minutes, so they are looked up live and never stored.</p>
+        </div>
+
+        <div class="pop" id="pop-proc" role="dialog" aria-labelledby="pop-proc-h" hidden>
+          <button type="button" class="pop-x" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+          <h3 id="pop-proc-h">Filter, score, select</h3>
+          <ol class="pipe nums">
+            <li><b>100k</b><span>places in Japan</span></li>
+            <li><b>5k</b><span>pass the hard filters</span></li>
+            <li><b>800</b><span>scored and sorted</span></li>
+            <li><b>200</b><span>selected for the LLM</span></li>
+          </ol>
+          <p class="label" style="margin-top:14px">Score is a weighted average. Soft dials set the weights.</p>
+          <div class="weights">
+            <div><span>Interest match</span><i style="--v:.30"></i><b>30%</b></div>
+            <div><span>Old-Japan match</span><i style="--v:.15"></i><b>15%</b></div>
+            <div><span>Quality</span><i style="--v:.20"></i><b>20%</b></div>
+            <div><span>Price fit</span><i style="--v:.10"></i><b>10%</b></div>
+            <div><span>Crowd fit</span><i style="--v:.20"></i><b>20%</b></div>
+            <div><span>Distance</span><i style="--v:.05"></i><b>5%</b></div>
+          </div>
+          <ol class="bars">
+            <li><span>Nishi Chaya teahouses</span><i style="--v:.86"></i><b>0.86</b></li>
+            <li><span>Kinkaku-ji</span><i class="neg" style="--v:.61"></i><b>0.61</b><em>Golden Week crowd penalty</em></li>
+          </ol>
+          <p class="note">Select keeps quotas, variety and hidden-gem slots. Places roll up into city scores. All numbers are illustrative.</p>
         </div>
       </section>
 
@@ -574,66 +1100,122 @@ h2, h3, p { margin: 0; }
 
 <script>
 (() => {
-  // Steps on the rail. A step is built once it has a takeaway; the rest are placeholders.
-  const STEPS = [
-    { code: 'L0', name: 'Basic AI Search', takeaway: 'AI needs factual data to plan and act.' },
-    { name: 'Step 2' },
+  // ---------- Story config ----------
+  // Steps on the rail. Each built step has beats; unbuilt steps are placeholders.
+  const FLOWS = [
+    { code: 'L0', name: 'Basic AI Search', takeaway: 'AI needs factual data to plan and act.',
+      beats: [{ id: '1', name: 'Ask the AI' }] },
+    { code: 'L1–L2', name: 'AI armed with data', takeaway: 'Filters make candidates valid, ranking makes them few.',
+      beats: [
+        { id: '2.1', name: 'Data feeds' },
+        { id: '2.2', name: 'How AI reads it', open: 'pop-access' },
+        { id: '2.3', name: 'Facts, dials, text' },
+        { id: '2.4', name: 'Fill the repository', open: 'pop-tkr' },
+        { id: '2.5', name: 'Filter, score, rank' },
+      ] },
     { name: 'Step 3' },
     { name: 'Step 4' },
     { name: 'Step 5' },
   ];
-  // Step (1-based) at which each gap turns green.
-  const CLOSED_AT = {};
-  // Wires between nodes. `in`/`out` = first/last step a wire is shown. Nodes use data-in/data-out.
+  // Node positions [left, top, width] on the 1376px-wide canvas, from a beat onward.
+  const POS = {
+    'n-input':    { '1': [0, 96, 300] },
+    'n-output':   { '1': [1076, 96, 300] },
+    'n-web':      { '1': [518, 84, 340] },
+    'n-llm':      { '1': [533, 262, 310], '2.1': [360, 340, 352] },
+    'n-feeds-rt': { '2.1': [353, 0, 340] },
+    'n-feeds-pd': { '2.1': [713, 0, 340] },
+    'n-tkr':      { '2.1': [488, 106, 430] },
+    'n-query':    { '2.3': [360, 200, 352] },
+    'n-proc':     { '2.5': [736, 200, 310] },
+  };
+  // Wires between nodes. in/out = first/last beat shown. Nodes use data-in/data-out.
   const WIRES = [
-    { id: 'w-in-llm',  from: 'n-input', to: 'n-llm',    label: 'form + prompt', in: 1 },
-    { id: 'w-llm-web', from: 'n-llm',   to: 'n-web',    dx: -9, dashed: true, in: 1 },
-    { id: 'w-web-llm', from: 'n-web',   to: 'n-llm',    dx: 9,  dashed: true, label: 'every request', gaps: 'G10', side: true, in: 1 },
-    { id: 'w-llm-out', from: 'n-llm',   to: 'n-output', label: 'prose', in: 1 },
+    { id: 'w-in-llm0',  from: 'n-input', to: 'n-llm', label: 'form + prompt', out: '2.2' },
+    { id: 'w-llm-web',  from: 'n-llm', to: 'n-web', dx: -9, dashed: true, out: '1' },
+    { id: 'w-web-llm',  from: 'n-web', to: 'n-llm', dx: 9, dashed: true, label: 'every request', gaps: 'G10', side: true, out: '1' },
+    { id: 'w-llm-out0', from: 'n-llm', to: 'n-output', label: 'prose', out: '1' },
+    { id: 'w-llm-out',  from: 'n-llm', to: 'n-output', label: 'prose', fy: .82, in: '2.1' },
+    { id: 'w-rt-tkr',   from: 'n-feeds-rt', to: 'n-tkr', dashed: true, label: 'live', side: true, in: '2.1' },
+    { id: 'w-pd-tkr',   from: 'n-feeds-pd', to: 'n-tkr', label: 'ingest', side: true, in: '2.1' },
+    { id: 'w-broken',   from: 'n-tkr', to: 'n-llm', broken: true, in: '2.1', out: '2.2' },
+    { id: 'w-in-query', from: 'n-input', to: 'n-query', label: 'facts', in: '2.3' },
+    { id: 'w-in-llm',   from: 'n-input', to: 'n-llm', label: 'prompt', in: '2.3' },
+    { id: 'w-llm-query', from: 'n-llm', to: 'n-query', label: 'dials + text', side: true, in: '2.3' },
+    { id: 'w-query-tkr', from: 'n-query', to: 'n-tkr', label: 'query', side: true, in: '2.3', out: '2.4' },
+    { id: 'w-query-proc', from: 'n-query', to: 'n-proc', in: '2.5' },
+    { id: 'w-tkr-proc', from: 'n-tkr', to: 'n-proc', label: 'data', side: true, in: '2.5' },
+    { id: 'w-proc-llm', from: 'n-proc', to: 'n-llm', elbow: true, ty: .42, label: 'ranked lists', in: '2.5' },
   ];
-  // Route the dot travels when a step opens.
-  const FLOW = { 1: ['w-in-llm', 'w-llm-web', 'w-web-llm', 'w-llm-out'] };
+  // Route the dot travels when a beat opens. Inner arrays run together; "@.5" stops halfway.
+  const FLOW = {
+    '1':   ['w-in-llm0', 'w-llm-web', 'w-web-llm', 'w-llm-out0'],
+    '2.1': [['w-rt-tkr', 'w-pd-tkr'], 'w-broken@.5'],
+    '2.3': [['w-in-query', 'w-in-llm'], 'w-llm-query', 'w-query-tkr'],
+    '2.4': [['w-rt-tkr', 'w-pd-tkr']],
+    '2.5': [['w-in-query', 'w-in-llm'], 'w-llm-query', ['w-query-proc', 'w-tkr-proc'], 'w-proc-llm', 'w-llm-out'],
+  };
+  // Beat at which each gap closes, and what closed it.
+  const GAPS = {
+    G1:  { at: '2.5', fix: 'Real places with IDs and status' },
+    G2:  { at: '2.5', fix: 'Festival calendar, seasonal crowds' },
+    G3:  { at: '2.4', fix: 'Curated, timestamped feeds' },
+    G7:  { at: '2.5', fix: 'Varied picks, hidden gems' },
+    G8:  { at: '2.5', fix: 'Veg and stairs are hard filters' },
+    G10: { at: '2.4', fix: 'Ingested once, queried fast' },
+  };
+  // Popover positions [left, top, width] on the canvas.
+  const POP_POS = {
+    'pop-access':   [672, 176, 404],
+    'pop-facts':    [690, 186, 380],
+    'pop-dials':    [690, 150, 380],
+    'pop-residual': [690, 186, 380],
+    'pop-tkr':      [345, 186, 710],
+    'pop-proc':     [0, 96, 700],
+  };
+  // Classes that hold until a beat, and elements that pulse to invite a click.
+  const STATES = [{ id: 'n-tkr', cls: 'is-empty', until: '2.3' }];
+  const HINTS = { '2.3': 'n-tkr', '2.5': 'n-proc' };
 
-  const W = 1280, H = 810;
-  const BUILT = STEPS.filter(s => s.takeaway).length;
+  // ---------- Setup ----------
+  const W = 1440, H = 900;
+  const BEATS = [];
+  FLOWS.forEach((f, fi) => (f.beats || []).forEach((b, bi) => BEATS.push({ ...b, flow: fi, at: bi })));
+  const IDX = Object.fromEntries(BEATS.map((b, i) => [b.id, i]));
   const $ = id => document.getElementById(id);
-  const stage = $('stage'), wrap = $('wrap'), canvas = $('canvas'), layer = $('wire-layer'), dot = $('dot');
-  const narrow = matchMedia('(max-width: 899px)');
+  const stage = $('stage'), wrap = $('wrap'), canvas = $('canvas'), layer = $('wire-layer'), dotLayer = $('dot-layer');
+  const narrow = matchMedia('(max-width: 999px)');
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   const SVG = 'http://www.w3.org/2000/svg';
-  let step = 0;
+  let cur = -1;
 
-  const shown = (o, s) => s >= (+o.in || 1) && s <= (o.out ? +o.out : Infinity);
-  const range = el => ({ in: el.dataset.in, out: el.dataset.out });
+  const span = (a, b) => [a ? IDX[a] : 0, b ? IDX[b] : Infinity];
+  const shownAt = (a, b, i) => { const [lo, hi] = span(a, b); return i >= lo && i <= hi; };
+  const isClosed = code => GAPS[code] && cur >= IDX[GAPS[code].at];
 
-  // ---- Step rail ----
+  // ---------- Step rail ----------
   const rail = $('rail');
-  rail.innerHTML = STEPS.map((s, i) => `
-    <li class="st"><button type="button" class="st-btn" data-go="${i + 1}" ${i + 1 > BUILT ? 'disabled' : ''}
-      aria-label="Step ${i + 1}: ${s.name}${i + 1 > BUILT ? ' (not built yet)' : ''}">
-      <span class="st-dot">${i + 1}</span>
-      <span class="st-name">${s.code ? `<span class="st-code">${s.code}</span>` : ''}${s.name}</span>
-    </button></li>`).join('');
-  rail.addEventListener('click', e => {
-    const b = e.target.closest('[data-go]');
-    if (!b) return;
-    const n = +b.dataset.go;
-    n === step ? flow(step) : go(n);
-  });
-  $('prev').addEventListener('click', () => go(step - 1));
-  $('next').addEventListener('click', () => go(step + 1));
-  addEventListener('keydown', e => {
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    if (e.key === 'ArrowRight' || e.key === 'PageDown') { go(step + 1); e.preventDefault(); }
-    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { go(step - 1); e.preventDefault(); }
-  });
+  rail.innerHTML = FLOWS.map((f, fi) => {
+    const built = !!f.beats;
+    const ticks = built ? f.beats.slice(1).map((b, k) =>
+      `<button type="button" class="tick" data-go="${b.id}" style="left:${(k + 1) / f.beats.length * 100}%" aria-label="${b.id} ${b.name}"></button>`).join('') : '';
+    return `<li class="st">
+      <button type="button" class="st-btn" ${built ? `data-go="${f.beats[0].id}"` : 'disabled'}
+        aria-label="Step ${fi + 1}: ${f.name}${built ? '' : ' (not built yet)'}">
+        <span class="st-dot">${fi + 1}</span>
+        <span class="st-name">${f.code ? `<span class="st-code">${f.code}</span>` : ''}${f.name}</span>
+        <span class="st-beat"></span>
+      </button>
+      ${fi < FLOWS.length - 1 ? `<span class="seg"><span class="seg-fill"></span>${ticks}</span>` : ''}
+    </li>`;
+  }).join('');
 
-  // ---- Wires ----
+  // ---------- Wires ----------
   const wires = {};
   WIRES.forEach(w => {
     const p = document.createElementNS(SVG, 'path');
-    p.setAttribute('class', 'wire' + (w.dashed ? ' dashed' : ''));
-    p.setAttribute('marker-end', 'url(#arrow)');
+    p.setAttribute('class', 'wire' + (w.dashed ? ' dashed' : '') + (w.broken ? ' broken' : ''));
+    if (!w.broken) p.setAttribute('marker-end', 'url(#arrow)');
     layer.appendChild(p);
     let label = null;
     if (w.label) {
@@ -653,14 +1235,28 @@ h2, h3, p { margin: 0; }
   }
   function geom(w) {
     const A = box($(w.from)), B = box($(w.to));
+    if (w.elbow) {                                        // down out of A, then sideways into B
+      const x1 = A.x + A.w / 2, y1 = A.y + A.h + A.g;
+      const toLeft = B.x + B.w <= x1;
+      const x2 = toLeft ? B.x + B.w + B.g + 1 : B.x - B.g - 1;
+      const y2 = B.y + B.h * (w.ty ?? .5);
+      const r = Math.max(0, Math.min(14, y2 - y1, Math.abs(x2 - x1) / 2));
+      const sx = toLeft ? -1 : 1;
+      return { d: `M${x1} ${y1}L${x1} ${y2 - r}Q${x1} ${y2} ${x1 + sx * r} ${y2}L${x2} ${y2}`, mx: (x1 + x2) / 2, my: y2 };
+    }
     if (A.x + A.w <= B.x || B.x + B.w <= A.x) {           // side by side: horizontal wire
       const ltr = A.x + A.w <= B.x;
-      const by = B.y + B.h / 2;
-      const ay = Math.min(Math.max(by, A.y + 18), A.y + A.h - 18);
+      const lo = Math.max(A.y, B.y) + 16, hi = Math.min(A.y + A.h, B.y + B.h) - 16;
+      let ya, yb;
+      if (lo <= hi) {
+        const small = A.h < B.h ? A : B;
+        const want = w.fy != null ? A.y + A.h * w.fy : small.y + small.h / 2;
+        ya = yb = Math.min(Math.max(want, lo), hi);
+      } else { ya = A.y + A.h / 2; yb = B.y + B.h / 2; }
       const x1 = ltr ? A.x + A.w + A.g : A.x - A.g;
       const x2 = ltr ? B.x - B.g - 1 : B.x + B.w + B.g + 1;
       const c = (x2 - x1) / 2;
-      return { d: `M${x1} ${ay}C${x1 + c} ${ay} ${x2 - c} ${by} ${x2} ${by}`, mx: (x1 + x2) / 2, my: (ay + by) / 2 };
+      return { d: `M${x1} ${ya}C${x1 + c} ${ya} ${x2 - c} ${yb} ${x2} ${yb}`, mx: (x1 + x2) / 2, my: (ya + yb) / 2 };
     }
     const down = A.y + A.h <= B.y;                        // stacked: vertical wire
     const x = (Math.max(A.x, B.x) + Math.min(A.x + A.w, B.x + B.w)) / 2 + (w.dx || 0);
@@ -669,144 +1265,242 @@ h2, h3, p { margin: 0; }
     return { d: `M${x} ${y1}L${x} ${y2}`, mx: x, my: (y1 + y2) / 2 };
   }
   function layout() {
-    if (narrow.matches) return;
+    if (narrow.matches || cur < 0) return;
     Object.values(wires).forEach(({ w, p, label }) => {
-      const on = shown(w, step) && !$(w.from).classList.contains('off') && !$(w.to).classList.contains('off');
+      const on = shownAt(w.in, w.out, cur) && !$(w.from).classList.contains('off') && !$(w.to).classList.contains('off');
       p.classList.toggle('off', !on);
       if (label) label.classList.toggle('off', !on);
       if (!on) return;
       const g = geom(w);
       p.setAttribute('d', g.d);
-      if (label) {
-        label.style.left = (w.side ? g.mx + 12 : g.mx) + 'px';
-        label.style.top = g.my + 'px';
-      }
+      if (label) { label.style.left = (w.side ? g.mx + 12 : g.mx) + 'px'; label.style.top = g.my + 'px'; }
+      if (w.broken) { const b = $('breaker'); b.style.left = g.mx + 'px'; b.style.top = g.my + 'px'; }
     });
   }
-  // Keep wires attached while nodes glide between positions.
   let followUntil = 0;
-  function follow(ms) {
-    const start = !followUntil || performance.now() > followUntil;
+  function follow(ms) {                                   // keep wires attached while nodes glide
+    const idle = !followUntil;
     followUntil = performance.now() + ms;
-    if (!start) return;
+    if (!idle) return;
     const tick = () => { layout(); if (performance.now() < followUntil) requestAnimationFrame(tick); else followUntil = 0; };
     requestAnimationFrame(tick);
   }
 
-  // ---- Travelling dot ----
+  // ---------- Travelling dot ----------
   let token = 0;
+  const dots = [];
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  function travel(p, ms, my) {
+  function dot(k) {
+    if (!dots[k]) {
+      const g = document.createElementNS(SVG, 'g');
+      g.setAttribute('class', 'dot');
+      g.innerHTML = '<circle class="dot-halo" r="9"/><circle class="dot-core" r="4"/>';
+      dotLayer.appendChild(g);
+      dots[k] = g;
+    }
+    return dots[k];
+  }
+  const hideDots = () => dots.forEach(d => { d.style.opacity = 0; });
+  function travel(d, p, ms, upto, my) {
     return new Promise(res => {
       const L = p.getTotalLength(), t0 = performance.now();
+      d.style.opacity = 1;
       const tick = t => {
         if (my !== token) return res();
         const k = Math.min(1, (t - t0) / ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
-        const pt = p.getPointAtLength(e * L);
-        dot.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
-        k < 1 ? requestAnimationFrame(tick) : res();
+        const pt = p.getPointAtLength(e * L * upto);
+        d.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+        if (k < 1) requestAnimationFrame(tick);
+        else { if (upto < 1) d.style.opacity = 0; res(); }
       };
       requestAnimationFrame(tick);
     });
   }
-  async function flow(s) {
+  async function flow(id) {
     const my = ++token;
-    dot.style.opacity = 0;
+    hideDots();
     if (still.matches || narrow.matches) return;
-    await wait(450);
-    for (const id of FLOW[s] || []) {
-      const { p } = wires[id];
+    await wait(650);
+    for (const leg of FLOW[id] || []) {
       if (my !== token) return;
-      if (p.classList.contains('off')) continue;
-      dot.style.opacity = 1;
-      await travel(p, 620, my);
+      const parts = (Array.isArray(leg) ? leg : [leg]).map(s => {
+        const [wid, upto] = s.split('@');
+        return { p: wires[wid] && wires[wid].p, upto: upto ? +upto : 1 };
+      }).filter(x => x.p && !x.p.classList.contains('off'));
+      if (!parts.length) continue;
+      await Promise.all(parts.map((x, k) => travel(dot(k), x.p, 600, x.upto, my)));
+      parts.forEach((x, k) => { if (k > 0) dot(k).style.opacity = 0; });
     }
-    if (my === token) dot.style.opacity = 0;
+    if (my === token) hideDots();
   }
 
-  // ---- Gaps ----
-  function paintGaps(s, animate) {
+  // ---------- Popovers ----------
+  let openId = null;
+  function openPop(id) {
+    closePop();
+    const p = $(id);
+    if (!p) return;
+    const pos = POP_POS[id];
+    if (pos) { p.style.left = pos[0] + 'px'; p.style.top = pos[1] + 'px'; p.style.width = pos[2] + 'px'; }
+    if (id === 'pop-access') {
+      p.querySelectorAll('.why').forEach(w => { w.hidden = true; });
+      p.querySelectorAll('.opt').forEach(o => o.classList.remove('sel', 'tried'));
+    }
+    p.hidden = false;
+    p.classList.remove('show'); void p.offsetWidth; p.classList.add('show');
+    openId = id;
+  }
+  function closePop() { if (openId) { $(openId).hidden = true; openId = null; } }
+  function pickOpt(btn) {
+    const o = btn.dataset.opt;
+    if (o === 'right') { go(IDX['2.3']); return; }
+    const pop = $('pop-access');
+    pop.querySelectorAll('.why').forEach(w => { w.hidden = w.dataset.why !== o; });
+    pop.querySelectorAll('.opt').forEach(b => b.classList.toggle('sel', b === btn));
+    btn.classList.add('tried');
+  }
+  function act(a) {
+    if (a === 'access') cur < IDX['2.2'] ? go(IDX['2.2']) : openPop('pop-access');
+    if (a === 'tkr') cur === IDX['2.3'] ? go(IDX['2.4']) : (openId === 'pop-tkr' ? closePop() : openPop('pop-tkr'));
+  }
+
+  // ---------- Gaps ----------
+  document.querySelectorAll('.gap p').forEach(p => { p.dataset.open = p.textContent; });
+  function paintGaps(animate) {
     let open = 0;
-    document.querySelectorAll('.gap').forEach(g => {
-      const at = CLOSED_AT[g.dataset.gap];
-      const closed = at != null && s >= at;
+    const cards = document.querySelectorAll('.gap');
+    cards.forEach(g => {
+      const code = g.dataset.gap, closed = !!isClosed(code);
       const was = g.classList.contains('is-closed');
       g.classList.toggle('is-closed', closed);
       g.querySelector('.st use').setAttribute('href', closed ? '#i-circle-check' : '#i-circle-x');
-      g.setAttribute('aria-label', `${g.dataset.gap} ${g.querySelector('h3').textContent.replace(g.dataset.gap, '')}: ${closed ? 'closed' : 'open'}`);
-      if (closed && !was && animate) { g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop'); }
+      const p = g.querySelector('p');
+      p.textContent = closed ? GAPS[code].fix : p.dataset.open;
+      g.setAttribute('aria-label', `${code} ${g.querySelector('h3').textContent.replace(code, '')}: ${closed ? 'closed. ' : 'open. '}${p.textContent}`);
+      if (closed && !was && animate) { g.classList.remove('pop-in'); void g.offsetWidth; g.classList.add('pop-in'); }
       if (!closed) open++;
     });
-    document.querySelectorAll('.gx').forEach(x => {
-      const at = CLOSED_AT[x.textContent.trim()];
-      x.classList.toggle('is-closed', at != null && s >= at);
-    });
-    const total = document.querySelectorAll('.gap').length;
+    document.querySelectorAll('.gx').forEach(x => x.classList.toggle('is-closed', !!isClosed(x.textContent.trim())));
     const count = $('count');
-    count.textContent = open === total ? `${total} open` : `${open} open · ${total - open} closed`;
+    count.textContent = open === cards.length ? `${open} open` : `${open} open · ${cards.length - open} closed`;
     count.classList.toggle('all-closed', open === 0);
   }
 
-  // Hover or focus a gap to see where it shows up, and the reverse.
+  // Hover a gap card or a gap chip to see where that gap shows up.
   let pinned = [];
   function light(codes) {
-    document.querySelectorAll('.lit').forEach(e => e.classList.remove('lit'));
+    stage.querySelectorAll('.lit').forEach(e => e.classList.remove('lit', 'ok'));
     stage.classList.toggle('linking', codes.length > 0);
     codes.forEach(c => {
-      document.querySelectorAll(`[data-gaps~="${c}"]`).forEach(e => { if (!e.closest('.off')) e.classList.add('lit'); });
-      document.querySelector(`.gap[data-gap="${c}"]`)?.classList.add('lit');
+      const ok = isClosed(c);
+      stage.querySelectorAll(`[data-gaps~="${c}"]`).forEach(e => {
+        if (e.closest('.off')) return;
+        e.classList.add('lit');
+        if (ok) e.classList.add('ok');
+      });
+      const card = stage.querySelector(`.gap[data-gap="${c}"]`);
+      if (card) card.classList.add('lit');
     });
   }
-  function bindLinks(root) {
-    root.querySelectorAll('.gap').forEach(g => {
-      const c = [g.dataset.gap];
-      g.addEventListener('pointerenter', () => light(c));
-      g.addEventListener('pointerleave', () => light(pinned));
-      g.addEventListener('focus', () => light(c));
-      g.addEventListener('blur', () => light(pinned));
-      g.addEventListener('click', () => { pinned = pinned[0] === c[0] ? [] : c; light(pinned); });
-    });
-    root.querySelectorAll('[data-gaps]').forEach(el => {
-      const c = el.dataset.gaps.split(' ');
-      el.addEventListener('pointerenter', () => light(c));
-      el.addEventListener('pointerleave', () => light(pinned));
-    });
-  }
-  bindLinks(document);
-  document.addEventListener('click', e => { if (!e.target.closest('.gap')) { pinned = []; light(pinned); } });
+  const codeOf = el => el.classList.contains('gap') ? el.dataset.gap : el.textContent.trim();
+  stage.addEventListener('pointerover', e => {
+    const t = e.target.closest('.gap, .gx');
+    if (t) light([codeOf(t)]);
+  });
+  stage.addEventListener('pointerout', e => {
+    const t = e.target.closest('.gap, .gx');
+    if (t && !t.contains(e.relatedTarget)) light(pinned);
+  });
+  stage.addEventListener('focusin', e => { if (e.target.classList.contains('gap')) light([e.target.dataset.gap]); });
+  stage.addEventListener('focusout', e => { if (e.target.classList.contains('gap')) light(pinned); });
 
-  // ---- Step change ----
-  function go(n) {
-    n = Math.max(1, Math.min(BUILT, n));
-    if (n === step) return;
-    const prev = step;
-    step = n;
-    stage.dataset.step = n;
-    document.querySelectorAll('[data-in]').forEach(el => {
-      const on = shown(range(el), n);
+  // ---------- Clicks ----------
+  stage.addEventListener('click', e => {
+    const t = e.target;
+    const goEl = t.closest('[data-go]');
+    if (goEl) { const i = IDX[goEl.dataset.go]; i === cur ? flow(BEATS[cur].id) : go(i); return; }
+    if (t.closest('.pop-x')) { closePop(); return; }
+    const opt = t.closest('.opt');
+    if (opt) { pickOpt(opt); return; }
+    const a = t.closest('[data-act]');
+    if (a) { act(a.dataset.act); return; }
+    const pp = t.closest('[data-pop]');
+    if (pp) { openId === pp.dataset.pop ? closePop() : openPop(pp.dataset.pop); return; }
+    const gap = t.closest('.gap');
+    if (gap) { pinned = pinned[0] === gap.dataset.gap ? [] : [gap.dataset.gap]; light(pinned); return; }
+    if (!t.closest('.pop')) { closePop(); pinned = []; light(pinned); }
+  });
+  stage.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
+  });
+  $('prev').addEventListener('click', () => go(cur - 1));
+  $('next').addEventListener('click', () => go(cur + 1));
+  addEventListener('keydown', e => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'Escape' && openId) { closePop(); return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { go(cur + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { go(cur - 1); e.preventDefault(); }
+  });
+
+  // ---------- Beat change ----------
+  function place() {
+    Object.entries(POS).forEach(([id, by]) => {
+      let p = Object.values(by)[0];
+      Object.entries(by).forEach(([b, v]) => { if (IDX[b] <= cur) p = v; });
+      const el = $(id);
+      el.style.left = p[0] + 'px'; el.style.top = p[1] + 'px'; el.style.width = p[2] + 'px';
+    });
+  }
+  function go(i) {
+    i = Math.max(0, Math.min(BEATS.length - 1, i));
+    if (i === cur) return;
+    const prev = cur;
+    cur = i;
+    const beat = BEATS[i], f = FLOWS[beat.flow];
+    stage.dataset.beat = beat.id;
+
+    document.querySelectorAll('[data-in], [data-out]').forEach(el => {
+      const on = shownAt(el.dataset.in, el.dataset.out, i);
+      const was = prev >= 0 && shownAt(el.dataset.in, el.dataset.out, prev);
       el.classList.toggle('off', !on);
-      if (on && prev && !shown(range(el), prev)) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+      if (on && prev >= 0 && !was) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
     });
-    rail.querySelectorAll('.st').forEach((li, i) => {
-      li.classList.toggle('is-done', i + 1 < n);
-      li.classList.toggle('is-current', i + 1 === n);
-      li.querySelector('button').toggleAttribute('aria-current', i + 1 === n);
-      if (i + 1 === n) li.querySelector('button').setAttribute('aria-current', 'step');
+    STATES.forEach(s => $(s.id).classList.toggle(s.cls, i <= IDX[s.until]));
+    document.querySelectorAll('.hint').forEach(el => el.classList.remove('hint'));
+    if (HINTS[beat.id]) $(HINTS[beat.id]).classList.add('hint');
+    place();
+
+    rail.querySelectorAll('.st').forEach((li, fi) => {
+      const fl = FLOWS[fi], current = fi === beat.flow, done = fi < beat.flow;
+      li.classList.toggle('is-current', current);
+      li.classList.toggle('is-done', done);
+      const btn = li.querySelector('.st-btn');
+      if (current) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current');
+      const fill = li.querySelector('.seg-fill');
+      if (fill) fill.style.width = (done ? 100 : current && fl.beats ? beat.at / fl.beats.length * 100 : 0) + '%';
+      li.querySelectorAll('.tick').forEach((t, k) => {
+        t.classList.toggle('on', done || (current && k + 1 <= beat.at));
+        t.classList.toggle('now', current && k + 1 === beat.at);
+      });
+      li.querySelector('.st-beat').textContent = current && fl.beats.length > 1 ? `${beat.id} · ${beat.name}` : '';
     });
-    const s = STEPS[n - 1];
-    $('now').innerHTML = `Step ${n} of ${STEPS.length} · ${s.code ? `<span class="st-code">${s.code}</span>` : ''}${s.name}`;
-    $('prev').disabled = n <= 1;
-    $('next').disabled = n >= BUILT;
-    $('takeaway').textContent = s.takeaway || '';
-    paintGaps(n, prev > 0);
+    $('now').innerHTML = `Step ${beat.flow + 1} of ${FLOWS.length} · ${f.code ? `<span class="st-code">${f.code}</span>` : ''}${f.name}` +
+      (f.beats.length > 1 ? `<span class="now-beat">${beat.id} · ${beat.name}</span>` : '');
+    $('prev').disabled = i <= 0;
+    $('next').disabled = i >= BEATS.length - 1;
+    $('takeaway').textContent = f.takeaway || '';
+
+    paintGaps(prev >= 0);
     pinned = [];
     light(pinned);
+    closePop();
+    if (beat.open) openPop(beat.open);
     layout();
-    follow(700);
-    if (prev) flow(n);
+    follow(900);
+    if (prev >= 0) flow(beat.id);
   }
 
-  // ---- Fit the stage to the screen ----
+  // ---------- Fit the stage to the screen ----------
   function fit() {
     if (narrow.matches) {
       wrap.style.width = wrap.style.height = '';
@@ -814,7 +1508,7 @@ h2, h3, p { margin: 0; }
       return;
     }
     const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-    const s = Math.min(vw / W, Math.max(vh / H, .75));
+    const s = Math.min(vw / W, Math.max(vh / H, .7));
     stage.style.transform = `scale(${s})`;
     wrap.style.width = W * s + 'px';
     wrap.style.height = H * s + 'px';
@@ -823,9 +1517,9 @@ h2, h3, p { margin: 0; }
   addEventListener('resize', fit);
   narrow.addEventListener('change', fit);
 
-  go(1);
+  go(0);
   fit();
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { layout(); flow(step); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { layout(); flow(BEATS[cur].id); });
 })();
 </script>
 </body>
