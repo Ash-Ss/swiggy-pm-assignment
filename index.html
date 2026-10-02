@@ -603,8 +603,8 @@ button { font: inherit; color: inherit; }
 .takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
 /* ---------- Revised architecture ---------- */
-/* One component is open in a large focus card. The others are chips in a compact map above it,
-   laid out in three lanes: conversation, planning, data. The last step spreads the map out. */
+/* One component is open in a large focus card. The others are chips in a map above it, laid out
+   in three lanes: conversation, planning, data. The last step spreads the map out. */
 .rmap { position: relative; flex: 1; min-height: 0; --ease: cubic-bezier(.3,.7,.2,1); }
 #r-input  { left: 0; top: 0; width: 300px; }
 #r-output { left: 1076px; top: 0; width: 300px; }
@@ -628,9 +628,9 @@ button { font: inherit; color: inherit; }
 
 /* Chips */
 .rk {
-  position: absolute; z-index: 2; margin: 0; padding: 0 12px; overflow: hidden; text-align: left;
+  position: absolute; z-index: 2; margin: 0; padding: 0 14px; overflow: hidden; text-align: left;
   display: flex; flex-direction: column; font: inherit; color: var(--ink);
-  border-radius: 11px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow);
+  border-radius: 12px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow);
   transition: left .7s var(--ease), top .7s var(--ease), width .7s var(--ease), height .7s var(--ease),
               background-color .3s, border-color .3s, color .3s, box-shadow .3s, opacity .35s, visibility .35s;
 }
@@ -641,15 +641,16 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .rk.is-llm { background: var(--accent-soft); }
 .rk.is-data { background: var(--sunk); }
 .rk.is-out { border-style: dashed; box-shadow: none; }
-.rk-h { flex: none; height: 38px; display: flex; align-items: center; gap: 8px; min-width: 0; }
-.rk-h .ic { width: 16px; height: 16px; color: var(--ink-2); }
-.rk-code { flex: none; padding: 4px 6px; border-radius: 6px; font: 700 11px/1 var(--f-mono); color: var(--bg); background: var(--ink); transition: background-color .3s, color .3s; }
-.rk-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 650 13.5px/1.2 var(--f-display); }
+.rk-h { flex: none; height: 48px; display: flex; align-items: center; gap: 9px; min-width: 0; }
+.rk-h .ic { width: 17px; height: 17px; color: var(--ink-2); }
+.rk-code { flex: none; padding: 5px 7px; border-radius: 6px; font: 700 12px/1 var(--f-mono); color: var(--bg); background: var(--ink); transition: background-color .3s, color .3s; }
+.rk-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 650 15px/1.2 var(--f-display); }
 .rk-more { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; padding-bottom: 10px; opacity: 0; transition: opacity .25s; }
 .rk-kinds { display: flex; gap: 4px; }
 .rk-role { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
 .rk-subs, .rk-feeds { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .rk-subs i, .rk-feeds i { font: 500 10.5px/1 var(--f-mono); font-style: normal; padding: 3px 5px; border-radius: 5px; color: var(--ink-2); background: var(--sunk); }
+.rk-subs b { font: 500 10.5px/1 var(--f-mono); color: var(--ink-3); }
 .rk.is-llm .rk-subs i, .rk.is-data .rk-feeds i { background: var(--surface); }
 .rk-feeds b { margin: 0 2px 0 6px; font: 600 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
 .rk-feeds b:first-child { margin-left: 0; }
@@ -667,8 +668,8 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 
 /* Focus card */
 .fk {
-  position: absolute; left: 0; right: 0; top: 184px; bottom: 0; z-index: 4;
-  display: flex; flex-direction: column; gap: 12px; padding: 16px 24px 18px;
+  position: absolute; left: 0; right: 0; top: 232px; bottom: 0; z-index: 4;
+  display: flex; flex-direction: column; gap: 14px; padding: 16px 24px 18px;
   border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
   transition: opacity .35s, transform .35s, visibility .35s;
 }
@@ -683,26 +684,33 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .fk-t { flex: 1; min-width: 0; }
 .fk-t h3 { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font: 760 23px/1.15 var(--f-display); font-stretch: 112%; text-wrap: balance; }
 .fk-t h3 .kind { font-stretch: 100%; }
-.fk-t p { margin-top: 5px; font-size: 14px; color: var(--ink-2); }
-.fk-io { flex: none; width: 440px; margin: 2px 0 0; display: grid; gap: 5px; }
-.fk-io div { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.fk-t p { margin-top: 5px; font-size: 14.5px; color: var(--ink-2); }
+.fk-io { flex: none; width: 450px; margin: 0; display: grid; gap: 4px; }
+.fk-io div { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 8px; align-items: baseline; }
 .fk-io dt { font: 600 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
 .fk-io dd { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
 
-.stabs { flex: none; display: flex; align-items: center; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+/* The parts of a component, as a sequence where they run in order */
+.stabs { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .stab {
-  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
-  padding: 4px 11px 4px 5px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
-  font-size: 12.5px; font-weight: 600; color: var(--ink-2);
+  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; text-align: left;
+  padding: 7px 15px 7px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
 }
-.stab i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 600 10.5px/1 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
-.stab:hover { border-color: var(--edge); color: var(--ink); }
+.stab i { flex: none; font-style: normal; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 600 12px/1 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
+.stab b { display: block; font-size: 14px; font-weight: 650; line-height: 1.25; white-space: nowrap; }
+.stab em { display: block; font-style: normal; font-size: 11.5px; line-height: 1.3; color: var(--ink-3); white-space: nowrap; }
+.stab:hover { border-color: var(--edge); }
 .stab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.stab.is-on { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
+.stab.is-on { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 3px var(--accent-soft); }
 .stab.is-on i { color: var(--accent-ink); background: var(--accent); }
-.stabs-r { margin-left: auto; font: 500 11px/1.3 var(--f-mono); color: var(--ink-3); text-align: right; }
+.stab.is-on em { color: var(--ink-2); }
+.stab.is-obj { border-style: dashed; }
+.stab-arr { flex: none; display: grid; place-items: center; color: var(--edge); }
+.stab-arr .ic { width: 17px; height: 17px; }
+.stab-gap { flex: none; width: 1px; height: 34px; margin: 0 6px; background: var(--line); }
+.stabs-r { margin-left: auto; }
 .fk-back {
-  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px;
+  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px 7px 9px;
   border-radius: 999px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent);
   font: 600 12.5px/1 var(--f-body);
 }
@@ -711,27 +719,32 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .fk-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* One part of a component */
-.sv { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
-.sv-h { flex: none; display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; column-gap: 10px; row-gap: 3px; }
-.sv-h h4 { margin: 0; font: 720 19px/1.2 var(--f-display); font-stretch: 106%; }
-.sv-h > p { grid-column: 1 / -1; font-size: 14px; color: var(--ink-2); }
-.sv-h .terms { grid-column: 4; }
-.sv-h .kind { justify-self: start; }
-.sv-g { flex: 1; min-height: 0; display: grid; grid-template-columns: 286px minmax(0, 1fr) minmax(0, 1.24fr); gap: 26px; }
-.sv-col { min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.sv { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+.sv-h { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.sv-h > p { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+.sv-h .terms { margin-left: auto; }
+.sv-g { flex: 1; min-height: 0; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 34px; }
+.sv-g.has-math { grid-template-columns: 300px minmax(0, 1fr) minmax(0, 1.15fr); gap: 28px; }
+.sv-col { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 .sv-col > .label:first-child { color: var(--accent); }
-.how { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; counter-reset: how; }
-.how li { counter-increment: how; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 9px; font-size: 13.5px; line-height: 1.45; }
+.sv .record { margin-top: 0; }
+.how { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; counter-reset: how; }
+.how li { counter-increment: how; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; font-size: 15px; line-height: 1.45; }
 .how li::before {
-  content: counter(how); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
-  font: 600 11px/1 var(--f-mono); color: var(--accent); background: var(--accent-soft);
+  content: counter(how); width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 11.5px/1 var(--f-mono); color: var(--accent); background: var(--accent-soft);
 }
 .how b { font-weight: 650; }
+.ex2 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+.ex2.wide { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.ex2.flip { grid-template-columns: minmax(0, .75fr) minmax(0, 1.5fr); }
+.ex2 > div { min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.ex-h { font-size: 13px; font-weight: 650; color: var(--ink); }
+.ex-note { font-size: 13px; line-height: 1.45; color: var(--ink-2); }
 
-/* Maths */
+/* Maths, used only by the trip score */
 .fx { padding: 9px 12px; border-radius: 10px; background: var(--sunk); font: 500 13px/1.6 var(--f-mono); color: var(--ink); overflow-x: auto; }
 .fx sub, .fx sup { font-size: .72em; line-height: 0; }
-.fx .term { font-size: 12px; }
 .fx-n { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
 .calc { padding: 7px 12px; border-radius: 10px; border: 1px dashed var(--line); font: 500 12px/1.65 var(--f-mono); color: var(--ink-2); }
 .calc b { font-weight: 600; color: var(--ink); }
@@ -744,7 +757,6 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .eqn .term { font-size: 13px; padding: 3px 8px; margin: 0 2px; }
 
 /* Shared bits for examples */
-.ex-h { font-size: 12.5px; font-weight: 650; color: var(--ink); }
 .pl {
   display: inline-flex; align-items: center; padding: 3px 6px; border-radius: 5px; white-space: nowrap;
   font: 600 10.5px/1.2 var(--f-mono); color: var(--ink-2); background: var(--sunk);
@@ -757,75 +769,119 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .ic.ok { width: 14px; height: 14px; stroke-width: 2.4; color: var(--green); vertical-align: -2px; }
 .ic.bad { width: 14px; height: 14px; stroke-width: 2.4; color: var(--red); vertical-align: -2px; }
 .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tile { display: flex; flex-direction: column; gap: 3px; padding: 9px 12px; border-radius: 10px; background: var(--sunk); font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+.tile b { font: 650 18px/1.2 var(--f-mono); color: var(--ink); }
+.tile strong { font-size: 13px; font-weight: 650; color: var(--ink); }
+.tile.is-pick { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.tile.is-bad b { color: var(--red); }
 
 .tbw { overflow-x: auto; }
-.tb { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.tb { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
 .tb th {
-  padding: 0 6px 6px; text-align: left; vertical-align: bottom; white-space: nowrap; border-bottom: 1px solid var(--line);
+  padding: 0 7px 6px; text-align: left; vertical-align: bottom; white-space: nowrap; border-bottom: 1px solid var(--line);
   font: 600 9.5px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3);
 }
-.tb td { padding: 5px 6px; border-bottom: 1px solid var(--line); line-height: 1.35; }
+.tb td { padding: 6px 7px; border-bottom: 1px solid var(--line); line-height: 1.35; }
 .tb .n { text-align: right; white-space: nowrap; }
-.tb td.n { font-family: var(--f-mono); font-size: 12px; }
+.tb td.n { font-family: var(--f-mono); font-size: 12.5px; }
 .tb tr.hi td { background: var(--accent-soft); }
-.tb tr.tot td { border-bottom: 0; padding-top: 7px; }
+.tb tr.tot td { border-bottom: 0; padding-top: 8px; }
 .tb tr.mute td { color: var(--ink-3); }
 .tb td b { font-weight: 650; }
 .tb .bad { color: var(--red); font-weight: 600; }
+.tb .sub { display: block; font-size: 11.5px; color: var(--ink-3); }
 
 /* C1 */
-.msgs { display: grid; gap: 7px; }
-.msg { display: grid; gap: 5px; padding: 8px 11px; border-radius: 10px; border: 1px solid var(--line); }
-.msg q { font-size: 13px; font-weight: 600; }
-.cls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+.msgs { display: grid; gap: 9px; }
+.msgs.g2 { grid-template-columns: 1fr 1fr; }
+.msg { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); }
+.msg q { font-size: 13.5px; font-weight: 600; }
+.cls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
 .cls .p { font: 500 11px var(--f-mono); color: var(--ink-3); }
 .cls .to { margin-left: auto; font: 600 11.5px var(--f-mono); color: var(--accent); }
-.msg code { padding: 4px 7px; border-radius: 6px; font: 500 11px/1.45 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
-.ts4 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 8px; }
-.tsc { min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); }
+.msg code { padding: 5px 8px; border-radius: 6px; font: 500 11.5px/1.45 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
+.ts4 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); grid-template-areas: "h d c" "h d r"; gap: 10px; }
+.ts4 > :nth-child(1) { grid-area: h; } .ts4 > :nth-child(2) { grid-area: d; } .ts4 > :nth-child(3) { grid-area: c; } .ts4 > :nth-child(4) { grid-area: r; }
+.tsc { min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 10px 13px; border-radius: 10px; border: 1px solid var(--line); }
 .tsc > .label { display: flex; align-items: center; gap: 5px; }
 .tsc > .label .ic { width: 13px; height: 13px; color: var(--accent); }
-.kv { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
-.kv li { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.kv { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.kv li { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
 .kv span { color: var(--ink-3); }
 .kv b { font-weight: 600; text-align: right; }
-.dls { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.dls li { display: grid; grid-template-columns: 114px minmax(0, 1fr) 28px 52px; align-items: center; gap: 6px; }
-.dls .dn { font: 500 11px/1.2 var(--f-mono); }
-.dls i { display: block; height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
-.dls b { font: 600 11px var(--f-mono); text-align: right; }
+.dls { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.dls li { display: grid; grid-template-columns: 124px minmax(0, 1fr) 30px 58px; align-items: center; gap: 8px; }
+.dls .dn { font: 500 11.5px/1.2 var(--f-mono); }
+.dls i { display: block; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
+.dls b { font: 600 11.5px var(--f-mono); text-align: right; }
 .src { font: 500 9.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
 .src.stated { color: var(--green); }
 .src.inferred { color: var(--amber); }
-.res { font-size: 13px; font-weight: 600; }
-.vec { font: 500 11px/1.4 var(--f-mono); color: var(--ink-2); }
-.offer { display: grid; gap: 7px; padding: 10px 12px; border-radius: 10px; border: 1.5px dashed var(--accent); }
-.offer-h { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
-.offer-h .ic { width: 15px; height: 15px; color: var(--accent); }
-.offer ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.offer li { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 8px; background: var(--sunk); font-size: 12px; color: var(--ink-2); }
-.offer li b { font-size: 12.5px; color: var(--ink); }
+.res { font-size: 14px; font-weight: 600; }
+.vec { font: 500 11.5px/1.4 var(--f-mono); color: var(--ink-2); }
+.offer { display: grid; gap: 8px; padding: 11px 13px; border-radius: 10px; border: 1.5px dashed var(--accent); }
+.offer-h { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; line-height: 1.45; }
+.offer-h .ic { flex: none; width: 16px; height: 16px; margin-top: 1px; color: var(--accent); }
+.offer ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.offer li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 8px; background: var(--sunk); font-size: 12.5px; color: var(--ink-2); }
+.offer li b { font-size: 13px; color: var(--ink); }
 .offer li.is-pick { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
 
 /* C2 */
-.funnel { display: grid; gap: 7px; }
-.fn { display: grid; grid-template-columns: 150px minmax(0, 1fr) 40px; align-items: center; gap: 10px; font-size: 12.5px; }
-.fn i { display: block; height: 16px; border-radius: 4px; width: calc(var(--v) * 100%); min-width: 3px; background: var(--accent); }
-.fn b { font: 600 12px var(--f-mono); text-align: right; }
-.rbars { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.rbars li { display: grid; grid-template-columns: 82px minmax(0, 1fr) 34px; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 550; }
-.rbars i { display: block; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
-.rbars b { font: 600 11.5px var(--f-mono); text-align: right; }
+.funnel { display: grid; gap: 9px; }
+.fn { display: grid; grid-template-columns: 160px minmax(0, 1fr) 42px; align-items: center; gap: 10px; font-size: 13px; }
+.fn i { display: block; height: 18px; border-radius: 4px; width: calc(var(--v) * 100%); min-width: 3px; background: var(--accent); }
+.fn b { font: 600 12.5px var(--f-mono); text-align: right; }
+.drops { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.drops li { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 10px; padding: 7px 10px; border-radius: 8px; background: var(--sunk); font-size: 13px; }
+.drops li b { font-weight: 600; }
+.drops li span { font-size: 12px; color: var(--red); }
+.drops li.kept span { color: var(--green); }
+.rbars { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.rbars li { display: grid; grid-template-columns: 160px minmax(0, 1fr) 36px; align-items: center; gap: 10px; font-size: 13px; font-weight: 550; }
+.rbars i { display: block; height: 7px; border-radius: 4px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
+.rbars b { font: 600 12px var(--f-mono); text-align: right; }
+.rbars li.mute { color: var(--ink-3); }
+.rbars li.mute i { background: linear-gradient(90deg, var(--edge) calc(var(--v) * 100%), var(--sunk) 0); }
 
 /* C3 */
-.er { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
-.er ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.er li { display: flex; flex-direction: column; padding: 5px 9px; border-radius: 8px; background: var(--sunk); font-size: 12.5px; }
-.er li b { font-weight: 650; }
-.er li span { font: 500 10.5px/1.4 var(--f-mono); color: var(--ink-3); }
-.er-out { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12.5px; text-align: center; }
-.er-out .ic { width: 18px; height: 18px; color: var(--accent); }
-.er-out b { font-weight: 650; }
+.feedgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fg { display: flex; flex-direction: column; gap: 9px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); }
+.fg-h { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 650; }
+.fg-h .ic { width: 16px; height: 16px; color: var(--accent); }
+.fg-h span { margin-left: auto; font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.fg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fg li { display: grid; grid-template-columns: 18px 76px minmax(0, 1fr); align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; background: var(--sunk); font-size: 13px; }
+.fg li .ic { width: 16px; height: 16px; color: var(--ink-2); }
+.fg li b { font-weight: 650; }
+.fg li span { color: var(--ink-2); }
+.fg-n { font-size: 12.5px; color: var(--ink-2); }
+
+/* C4 */
+.route { list-style: none; margin: 0; padding: 0; display: grid; }
+.route .stop { display: flex; align-items: baseline; gap: 8px; font-size: 14px; font-weight: 650; }
+.route .stop::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); transform: translateY(-1px); }
+.route .stop i { font-style: normal; font-weight: 500; font-size: 12.5px; color: var(--ink-3); }
+.route .leg { display: flex; align-items: center; gap: 7px; margin-left: 4px; padding: 5px 0 5px 14px; border-left: 2px solid var(--t-transit-soft); font-size: 12.5px; color: var(--ink-2); }
+.route .leg .ic { width: 15px; height: 15px; color: var(--t-transit); }
+.route .leg b { font-weight: 600; color: var(--ink); }
+.tbar { display: flex; height: 26px; gap: 2px; border-radius: 6px; overflow: hidden; }
+.tbar i { display: grid; place-items: center; height: 100%; font: 600 10.5px/1 var(--f-mono); font-style: normal; color: var(--accent-ink); background: var(--accent); }
+.tbar i:nth-child(even) { background: var(--accent-2); color: var(--ink); }
+.tbar i.free { background: var(--sunk); color: var(--ink-3); }
+.tbar-l { display: flex; justify-content: space-between; font: 500 10.5px var(--f-mono); color: var(--ink-3); }
+.whynot { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.whynot li { padding: 8px 11px; border-radius: 8px; background: var(--sunk); font-size: 13px; line-height: 1.45; }
+.dstrip { position: relative; height: 22px; border-radius: 6px; background: var(--sunk); overflow: hidden; }
+.dstrip i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.dstrip .visit { background: var(--accent); }
+.dstrip .meal { background: var(--green); }
+.dstrip .rest { background: var(--line); }
+.dstrip-ax { position: relative; height: 12px; margin-top: -4px; font: 500 10px/1 var(--f-mono); color: var(--ink-3); }
+.dstrip-ax span { position: absolute; top: 0; transform: translateX(-50%); }
+.dstrip-ax span:first-child { transform: none; }
+.dstrip-ax span:last-child { transform: translateX(-100%); }
 .chart { display: block; width: 100%; height: auto; overflow: visible; }
 .ch-grid { stroke: var(--line); stroke-width: 1; }
 .ch-lab { font: 500 10px var(--f-mono); fill: var(--ink-3); }
@@ -843,96 +899,82 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .ch-leg span { display: inline-flex; align-items: center; gap: 6px; }
 .ch-leg span::before { content: ""; width: 14px; height: 3px; border-radius: 2px; background: var(--k); }
 
-/* C4 */
-.route { list-style: none; margin: 0; padding: 0; display: grid; }
-.route .stop { display: flex; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 650; }
-.route .stop::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); transform: translateY(-1px); }
-.route .stop i { font-style: normal; font-weight: 500; font-size: 12px; color: var(--ink-3); }
-.route .leg { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding: 4px 0 4px 13px; border-left: 2px solid var(--t-transit-soft); font-size: 12px; color: var(--ink-2); }
-.route .leg .ic { width: 14px; height: 14px; color: var(--t-transit); }
-.route .leg b { font-weight: 600; color: var(--ink); }
-.dstrip { position: relative; height: 22px; border-radius: 6px; background: var(--sunk); overflow: hidden; }
-.dstrip i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
-.dstrip .visit { background: var(--accent); }
-.dstrip .meal { background: var(--green); }
-.dstrip .rest { background: var(--line); }
-.dstrip-ax { position: relative; height: 12px; margin-top: -4px; font: 500 10px/1 var(--f-mono); color: var(--ink-3); }
-.dstrip-ax span { position: absolute; top: 0; transform: translateX(-50%); }
-.dstrip-ax span:first-child { transform: none; }
-.dstrip-ax span:last-child { transform: translateX(-100%); }
-
 /* C5 */
 .slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
-.slots li { display: grid; grid-template-columns: 18px 170px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 4px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
-.slots li .ic { width: 15px; height: 15px; color: var(--ink-2); }
+.slots li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; column-gap: 9px; row-gap: 1px; padding: 6px 4px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.slots li .ic { grid-row: span 2; width: 16px; height: 16px; color: var(--ink-2); }
 .slots li b { font-weight: 650; }
-.slots li span { font: 500 11.5px var(--f-mono); color: var(--ink-2); }
-.slots li em { font-style: normal; font-size: 11.5px; color: var(--ink-3); }
+.slots li em { font-style: normal; font-size: 11.5px; color: var(--ink-3); text-align: right; }
+.slots li span { grid-column: 2 / -1; font: 500 11.5px var(--f-mono); color: var(--ink-2); }
 .cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.cmp2 div { display: flex; flex-direction: column; gap: 3px; padding: 8px 11px; border-radius: 9px; background: var(--sunk); font-size: 12px; color: var(--ink-2); }
-.cmp2 b { font: 650 15px/1.2 var(--f-mono); color: var(--ink); }
+.cmp2 div { display: flex; flex-direction: column; gap: 3px; padding: 9px 12px; border-radius: 9px; background: var(--sunk); font-size: 12.5px; color: var(--ink-2); }
+.cmp2 b { font: 650 16px/1.2 var(--f-mono); color: var(--ink); }
 .cmp2 .is-pick { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
-.stack { display: flex; height: 18px; gap: 2px; border-radius: 5px; overflow: hidden; }
+.stack { display: flex; height: 20px; gap: 2px; border-radius: 5px; overflow: hidden; }
 .stack i { display: block; height: 100%; }
-.stack-l { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
+.stack-l { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); }
 .stack-l span { display: inline-flex; align-items: center; gap: 6px; }
 .stack-l span::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--k); }
-.stack-l b { font: 600 11.5px var(--f-mono); color: var(--ink); }
+.stack-l b { font: 600 12px var(--f-mono); color: var(--ink); }
 
 /* C6 */
-.cases { display: grid; gap: 10px; }
-.case { display: grid; gap: 5px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 12.5px; line-height: 1.4; }
-.case-h { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.rules { margin: 0; padding: 11px 13px; border-radius: 10px; background: var(--sunk); font: 500 12px/1.75 var(--f-mono); color: var(--ink); white-space: pre; overflow-x: auto; }
+.rules .c { color: var(--ink-3); }
+.cases { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.case { display: flex; flex-direction: column; gap: 7px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); font-size: 13px; line-height: 1.45; }
+.case-h { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .case-h b { font-weight: 650; }
 .case-fix { display: flex; gap: 6px; color: var(--ink-2); }
-.case-fix .ic { flex: none; width: 14px; height: 14px; margin-top: 2px; color: var(--accent); }
+.case-fix .ic { flex: none; width: 15px; height: 15px; margin-top: 2px; color: var(--accent); }
 .case-r { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--ink-2); }
-.case code { font: 500 11px/1.4 var(--f-mono); color: var(--ink-2); }
+.case code { font: 500 11.5px/1.4 var(--f-mono); color: var(--ink-2); }
 
 /* C7 */
-.narr { padding: 11px 13px; border-radius: 10px; background: var(--accent-soft); font-size: 13.5px; line-height: 1.75; }
+.narr { padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: 14px; line-height: 1.8; }
 .narr mark {
   color: var(--ink); font-weight: 650; padding: 1px 3px; border-radius: 4px;
   background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent);
 }
 .narr sup { margin-left: 2px; font: 600 9.5px var(--f-mono); color: var(--accent); }
-.srcs { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; counter-reset: src; }
-.srcs li { counter-increment: src; display: flex; align-items: center; gap: 8px; font: 500 11.5px/1.4 var(--f-mono); color: var(--ink-2); }
+.srcs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; counter-reset: src; }
+.srcs li { counter-increment: src; display: flex; align-items: center; gap: 8px; font: 500 12px/1.4 var(--f-mono); color: var(--ink-2); }
 .srcs li::before { content: counter(src); width: 16px; font-weight: 600; color: var(--accent); }
-.says { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.says li { padding: 7px 10px; border-radius: 9px; background: var(--sunk); font-size: 12.5px; line-height: 1.45; }
+.says { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.says li { padding: 9px 12px; border-radius: 9px; background: var(--sunk); font-size: 13px; line-height: 1.5; }
 .says b { font-weight: 650; }
 .undo { color: var(--accent); font-weight: 600; white-space: nowrap; }
-.say { padding: 9px 12px; border-radius: 10px; background: var(--accent-soft); font-size: 13px; line-height: 1.5; font-weight: 550; }
-.fwd { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.fwd li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; }
+.say { padding: 10px 13px; border-radius: 10px; background: var(--accent-soft); font-size: 13.5px; line-height: 1.5; font-weight: 550; }
+.fwd { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.fwd li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; }
 .fwd q { font-weight: 600; }
 .fwd span { font: 500 11.5px var(--f-mono); color: var(--ink-2); }
-.fwd span:last-child { color: var(--accent); font-weight: 600; }
+.fwd span:last-child { margin-left: auto; color: var(--accent); font-weight: 600; }
 
 /* C8 */
-.trig { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.tg { display: flex; flex-direction: column; gap: 7px; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); }
-.tg-h { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 650; }
+.trig { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tg { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); }
+.tg.is-skip { border-style: dashed; color: var(--ink-3); }
+.tg-h { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 650; }
 .tg-h .ic { width: 15px; height: 15px; color: var(--amber); }
-.tg q, .tg .tg-q { font-size: 13px; line-height: 1.45; font-weight: 550; }
+.tg q, .tg .tg-q { font-size: 13.5px; line-height: 1.45; font-weight: 550; }
 .tg-r { margin-top: auto; font: 500 11.5px/1.4 var(--f-mono); color: var(--accent); }
-.edit { display: grid; gap: 6px; }
-.edit + .edit { margin-top: 6px; }
-.edit q { font-size: 12.5px; font-weight: 600; }
-.json { margin: 0; padding: 8px 12px; border-radius: 10px; background: var(--sunk); font: 500 11.5px/1.5 var(--f-mono); color: var(--ink); white-space: pre; overflow-x: auto; }
+.tg.is-skip .tg-r { color: var(--ink-3); }
+.edits { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.edit { display: flex; flex-direction: column; gap: 7px; }
+.edit q { font-size: 13.5px; font-weight: 600; }
+.json { margin: 0; padding: 9px 12px; border-radius: 10px; background: var(--sunk); font: 500 12px/1.55 var(--f-mono); color: var(--ink); white-space: pre; overflow-x: auto; }
 .json .jk { color: var(--accent); }
 .tree, .tree ul { list-style: none; margin: 0; padding: 0; }
-.tree { display: grid; gap: 4px; }
-.tree ul { display: grid; gap: 4px; margin: 4px 0 0 9px; padding-left: 14px; border-left: 1.5px solid var(--line); }
-.tree li > span:first-child { display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; font-size: 12.5px; font-weight: 600; }
-.tree li > span:first-child .ic { width: 14px; height: 14px; color: var(--ink-2); }
+.tree { display: grid; gap: 5px; }
+.tree ul { display: grid; gap: 5px; margin: 5px 0 0 9px; padding-left: 14px; border-left: 1.5px solid var(--line); }
+.tree li > span:first-child { display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; font-size: 13px; font-weight: 600; }
+.tree li > span:first-child .ic { width: 15px; height: 15px; color: var(--ink-2); }
 .tree li.frz > span:first-child { color: var(--ink-3); font-weight: 500; }
 .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.ba > div { display: flex; flex-direction: column; gap: 6px; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); }
+.ba > div { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); }
 .ba > div + div { border-color: var(--accent); }
-.ba ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; font-size: 12.5px; line-height: 1.4; }
-.ba ol b { display: inline-block; width: 44px; font: 600 11px var(--f-mono); color: var(--ink-3); }
+.ba ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13px; line-height: 1.45; }
+.ba ol b { display: inline-block; width: 46px; font: 600 11px var(--f-mono); color: var(--ink-3); }
 .ba .gone { color: var(--ink-3); }
 
 /* ---------- Research ---------- */
@@ -1140,7 +1182,8 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
   .lane, .lane-rule { display: none; }
   .rk { position: relative; left: auto !important; top: auto !important; width: auto !important; height: auto !important; flex: 0 1 auto; }
   .rk.off { display: none; }
-  .rk-h { height: 34px; }
+  .rk-h { height: 38px; }
+  .rk-name { font-size: 14px; }
   .rmap:not(.is-over) .rk-more { display: none; }
   .rmap.is-over .rk { flex: 1 1 100%; }
   .fk { position: relative; left: auto; right: auto; top: auto; bottom: auto; margin-top: 8px; padding: 16px 16px 18px; }
@@ -1149,16 +1192,17 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
   .fk-h { flex-wrap: wrap; }
   .fk-t h3 { font-size: 20px; }
   .fk-io { width: 100%; }
-  .stabs { flex-wrap: wrap; }
-  .stabs-r { flex-basis: 100%; margin-left: 0; text-align: left; }
-  .sv-h { grid-template-columns: auto minmax(0, 1fr); }
-  .sv-h .terms { grid-column: 1 / -1; }
-  .sv-g { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-  .ts4, .offer ol, .trig, .ba, .cmp2 { grid-template-columns: minmax(0, 1fr); }
+  .stab-arr, .stab-gap { display: none; }
+  .stab b, .stab em { white-space: normal; }
+  .stabs-r { flex-basis: 100%; margin-left: 0; }
+  .sv-h .terms { margin-left: 0; }
+  .sv-g, .sv-g.has-math { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .ex2, .ex2.wide, .ex2.flip, .msgs.g2, .ts4, .feedgrid, .tiles, .cases, .trig, .edits, .ba, .cmp2 { grid-template-columns: minmax(0, 1fr); }
+  .ts4 { grid-template-areas: "h" "d" "c" "r"; }
+  .sv .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fn { grid-template-columns: 112px minmax(0, 1fr) 36px; }
-  .slots li { grid-template-columns: 18px minmax(0, 1fr); }
-  .slots li span, .slots li em { grid-column: 2; }
-  .er { grid-template-columns: minmax(0, 1fr); }
+  .fg li { grid-template-columns: 18px 64px minmax(0, 1fr); }
+  .rbars li { grid-template-columns: 96px minmax(0, 1fr) 34px; }
 }
 @media (max-width: 380px) {
   .gaps { grid-template-columns: 1fr; }
@@ -1670,11 +1714,11 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
             </defs>
             <g id="wire-layer-r"></g>
           </svg>
-          <p class="lane" style="top:12px"><b>Conversation</b><span>Meaning: the LLM’s job</span></p>
-          <i class="lane-rule" style="top:293px"></i>
+          <p class="lane" style="top:2px"><b>Conversation</b><span>Meaning: the LLM’s job</span></p>
+          <i class="lane-rule" style="top:292px"></i>
           <p class="lane" style="top:300px"><b>Planning</b><span>Guarantees: code and solvers</span></p>
           <i class="lane-rule" style="top:584px"></i>
-          <p class="lane" style="top:594px"><b>Data</b><span>Facts with a source and a time</span></p>
+          <p class="lane" style="top:592px"><b>Data</b><span>Facts with a source and a time</span></p>
 
           <article class="node card" id="r-input">
             <header class="node-h">
@@ -2388,10 +2432,10 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
   const TERM = { fit: 'Fit', cost: 'Cost', transit: 'Transit', stay: 'Stay', score: 'Trip score' };
   const T = (k, s = TERM[k]) => `<span class="term ${k}">${s}</span>`;
   const fx = s => `<div class="fx">${s}</div>`;
-  const nt = s => `<p class="fx-n">${s}</p>`;
   const calc = s => `<p class="calc">${s}</p>`;
   const pl = (s, k = '') => `<span class="pl ${k}">${s}</span>`;
   const eh = s => `<p class="ex-h">${s}</p>`;
+  const note = s => `<p class="ex-note">${s}</p>`;
   const yes = '<svg class="ic ok" aria-label="pass"><use href="#i-check"/></svg>';
   const no = '<svg class="ic bad" aria-label="fail"><use href="#i-x"/></svg>';
   const vars = a => `<dl class="vars">${a.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
@@ -2410,7 +2454,8 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
     `<li><span class="dn">${n}</span><i style="--v:${v}"></i><b>${v.toFixed(2)}</b><span class="src ${s}">${s}</span></li>`).join('')}</ul>`;
   const json = o => `<pre class="json">{\n${Object.entries(o).map(([k, v]) =>
     `  <span class="jk">"${k}"</span>: ${typeof v === 'string' ? `"${v}"` : v}`).join(',\n')}\n}</pre>`;
-  const rbars = a => `<ol class="rbars">${a.map(([n, v]) => `<li><span>${n}</span><i style="--v:${v}"></i><b>${v.toFixed(2)}</b></li>`).join('')}</ol>`;
+  const rbars = a => `<ol class="rbars">${a.map(([n, v, m]) => `<li${m ? ' class="mute"' : ''}><span>${n}</span><i style="--v:${v}"></i><b>${v.toFixed(2)}</b></li>`).join('')}</ol>`;
+  const slots = a => `<ul class="slots">${a.map(([i, w, t, c]) => `<li>${ic(i)}<b>${w}</b><em>${c}</em><span>${t}</span></li>`).join('')}</ul>`;
   function waterfall(rows) {                              // [label, from, to, term, text], drawn to one scale
     const X = 96, W = 360, RH = 30, H = rows.length * RH + 20, x = v => X + v * W;
     let s = `<svg class="chart" viewBox="0 0 ${X + W + 52} ${H}" role="img" aria-label="Trip score built up from its terms">`;
@@ -2449,250 +2494,219 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
     <div class="dstrip-ax">${[7, 10, 13, 16, 19].map(h => `<span style="left:${(h - 7) / 12 * 100}%">${String(h).padStart(2, '0')}:00</span>`).join('')}</div>`;
 
   // The eight components. Every example follows the same trip from the Architecture tab.
+  // seq: the parts run in order. obj: the first part is the objective the others serve.
   const RK = [
-    { id: 1, code: 'C1', name: 'Dialogue manager & trip state', short: 'Dialogue & trip state', kinds: ['llm', 'state'], cls: 'is-llm',
+    { id: 1, code: 'C1', name: 'Dialogue & trip state manager', short: 'Dialogue & trip state', kinds: ['llm', 'state'], cls: 'is-llm', seq: true,
       role: 'Understands the traveller and keeps one typed trip state.',
       in: 'The trip form and every chat message',
-      out: 'Trip state → C2, C4 · questions and options → traveller · changes → C8',
+      out: 'Trip state → C2, C4 · questions → traveller · changes → C8',
       subs: [
-        { tab: 'Understand', n: 'Understand the message', kind: 'llm',
-          lead: 'Classifies each message, then turns what it says into a typed patch.',
+        { n: 'Intent classifier', d: 'Message → request type', t: 'Intent', kind: 'llm',
+          lead: 'Reads each message and decides what the system should do with it.',
           how: [
-            '<b>Classify the intent:</b> new trip, refine, change, question or out of scope.',
-            '<b>Pick the request type:</b> what the planner should do next.',
-            '<b>Extract a patch</b> for the trip state, as structured output against a schema.',
-            '<b>Route it:</b> new plan to C2, change to C8, question to C7.',
+            '<b>Classify</b> it: new trip, change, question or out of scope',
+            '<b>Extract</b> the details as a typed patch',
+            '<b>Ask</b> instead of guessing when unsure',
+            '<b>Route</b> it: plan to C2, change to C8, question to C7',
           ],
-          math: fx('intent = argmax<sub>i</sub> P(i | message, trip state)') + nt('The LLM returns the label and its probability.')
-            + fx('act if P ≥ 0.75, else ask one question') + nt('A low-confidence guess never reaches the planner.')
-            + fx('patch must validate against the schema') + nt('Code checks every field. An unknown field or a bad value is rejected and asked again.'),
-          ex: `<div class="msgs">
-            ${msg('We’re vegetarian, one of us has a bad knee, we hate crowds…', 'New trip', 'plan', '0.97', 'C2', 'diet: vegetarian · max_walk_km: 4 · stairs: low · crowd_tolerance: low · residual: “feel like old Japan”')}
-            ${msg('Can day 6 be lighter?', 'Change', 'edit pace, day 6', '0.91', 'C8')}
-            ${msg('Why isn’t Kinkaku-ji in the plan?', 'Question', 'explain a choice', '0.88', 'C7')}
-            ${msg('Book the Kyoto hotel for us.', 'Out of scope', 'booking', '0.95', 'reply', 'We find and compare options. Booking happens on the provider’s site.')}
-          </div>` },
-        { tab: 'Trip state', n: 'Trip state', kind: 'state',
-          lead: 'One typed record that every component reads. The LLM proposes changes, and code accepts them.',
+          ex: `<div class="msgs g2">
+            ${msg('We’re vegetarian, one of us has a bad knee, we hate crowds…', 'New trip', 'plan it', '0.97', 'C2', 'diet: vegetarian · max_walk_km: 4 · stairs: low · crowd_tolerance: low · residual: “feel like old Japan”')}
+            ${msg('Can day 6 be lighter?', 'Change', 'edit day 6', '0.91', 'C8', 'days[6].pace: lower')}
+            ${msg('Why isn’t Kinkaku-ji in the plan?', 'Question', 'explain a choice', '0.88', 'C7', 'answer from: trade-off log')}
+            ${msg('Book the Kyoto hotel for us.', 'Out of scope', 'booking', '0.95', 'reply', 'We compare options. Booking happens on the provider’s site.')}
+          </div>${note('P is how sure the classifier is. Below 0.75 it asks one short question instead of guessing.')}` },
+        { n: 'Trip state manager', d: 'One typed record of the trip', t: 'State', kind: 'state',
+          lead: 'Keeps one typed record of the trip. Every component reads it.',
           how: [
-            '<b>Hard constraints</b> must hold. They are never traded off.',
-            '<b>Soft preferences</b> are trip dials from 0 to 1. C4 trades them off.',
-            '<b>Trip context</b> says who is travelling, from where, for how long.',
-            '<b>Residual text</b> is whatever fits no field. It becomes an embedding for semantic search.',
+            '<b>Hard constraints</b> are never traded off',
+            '<b>Trip dials</b> are soft preferences, from 0 to 1',
+            '<b>Trip context</b>: who, from where, how long',
+            '<b>Residual text</b> feeds semantic search',
           ],
-          math: fx('dial = (value ∈ [0, 1], confidence, source)')
-            + fx('v = (c<sub>1</sub>·v<sub>1</sub> + c<sub>2</sub>·v<sub>2</sub>) / (c<sub>1</sub> + c<sub>2</sub>)') + nt('New evidence is merged by confidence.')
-            + calc('crowd_tolerance<br>default 0.5 (c 0.1) + “hate crowds” = low 0.1 (c 0.9)<br>= (0.1 × 0.5 + 0.9 × 0.1) / 1.0 = <b>0.14</b>')
-            + nt('The LLM picks a level. The PM’s catalog maps each level to a number.'),
           ex: `<div class="ts4">
             <div class="tsc"><p class="label">${ic('lock')}Hard constraints</p>
               <ul class="kv"><li><span>Dates</span><b>28 Apr – 4 May</b></li><li><span>Diet</span><b>vegetarian, no dashi</b></li>
               <li><span>Walking</span><b>≤ 4 km a day</b></li><li><span>Stairs</span><b>low</b></li><li><span>Budget</span><b>≤ ₹3.2 L, asked</b></li></ul></div>
-            <div class="tsc"><p class="label">${ic('sliders-horizontal')}Soft preferences · trip dials</p>
+            <div class="tsc"><p class="label">${ic('sliders-horizontal')}Trip dials · soft preferences</p>
               ${dials([['crowd_tolerance', .14, 'stated'], ['pace', .30, 'inferred'], ['temples', .80, 'stated'], ['food', .80, 'stated'], ['photography', .70, 'stated'], ['hidden_gem_share', .30, 'default']])}</div>
             <div class="tsc"><p class="label">${ic('users')}Trip context</p>
               <ul class="kv"><li><span>Who</span><b>2 adults</b></li><li><span>From</span><b>Bengaluru</b></li><li><span>Length</span><b>7 days, 6 nights</b></li><li><span>First visit</span><b>unknown</b></li></ul></div>
             <div class="tsc"><p class="label">${ic('text-search')}Residual text</p>
-              <p class="res">“feel like old Japan”</p><p class="vec">→ embedding [0.12, −0.48, 0.07, …]</p>${nt('Matched against place descriptions in C2.')}</div>
-          </div>` },
-        { tab: 'Ask & offer', n: 'Ask, and offer options', kind: 'llm',
-          lead: 'Asks only the questions that would change the plan, and offers options when C4 needs a decision.',
+              <p class="res">“feel like old Japan”</p><p class="vec">→ embedding, matched against place descriptions in C2</p></div>
+          </div>${note('“Hate crowds” moved crowd_tolerance from the default 0.5 to 0.14. Inferred values stay unsure until the traveller confirms them.')}` },
+        { n: 'Clarify & offer options', d: 'Only questions that matter', t: 'Clarify', kind: 'llm',
+          lead: 'Asks few questions, and turns C4’s trade-offs into clear choices.',
           how: [
-            '<b>List open questions:</b> missing fields and low-confidence dials.',
-            '<b>Score each one</b> by how much its answer would move the best plan.',
-            '<b>Ask the top one or two.</b> Use defaults for the rest, and say so.',
-            '<b>When C4 calls,</b> show two or three options and what each one costs.',
+            '<b>List</b> missing and unsure details',
+            '<b>Ask</b> only the one or two that change the plan',
+            '<b>Default</b> the rest, and say so',
+            '<b>Offer options</b> when C4 needs a decision',
           ],
-          math: fx('priority(q) = (1 − confidence<sub>q</sub>) × impact<sub>q</sub>')
-            + fx('impact<sub>q</sub> = |S(best | a) − S(best | b)|') + nt('S is the trip score. C4 re-solves the city plan for each likely answer a and b, which takes milliseconds.')
-            + fx('ask if priority ≥ 0.15, at most 2 per turn'),
-          ex: tb(['Open question', '#Conf.', '#Impact', '#Priority', 'Then'], [
-              { c: ['Total budget?', '0.0', '0.45', '<b>0.45</b>', pl('Ask', 'acc')], cls: 'hi' },
-              { c: ['Are about 100 steps OK for the knee?', '0.4', '0.30', '<b>0.18</b>', pl('Ask', 'acc')], cls: 'hi' },
-              ['A ryokan night?', '0.5', '0.12', '0.06', pl('Default: 1 night', 'mute')],
-              ['Early starts OK?', '0.6', '0.10', '0.04', pl('Default: yes', 'mute')],
-            ]) + `<div class="offer">
-              <p class="offer-h">${ic('scale')}<span><b>C4 needs a decision.</b> The traveller said ₹2.5 L, and Golden Week fares push every plan past it.</span></p>
+          ex: `<div class="ex2"><div>${eh('Open questions, most useful first')}${tb(['Question', '#Sure', '#Impact', 'Then'], [
+              { c: ['Total budget?', '0.0', '0.45', pl('Ask', 'acc')], cls: 'hi' },
+              { c: ['Are about 100 steps OK for the knee?', '0.4', '0.30', pl('Ask', 'acc')], cls: 'hi' },
+              ['A ryokan night?', '0.5', '0.12', pl('Default: 1 night', 'mute')],
+              ['Early starts OK?', '0.6', '0.10', pl('Default: yes', 'mute')],
+            ])}${note('Impact is how much the best plan would change with the answer.')}</div>
+            <div>${eh('When C4 needs a decision')}<div class="offer">
+              <p class="offer-h">${ic('scale')}<span>The traveller said ₹2.5 L. Golden Week fares push every plan past it.</span></p>
               <ol><li class="is-pick"><b>Raise to ₹3.2 L</b><span>Keeps Tokyo, Kanazawa and Kyoto</span></li>
               <li><b>Keep ₹2.5 L</b><span>Travel 10–16 May, when fares are about 30% lower</span></li></ol>
-              ${nt('The traveller picks the first. “Budget ≤ ₹3.2 L” becomes a hard constraint.')}
-            </div>` },
+            </div>${note('The traveller picks the first. “Budget ≤ ₹3.2 L” becomes a hard constraint.')}</div></div>` },
       ] },
 
-    { id: 2, code: 'C2', name: 'Candidate generation', short: 'Candidate generation', kinds: ['code'],
+    { id: 2, code: 'C2', name: 'Candidate generator', short: 'Candidate generator', kinds: ['code'], seq: true,
       role: 'Turns the trip state into short ranked lists of cities and places.',
       in: 'Trip state from C1 · places and cities from C3',
-      out: 'Ranked cities and POIs → C4',
+      out: 'Ranked shortlists of cities and places → C4',
       subs: [
-        { tab: 'Universe', n: 'Plannable universe', kind: 'code',
-          lead: 'Hard constraints only. Anything that cannot be part of a valid trip leaves here.',
+        { n: 'Hard-constraint filter', d: 'The plannable universe', t: 'Filter', kind: 'code',
+          lead: 'Removes everything that cannot be part of a valid trip.',
           how: [
-            '<b>Compile</b> the hard constraints into exact filters. No LLM in this step.',
-            '<b>Filter places</b> by dates, access and diet.',
-            '<b>Keep cities</b> that still have enough valid places to fill a day.',
-            '<b>Unknown values</b> pass only with confidence ≥ 0.7. The rest are dropped, each with a reason.',
+            '<b>Hard constraints</b> become exact filters',
+            '<b>No LLM</b> in this step',
+            '<b>Unsure data</b> is dropped, with a reason',
+            '<b>A city stays</b> only if a day’s worth is left',
           ],
-          math: fx('U = { p : open(p, dates) ∧ stairs(p) ≤ low<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧ (food(p) ⇒ veg_safe(p)) }')
-            + nt('A restaurant must be veg-safe. A garden has no food rule to pass.')
-            + fx('Cities = { c : |U ∩ c| ≥ 8 }')
-            + fx('keep p if confidence(attribute) ≥ 0.7'),
-          ex: `<div class="funnel">${[['Places in Japan', 1, '100k'], ['Open 28 Apr – 4 May', .38, '38k'], ['Knee-safe, stairs low', .14, '14k'], ['Veg-safe, or not food', .05, '5k']]
+          ex: `<div class="ex2"><div>${eh('100k places → 5k valid')}<div class="funnel">${[['Places in Japan', 1, '100k'], ['Open 28 Apr – 4 May', .38, '38k'], ['Knee-safe, stairs low', .14, '14k'], ['Veg-safe, or not food', .05, '5k']]
               .map(([l, v, t]) => `<div class="fn"><span>${l}</span><i style="--v:${v}"></i><b>${t}</b></div>`).join('')}</div>
-            <div class="chips-row">${pl('Cities: 46 → 11', 'acc')}${pl('1.2k dropped: access unknown', 'mute')}</div>
-            ${nt('Bars are to scale. Five thousand valid places remain, out of a hundred thousand.')}` },
-        { tab: 'Rank', n: 'Rank by dials and text', kind: 'code',
-          lead: 'Scores every place in the universe. The soft dials set the weights.',
+              <div class="chips-row">${pl('Cities: 46 → 11', 'acc')}${pl('Bars drawn to scale', 'mute')}</div></div>
+            <div>${eh('Removed, with a reason')}<ul class="drops">
+              <li><b>Kiyomizu-dera slope</b><span>steep climb · knee</span></li>
+              <li><b>Fushimi Inari summit trail</b><span>steep stairs · knee</span></li>
+              <li><b>Myoryu-ji tour</b><span>hidden stairways · knee</span></li>
+              <li><b>Ramen alley, Kyoto</b><span>no veg option</span></li>
+              <li><b>Machiya café</b><span>closed on these dates</span></li>
+              <li class="kept"><b>Fushimi Inari lower gates</b><span>kept · gentle path</span></li></ul></div></div>` },
+        { n: 'Preference ranker', d: 'Dials + semantic match', t: 'Rank', kind: 'code',
+          lead: 'Ranks what is left by how well it fits this traveller.',
           how: [
-            '<b>Match each dial</b> to a place attribute: interests, crowds, price, distance.',
-            '<b>Match the residual text</b> by cosine similarity of embeddings.',
-            '<b>Take the weighted sum</b>, one score per place.',
+            '<b>Score</b> each place against the trip dials',
+            '<b>Match</b> “old Japan” by meaning, not keywords',
+            '<b>Judge crowds</b> for the actual dates',
           ],
-          math: fx('s(p) = Σ<sub>d</sub> w<sub>d</sub> · match<sub>d</sub>(p)')
-            + fx('old_japan(p) = cos(e<sub>text</sub>, e<sub>p</sub>)')
-            + fx('crowd_fit(p) = 1 − max(0, crowd(p) − tol) / (1 − tol)')
-            + calc('Kinkaku-ji in Golden Week: crowd 0.95, tol 0.14<br>crowd_fit = 1 − 0.81 / 0.86 = <b>0.06</b>'),
-          ex: tb(['Place', '#Interest<br>×.30', '#Old Japan<br>×.15', '#Quality<br>×.20', '#Price<br>×.10', '#Crowd<br>×.20', '#Dist.<br>×.05', '#Score'], [
-              ['Nishi Chaya teahouses', '.88', '.95', '.85', '.90', '.80', '.60', '<b>0.86</b>'],
-              ['Yanaka walk', '.77', '.90', '.75', '1.0', '.85', '.90', '<b>0.83</b>'],
+          ex: `<div class="ex2 wide"><div>${eh('Three places, scored')}${tb(['Place', '#Interests<br>×.30', '#Old Japan<br>×.15', '#Quality<br>×.20', '#Price<br>×.10', '#Crowd<br>×.20', '#Distance<br>×.05', '#Score'], [
+              ['Nishi Chaya teahouses', '.93', '.86', '.85', '.90', '.80', '.60', '<b>0.86</b>'],
+              ['Yanaka walk', '.80', '.83', '.75', '1.0', '.85', '.90', '<b>0.83</b>'],
               ['Kinkaku-ji', '.80', '.65', '.90', '.60', '<span class="bad">.06</span>', '.50', '<b>0.61</b>'],
-            ])
-            + calc('Nishi Chaya: .30×.88 + .15×.95 + .20×.85 + .10×.90 + .20×.80 + .05×.60 = <b>0.86</b>')
-            + nt('Old Japan is the residual-text match. Crowd uses the trip dates, so Golden Week sinks Kinkaku-ji.') },
-        { tab: 'Hand off', n: 'Diversify and hand off', kind: 'code',
-          lead: 'Keeps variety and hidden gems, then hands short ranked lists to C4.',
+            ])}${note('Crowd is judged for the trip dates. Golden Week sinks Kinkaku-ji.')}</div>
+            <div>${eh('“Feel like old Japan”, matched by meaning')}${rbars([['Nishi Chaya teahouses', .86], ['Yanaka walk', .83], ['Kinkaku-ji', .65], ['Shibuya Sky deck', .21, 1]])}
+              ${note('This match is the Old Japan column. It re-ranks places; it never removes one.')}</div></div>` },
+        { n: 'Shortlist builder', d: 'Variety, then hand-off to C4', t: 'Shortlist', kind: 'code',
+          lead: 'Turns the ranking into short, varied lists for the planner.',
           how: [
-            '<b>Pick per city with MMR:</b> a high score, but unlike what is already picked.',
-            '<b>Reserve hidden-gem slots</b> from the hidden_gem_share dial.',
-            '<b>Roll places up</b> into city scores.',
-            '<b>Hand off</b> about 30 places per city, with hours, durations and crowd curves.',
+            '<b>Keep variety</b>: skip near-duplicates',
+            '<b>Reserve slots</b> for hidden gems',
+            '<b>Roll up</b> place scores into city scores',
+            '<b>Hand</b> about 30 places per city to C4',
           ],
-          math: fx('MMR(p) = λ·s(p) − (1 − λ)·max<sub>q∈S</sub> sim(p, q)') + nt('λ = 0.7. S is the set picked so far.')
-            + fx('gem slots = ⌈0.30 · k⌉')
-            + fx('city(c) = 0.7 · mean(top 8 s) + 0.3 · coverage(c)') + nt('Coverage is the share of the traveller’s interests the city serves well.'),
-          ex: eh('Kyoto, after Fushimi Inari is picked') + tb(['Candidate', '#s(p)', '#Sim. to picked', '#MMR'], [
-              { c: ['Shojin lunch', '0.70', '0.15', '<b>0.45</b>'], cls: 'hi' },
-              ['Tofuku-ji', '0.74', '0.62', '0.33'],
-              ['Kennin-ji', '0.76', '0.80', '0.29'],
-            ]) + nt('Kennin-ji has the highest score on its own, but it is the most like what is already picked.')
-            + eh('Ranked cities → C4') + rbars([['Kanazawa', .81], ['Kyoto', .77], ['Tokyo', .72], ['Takayama', .70], ['Nara', .66]]) },
+          ex: `<div class="ex2"><div>${eh('Kyoto, after Fushimi Inari is picked')}${tb(['Candidate', '#Score', '#Like what’s picked', 'Order'], [
+              { c: ['Shojin lunch', '0.70', '0.15', pl('next', 'acc')], cls: 'hi' },
+              ['Tofuku-ji', '0.74', '0.62', pl('after that', 'mute')],
+              ['Kennin-ji', '0.76', '0.80', pl('later', 'mute')],
+            ])}${note('Kennin-ji has the highest score alone, but it is the most like what is already picked.')}</div>
+            <div>${eh('Ranked cities')}${rbars([['Kanazawa', .81], ['Kyoto', .77], ['Tokyo', .72], ['Takayama', .70], ['Nara', .66, 1]])}
+              ${note('The top 4 cities go to C4, with about 30 places each.')}</div></div>` },
       ] },
 
-    { id: 3, code: 'C3', name: 'Data feeds', short: 'Data feeds', kinds: ['data'], cls: 'is-data',
-      role: 'Facts with a source and a timestamp. Plans never rest on the LLM’s memory.',
-      in: 'Airlines, hotels, maps, places, events and crowd providers',
-      out: 'Places, times, crowds → C2, C4 · live fares → C5 · fresh facts → C6 · alerts → C8',
+    { id: 3, code: 'C3', name: 'Data feeds & knowledge repository', short: 'Data feeds & repository', kinds: ['data'], cls: 'is-data', seq: true,
+      role: 'Facts with a source and a time. Plans never rest on the LLM’s memory.',
+      in: 'Airline, hotel, weather, places, maps and events providers',
+      out: 'Repository → C2, C4 · live data → C5, C6, C8',
       subs: [
-        { tab: 'Sources', n: 'Sources and freshness', kind: 'data',
+        { n: 'Real-time & periodic feeds', d: 'Minutes vs days to months', t: 'Feeds', kind: 'data',
           lead: 'Two kinds of feed, split by how fast the truth changes.',
           how: [
-            '<b>Live feeds</b> are queried when needed: fares, rooms, weather, disruptions.',
-            '<b>Periodic feeds</b> are ingested in batches: places, maps, events, crowds.',
-            '<b>Every fact carries</b> its source and an as-of time.',
-            '<b>Stale facts are fetched again</b> before use, never shown as current.',
+            '<b>Real-time</b>: looked up when needed',
+            '<b>Periodic</b>: pulled on a schedule',
+            '<b>Every fact</b> carries a source and a time',
           ],
-          math: fx('usable(f) ⇔ now − f.as_of ≤ TTL(f.type)') + nt('One rule, applied in C2, C4, C5 and C6.')
-            + vars([['fares', '15 minutes'], ['rooms', '30 minutes'], ['weather', '3 hours'], ['events', '1 day'], ['hours', '7 days'], ['timetables', '30 days']]),
-          ex: tb(['Feed', 'Kind', 'Refresh', 'Read by'], [
-              ['Flights: fares, seats', pl('Live', 'acc'), 'each search', 'C5 · C6'],
-              ['Hotels: rates, rooms', pl('Live', 'acc'), 'each search', 'C5 · C6'],
-              ['Weather', pl('Live', 'acc'), 'hourly', 'C4 · C6'],
-              ['Disruptions', pl('Live', 'acc'), 'pushed', 'C8'],
-              ['Places: hours, access, prices', pl('Periodic'), 'weekly', 'C2 · C4 · C6'],
-              ['Maps and timetables', pl('Periodic'), 'monthly', 'C4 · C5'],
-              ['Festivals and events', pl('Periodic'), 'daily', 'C2 · C4'],
-              ['Crowd patterns', pl('Periodic'), 'weekly', 'C2 · C4'],
-            ]) },
-        { tab: 'Build', n: 'Build the repository', kind: 'data',
-          lead: 'Periodic feeds become one clean, queryable record per place.',
+          ex: `<div class="feedgrid">
+            <div class="fg"><p class="fg-h">${ic('zap')}Real-time<span>minutes</span></p><ul>
+              <li>${ic('plane')}<b>Flights</b><span>fares, seats, status</span></li>
+              <li>${ic('bed-double')}<b>Hotels</b><span>rates, rooms left</span></li>
+              <li>${ic('cloud-sun')}<b>Weather</b><span>forecasts, warnings</span></li></ul>
+              <p class="fg-n">Looked up live when C5, C6 or C8 need them. Never stored.</p></div>
+            <div class="fg"><p class="fg-h">${ic('refresh-cw')}Periodic<span>days to months</span></p><ul>
+              <li>${ic('map-pin')}<b>POIs</b><span>hours, access, prices</span></li>
+              <li>${ic('map')}<b>Maps</b><span>routes, travel times</span></li>
+              <li>${ic('party-popper')}<b>Festivals</b><span>events, holidays</span></li></ul>
+              <p class="fg-n">Pulled on a schedule into the knowledge repository.</p></div>
+          </div>` },
+        { n: 'Knowledge repository', d: 'Normalized, enriched, indexed', t: 'Repository', kind: 'data',
+          lead: 'Periodic feeds become one clean record per place.',
           how: [
-            '<b>Ingest</b> on a schedule, stamped with source and time.',
-            '<b>Normalize</b> to one schema, and merge duplicates into one place ID.',
-            '<b>Enrich</b> with derived attributes, each with a confidence.',
-            '<b>Index</b> for filters, geo search, embeddings and city profiles.',
+            '<b>Ingest</b> on a schedule',
+            '<b>Normalize</b> and merge duplicates',
+            '<b>Enrich</b>: stairs, veg, crowds',
+            '<b>Index</b> for filters, maps and meaning',
           ],
-          math: fx('match(a, b) = 0.5·name + 0.3·geo + 0.2·category') + nt('Name uses aliases and translations. Geo is 1 within 150 m.')
-            + fx('merge if match ≥ 0.85'),
-          ex: eh('Three feeds, one place') + `<div class="er"><ul>
-              <li><b>Kinkaku-ji</b><span>places feed · 35.0394, 135.7292</span></li>
-              <li><b>Golden Pavilion</b><span>reviews feed · 35.0393, 135.7290</span></li>
-              <li><b>Rokuon-ji</b><span>maps feed · 35.0395, 135.7293</span></li></ul>
-              <div class="er-out">${pl('match 0.97', 'acc')}${ic('arrow-right')}<span><span class="rec-id">P-11320</span><br><b>Kinkaku-ji</b></span></div></div>`
-            + eh('An enriched record') + `<div class="record">
+          ex: `<ol class="pipe">
+              <li><span class="pipe-ic">${ic('download')}</span><b>Ingest</b><span>Scheduled pulls, stamped with source and time</span></li>
+              <li><span class="pipe-ic">${ic('layers')}</span><b>Normalize</b><span>One schema, stable IDs, duplicates merged</span></li>
+              <li><span class="pipe-ic">${ic('sparkles')}</span><b>Enrich</b><span>Stairs, veg-friendly, crowd levels, each with a confidence</span></li>
+              <li><span class="pipe-ic">${ic('search')}</span><b>Index</b><span>Filters, geo, embeddings, city profiles</span></li></ol>
+            ${eh('One record')}<div class="record">
               <div class="rec-h"><span class="rec-id">P-20418</span><b>Nishi Chaya teahouses</b><span>Kanazawa</span></div>
-              <div class="rec-tags"><span>historic street</span><span>stairs: none · 0.9</span><span>veg nearby: yes · 0.7</span><span>crowd, Golden Week 10:00: 0.31</span><span>gem: 0.62</span><span>places feed · 3 days ago</span></div></div>` },
-        { tab: 'Signals', n: 'Derived signals', kind: 'data',
-          lead: 'What the planner needs is rarely in a feed. It is computed, with a confidence.',
-          how: [
-            '<b>Crowd curve</b> per place, hour and date, holidays included.',
-            '<b>Hidden-gem score:</b> high quality, low fame.',
-            '<b>Knee-safe:</b> steps and slope, from access data and photos.',
-            '<b>Veg-safe:</b> a vegetarian menu with no fish stock (dashi), confirmed.',
-          ],
-          math: fx('crowd(p, d, h) = min(1, base(p, weekday, h) × holiday(d))') + nt('holiday(d) = 1.6 in Golden Week.')
-            + fx('gem(p) = z(rating) − z(log reviews)')
-            + fx('knee_ok(p) = steps ≤ 100 ∧ slope ≤ 8%'),
-          ex: eh('Fushimi Inari, crowd by hour') + crowdChart()
-            + '<div class="ch-leg"><span style="--k:var(--accent)">3 May, Golden Week</span><span style="--k:var(--edge)">A normal weekday</span></div>'
-            + nt('At 07:00 the crowd is 0.16. By 11:00 it is 0.96. C4 uses this curve to time the visit.') },
+              <div class="rec-tags"><span>historic street</span><span>stairs: none · 0.9</span><span>veg nearby: yes · 0.7</span><span>crowds in Golden Week: low</span><span>hidden gem</span><span>places feed · 3 days ago</span></div></div>
+            ${note('“Kinkaku-ji”, “Golden Pavilion” and “Rokuon-ji” arrive from three feeds and become one place ID.')}` },
       ] },
 
-    { id: 4, code: 'C4', name: 'Planner / optimizer', short: 'Planner / optimizer', kinds: ['code'],
-      role: 'Builds whole itineraries that maximize the trip score.',
-      in: 'Ranked lists from C2 · trip state from C1 · travel times from C3',
-      out: 'Top-K itineraries → C5 · trade-off log → C7 · decisions it needs → C1',
+    { id: 4, code: 'C4', name: 'Itinerary optimizer', short: 'Itinerary optimizer', kinds: ['code'], seq: true, obj: true,
+      role: 'Builds whole itineraries with the best trip score.',
+      in: 'Shortlists (C2) · trip state (C1) · travel times (C3)',
+      out: 'Top-K plans → C5 · trade-off log → C7 · decisions → C1',
       subs: [
-        { tab: 'Trip score', n: 'The trip score', kind: 'code', terms: ['score'],
-          lead: 'One number to compare any two itineraries. Hard constraints are not in it, because they are never broken.',
+        { n: 'Trip score', d: 'The objective', t: 'Score', kind: 'code', terms: ['score'],
+          lead: 'One number to compare any two itineraries. Hard constraints are never in it.',
           how: [
-            '<b>Fit</b> rewards keeping to the trip dials: interests, crowds, pace, old Japan, hidden gems.',
-            '<b>Cost, transit and stay</b> are penalties, each normalized.',
-            '<b>Weights come from the dials.</b> A bad knee doubles the transit weight.',
-            '<b>Each next step</b> improves some of these terms.',
+            '<b>Fit</b> rewards keeping to the trip dials',
+            '<b>Cost, transit and stay</b> are penalties',
+            '<b>Weights</b> come from the dials',
+            '<b>Every step after this</b> raises the score',
           ],
           math: `<div class="eqn">S = ${T('fit')} − λ<sub>c</sub>·${T('cost')} − λ<sub>t</sub>·${T('transit')} − λ<sub>s</sub>·${T('stay')} − …</div>`
             + vars([['Fit', 'Σ<sub>d</sub> w<sub>d</sub> · adherence<sub>d</sub>, from 0 to 1'], ['Cost', 'estimated ₹ ÷ budget'], ['Transit', 'hours moving, between and within cities'],
                 ['Stay', 'Σ max(0, n<sub>c</sub> − ideal<sub>c</sub>)² + 0.5 per one-night stop + 3 per hotel change'], ['…', 'overload hours, late finishes']])
-            + fx('λ<sub>c</sub> = 0.15<br>λ<sub>t</sub> = 0.008 × 2 = 0.016 per hour<br>λ<sub>s</sub> = 0.02'),
+            + fx('λ<sub>c</sub> = 0.15<br>λ<sub>t</sub> = 0.008 × 2 = 0.016 per hour, doubled for the knee<br>λ<sub>s</sub> = 0.02'),
           ex: eh('Plan A · Tokyo 2 · Kanazawa 2 · Kyoto 2') + waterfall([
               ['Fit', 0, .88, 'fit', '+0.88'], ['Cost', .88, .74, 'cost', '−0.14'], ['Transit', .74, .59, 'transit', '−0.15'],
               ['Stay', .59, .47, 'stay', '−0.12'], ['Trip score', 0, .47, 'score', '0.47']])
             + calc('Cost 0.15 × 0.91 · Transit 0.016 × 9.5 h · Stay 0.02 × 6 (two hotel changes)') },
-        { tab: 'Cities', n: 'City selector', kind: 'code', terms: ['fit', 'transit', 'stay'],
-          lead: 'Which cities, in what order, for how many nights. Each move between cities is a leg.',
+        { n: 'City & leg planner', d: 'Cities, order, nights', t: 'Cities', kind: 'code', terms: ['fit', 'transit', 'stay'],
+          lead: 'Chooses the cities, their order and the nights in each. Each move is a leg.',
           how: [
-            '<b>Take the top cities</b> from C2, plus the arrival and departure airports.',
-            '<b>Enumerate</b> orders of 2 to 4 cities and every split of the 6 nights.',
-            '<b>Score each</b> on city value, leg hours and the stay penalty.',
-            '<b>Keep the best 3</b> city plans for the next steps.',
+            '<b>Try</b> every order of 2 to 4 of the top cities',
+            '<b>Split</b> the 6 nights between them',
+            '<b>Weigh</b> city value against train time and moves',
+            '<b>Keep</b> the best plan for 2, 3 and 4 cities',
           ],
-          math: fx('max Σ<sub>c</sub> city(c)·g(n<sub>c</sub>) − λ<sub>t</sub>·legs − λ<sub>s</sub>·Stay')
-            + fx('g(n) = 1 − e<sup>−n/τ<sub>c</sub></sup>') + nt('Each extra night adds less. τ is the ideal stay: Tokyo 2, Kanazawa 2, Kyoto 3.')
-            + fx('Σ n<sub>c</sub> = 6 · start near arrival · end near departure') + nt('Six cities give under 2,000 orders, so an exact search with pruning is fast.'),
-          ex: eh('Plan A, leg by leg') + `<ol class="route">
+          ex: `<div class="ex2 flip"><div>${eh('Plan A, leg by leg')}<ol class="route">
               <li class="stop">Tokyo <i>2 nights · land day 1</i></li>
               <li class="leg">${ic('train-front')}<b>Shinkansen, 2 h 30</b> · day 3, 10:24</li>
               <li class="stop">Kanazawa <i>2 nights</i></li>
               <li class="leg">${ic('train-front')}<b>Via Tsuruga, 2 h 10</b> · day 5, 10:00</li>
               <li class="stop">Kyoto <i>2 nights</i></li>
               <li class="leg">${ic('train-front')}<b>Haruka to KIX, 1 h 20</b> · day 7, 08:40</li>
-              <li class="stop">Fly home <i>day 7</i></li></ol>`
-            + tb(['City plan', '#Value', '#Legs', '#Stay', '#Total'], [
-              { c: ['A · Tokyo 2 · Kanazawa 2 · Kyoto 2', '1.34', '−0.10', '−0.12', '<b>1.12</b>'], cls: 'hi' },
-              ['C · Tokyo 1 · Kanazawa 2 · Takayama 1 · Kyoto 2', '1.45', '−0.16', '−0.20', '1.09'],
-              ['B · Tokyo 2 · Kyoto 4', '1.02', '−0.06', '−0.08', '0.88'],
-            ]) },
-        { tab: 'POIs', n: 'POI selector', kind: 'code', terms: ['fit', 'transit'],
-          lead: 'Fills each city’s hours with the best set of places that fits.',
+              <li class="stop">Fly home <i>day 7</i></li></ol></div>
+            <div>${eh('City plans tried, best first')}${tb(['City plan', '#Train time', '#Moves', '#City score', 'Kept'], [
+              { c: ['A · Tokyo 2 · Kanazawa 2 · Kyoto 2', '6.0 h', '2', '<b>1.13</b>', yes], cls: 'hi' },
+              { c: ['C · Tokyo 1 · Kanazawa 2 · Takayama 1 · Kyoto 2', '9.8 h', '3', '<b>1.09</b>', yes], cls: 'hi' },
+              ['Tokyo 1 · Kanazawa 2 · Kyoto 3', '6.0 h', '2', '1.06', ''],
+              ['Tokyo 2 · Kanazawa 1 · Kyoto 3', '6.0 h', '2', '1.04', ''],
+              ['Tokyo 2 · Takayama 2 · Kyoto 2', '9.4 h', '2', '1.00', ''],
+              { c: ['B · Tokyo 3 · Kyoto 3', '3.6 h', '1', '<b>0.91</b>', yes], cls: 'hi' },
+              ['Tokyo 2 · Kyoto 4', '3.6 h', '1', '0.89', ''],
+            ])}${note('Kept: the best plan with 2, 3 and 4 cities, so the traveller sees real choices.')}</div></div>` },
+        { n: 'Activity selector', d: 'Places that fit the hours', t: 'Activities', kind: 'code', terms: ['fit', 'transit'],
+          lead: 'Fills each city’s hours with the best places that fit.',
           how: [
-            '<b>Set a time budget</b> per city from its days and the pace dial: about 6 active hours a day.',
-            '<b>Choose the set</b> with the highest total score that fits the budget.',
-            '<b>Apply quotas:</b> at most 2 temples a day, at least one veg meal stop.',
-            '<b>Add a cluster bonus</b> for places close together, so days need less transit.',
+            '<b>Budget</b> about 6 active hours a day',
+            '<b>Pick</b> the best set that fits',
+            '<b>Quotas</b>: 2 temples a day, a veg meal stop',
+            '<b>Prefer</b> places close together',
           ],
-          math: fx('max Σ<sub>p</sub> s(p)·x<sub>p</sub> s.t. Σ<sub>p</sub> h<sub>p</sub>·x<sub>p</sub> ≤ H, x<sub>p</sub> ∈ {0, 1}') + nt('A 0/1 knapsack per city. h is visit time plus access time.')
-            + fx('H<sub>Kanazawa</sub> = 4 h on arrival day + 6 h = 10 h')
-            + fx('+0.05 if within 1 km of another chosen place'),
-          ex: eh('Kanazawa, H = 10 h') + tb(['Place', '#Hours', '#Score', ''], [
+          ex: `<div class="ex2"><div>${eh('Kanazawa: 10 hours to fill')}${tb(['Place', '#Hours', '#Score', ''], [
               { c: ['Nishi Chaya teahouses', '1.5', '0.86', yes], cls: 'hi' },
               { c: ['Higashi Chaya district', '2.0', '0.84', yes], cls: 'hi' },
               { c: ['Kenroku-en garden', '2.0', '0.80', yes], cls: 'hi' },
@@ -2700,329 +2714,335 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
               { c: ['D.T. Suzuki Museum', '1.5', '0.74', yes], cls: 'hi' },
               { c: ['Veg lunch, dashi-free', '1.0', '0.70', yes], cls: 'hi' },
               { c: ['21st Century Museum', '2.0', '0.66', no], cls: 'mute' },
-            ]) + calc('Chosen: 9.5 h of 10 h, total <b>4.72</b><br>Museum in, Suzuki out: 4.64, so the museum goes to the log') },
-        { tab: 'Base', n: 'Base locator', kind: 'code', terms: ['transit', 'cost'],
-          lead: 'Picks the neighbourhood to sleep in, close to where the days happen.',
+            ])}</div>
+            <div>${eh('How the 10 hours are used')}<div class="tbar">
+              <i style="flex:1.5">Nishi</i><i style="flex:2">Higashi</i><i style="flex:2">Kenroku</i><i style="flex:1.5">Nagamachi</i><i style="flex:1.5">Suzuki</i><i style="flex:1">Lunch</i><i class="free" style="flex:.5"></i></div>
+              <div class="tbar-l"><span>0 h</span><span>9.5 h used</span><span>10 h</span></div>
+              ${note('Adding the 21st Century Museum (2 h) would mean dropping D.T. Suzuki for a lower total, so the museum goes to the trade-off log.')}
+              <div class="chips-row">${pl('2 temples a day at most', 'mute')}${pl('1 veg meal stop a day', 'mute')}${pl('Close together: bonus', 'mute')}</div></div></div>` },
+        { n: 'Base locator', d: 'Where to sleep', t: 'Base', kind: 'code', terms: ['transit', 'cost'],
+          lead: 'Picks where to sleep in each city, close to where the days happen.',
           how: [
-            '<b>List candidates:</b> neighbourhoods with rooms in budget and a lift.',
-            '<b>Add up travel</b> to every chosen place, and to the station with luggage.',
-            '<b>Add the room price</b> as a share of the budget.',
-            '<b>Pick the lowest penalty.</b> A ryokan earns a small old-Japan bonus.',
+            '<b>Compare</b> areas with rooms and lifts',
+            '<b>Add up</b> travel to the day’s places',
+            '<b>Count</b> station trips twice, for luggage',
+            '<b>Weigh</b> the room price',
           ],
-          math: fx('base = argmin<sub>b</sub> λ<sub>t</sub>·T(b) + λ<sub>c</sub>·price(b) / budget − bonus(b)')
-            + fx('T(b) = Σ<sub>p</sub> t(b, p) + 2 × 2 × t(b, station)') + nt('Trips to the station count double: luggage, and a bad knee.')
-            + calc('Gion: 0.016 × 4.07 h + 0.15 × ₹46k / ₹3.2 L − 0.02 = <b>0.067</b>'),
-          ex: eh('Kyoto, 2 nights') + tb(['Base', '#Travel', '#Station', '#Room a night', '#Penalty'], [
+          ex: `<div class="ex2"><div>${eh('Kyoto, 2 nights')}${tb(['Base', '#Travel', '#To station', '#Room a night', '#Penalty'], [
               { c: ['Karasuma-Shijo', '2.8 h', '10 min', '₹15k', '<b>0.058</b>'], cls: 'hi' },
               ['Kyoto Station', '2.9 h', '5 min', '₹14k', '0.060'],
               ['Gion, ryokan', '4.1 h', '25 min', '₹23k', '0.067'],
-            ]) + nt('Gion loses by 0.009: 25 minutes from the station and ₹16k more for two nights. The miss goes to the trade-off log for C7.') },
-        { tab: 'Routes', n: 'Daily routes', kind: 'code', terms: ['fit', 'transit'],
-          lead: 'Orders each day around opening hours, crowd curves and the knee.',
+            ])}${note('The lowest penalty wins: travel time and room price, minus a small bonus for a ryokan.')}</div>
+            <div>${eh('Why not the Gion ryokan?')}<ul class="whynot"><li>25 minutes to the station, with bags and a bad knee</li><li>₹16k more for the two nights</li><li>The old-Japan bonus does not cover the gap</li></ul>
+              ${note('The miss goes to the trade-off log, so C7 can offer it back.')}</div></div>` },
+        { n: 'Day scheduler', d: 'Order, timing, crowds', t: 'Schedule', kind: 'code', terms: ['fit', 'transit'],
+          lead: 'Orders and times each day around opening hours, crowds and the knee.',
           how: [
-            '<b>Keep arrival and departure days light:</b> land, check in, one walk nearby.',
-            '<b>Order the stops</b> to cut transit, inside opening hours.',
-            '<b>Move crowded places</b> to their quiet hours, using the crowd curve from C3.',
-            '<b>Cap the day:</b> about 6 active hours and 4 km of walking, with a rest.',
+            '<b>Keep</b> arrival and departure days light',
+            '<b>Order</b> stops to cut travel',
+            '<b>Visit</b> busy places at quiet hours',
+            '<b>Cap</b> the day: 6 hours, 4 km, a rest',
           ],
-          math: fx('max Σ<sub>p</sub> s(p)·(1 − γ·crowd(p, t<sub>p</sub>)) − λ<sub>t</sub>·travel') + nt('γ = 0.6 for “hate crowds”. A small orienteering problem with time windows, solved exactly per day.')
-            + fx('open<sub>p</sub> ≤ t<sub>p</sub>, t<sub>p</sub> + d<sub>p</sub> ≤ close<sub>p</sub>, Σ walk ≤ 4 km')
-            + calc('Fushimi Inari, s = 0.80<br>07:00 → 0.80 × (1 − 0.6 × 0.16) = <b>0.72</b><br>11:00 → 0.80 × (1 − 0.6 × 0.96) = <b>0.34</b>'),
-          ex: eh('Day 6 · 3 May · Kyoto') + dayStrip([[7, 8.5, 'visit'], [8.75, 10.25, 'visit'], [10.75, 12.25, 'meal'], [12.5, 15.5, 'rest'], [16.5, 18.5, 'visit']])
-            + tb(['Time', 'Stop', '#Crowd'], [
-              ['07:00–08:30', 'Fushimi Inari, lower gates', '0.16'],
-              ['08:45–10:15', 'Tofuku-ji', '0.30'],
-              ['10:45–12:15', 'Shojin lunch, dashi-free', '–'],
-              ['12:30–15:30', 'Rest at the hotel', '–'],
-              ['16:30–18:30', 'Gion lanes at golden hour', '0.55'],
-            ]) + `<div class="chips-row">${pl('Walking 3.6 of 4 km', 'ok')}${pl('Rest 3 h', 'ok')}${pl('Summit path skipped: steep stairs', 'bad')}</div>` },
-        { tab: 'Top-K', n: 'Top-K and the trade-off log', kind: 'code', terms: ['score'],
-          lead: 'Keeps the best few plans that really differ, and writes down every rejection.',
+          ex: `<div class="ex2"><div>${eh('Day 6 · 3 May · Kyoto')}${dayStrip([[7, 8.5, 'visit'], [8.75, 10.25, 'visit'], [10.75, 12.25, 'meal'], [12.5, 15.5, 'rest'], [16.5, 18.5, 'visit']])}
+              ${tb(['Time', 'Stop', '#Crowd'], [
+                ['07:00–08:30', 'Fushimi Inari, lower gates', '0.16'],
+                ['08:45–10:15', 'Tofuku-ji', '0.30'],
+                ['10:45–12:15', 'Shojin lunch, dashi-free', '–'],
+                ['12:30–15:30', 'Rest at the hotel', '–'],
+                ['16:30–18:30', 'Gion lanes at golden hour', '0.55'],
+              ])}<div class="chips-row">${pl('Walking 3.6 of 4 km', 'ok')}${pl('Rest 3 h', 'ok')}${pl('Summit path skipped: stairs', 'bad')}</div></div>
+            <div>${eh('Why Fushimi Inari at 07:00')}${crowdChart()}
+              <div class="ch-leg"><span style="--k:var(--accent)">3 May, Golden Week</span><span style="--k:var(--edge)">A normal weekday</span></div>
+              ${note('Crowd 0.16 at 07:00 against 0.96 at 11:00. For this traveller the early slot is worth twice as much.')}</div></div>` },
+        { n: 'Top-K & trade-off log', d: 'Best plans, rejections', t: 'Top-K', kind: 'code', terms: ['score'],
+          lead: 'Keeps the best few plans, and writes down everything it gave up.',
           how: [
-            '<b>Assemble full plans</b> from city plans, places, bases and routes.',
-            '<b>Keep the top K = 3</b> by trip score, forced to differ.',
-            '<b>Log every rejection</b> with its stage, reason and cost.',
-            '<b>Call C1</b> when no plan is feasible, or the top two are within 0.02.',
+            '<b>Assemble</b> full plans from the steps above',
+            '<b>Keep</b> the 3 best that really differ',
+            '<b>Log</b> every rejection with its reason',
+            '<b>Ask C1</b> when nothing fits or two plans tie',
           ],
-          math: fx('Jaccard(I<sub>j</sub>, I<sub>k</sub>) ≤ 0.6 for any two kept plans') + nt('Measured on the places they visit.')
-            + fx('log entry = { item, stage, reason, rule, Δscore }')
-            + fx('ask C1 if |S<sub>1</sub> − S<sub>2</sub>| &lt; 0.02 or nothing is feasible'),
-          ex: eh('Top-K, K = 3') + tb(['Plan', 'Cities and nights', '#Score'], [
+          ex: `<div class="ex2"><div>${eh('Top-K, K = 3')}${tb(['Plan', 'Cities and nights', '#Trip score'], [
               { c: ['A · Classic, slow', 'Tokyo 2 · Kanazawa 2 · Kyoto 2', '<b>0.47</b>'], cls: 'hi' },
-              ['B · Fewer moves', 'Tokyo 2 · Kyoto 4', '0.43'],
+              ['B · Fewer moves', 'Tokyo 3 · Kyoto 3', '0.43'],
               ['C · Mountain towns', 'Tokyo 1 · Kanazawa 2 · Takayama 1 · Kyoto 2', '0.35'],
-            ]) + eh('Trade-off log') + tb(['Item', 'Stage', 'Reason', 'Rule', '#Δ'], [
-              ['Kinkaku-ji', 'Rank', 'Golden Week crowds all day', pl('soft'), '−0.03'],
-              ['Inari summit', 'Routes', 'Steep stairs, bad knee', pl('hard', 'bad'), '–'],
-              ['Gion ryokan', 'Base', '₹16k more, far from station', pl('soft'), '−0.01'],
-              ['21st Century Museum', 'POIs', 'No hours left in Kanazawa', pl('soft'), '−0.01'],
-            ]) },
+            ])}${note('Any two kept plans share at most 60% of their places.')}</div>
+            <div>${eh('Trade-off log')}${tb(['Item', 'Step', 'Reason', '#Score lost'], [
+              ['Kinkaku-ji', 'Rank', 'Golden Week crowds all day', '0.03'],
+              ['Inari summit', 'Schedule', 'Steep stairs, a hard rule', '–'],
+              ['Gion ryokan', 'Base', '₹16k more, far from station', '0.01'],
+              ['21st Century Museum', 'Activities', 'No hours left in Kanazawa', '0.01'],
+            ])}${note('C7 explains these. C1 asks about any the traveller may want back.')}</div></div>` },
       ] },
 
-    { id: 5, code: 'C5', name: 'Booking search', short: 'Booking search', kinds: ['code'],
+    { id: 5, code: 'C5', name: 'Booking option search', short: 'Booking search', kinds: ['code'], seq: true,
       role: 'Finds real options for every slot in each plan. Search only, no booking.',
       in: 'Top-K itineraries from C4 · live fares and rooms from C3',
-      out: 'Each itinerary with ranked options per slot → C6',
+      out: 'Bundles of options for each itinerary → C6',
       subs: [
-        { tab: 'Slots', n: 'Slots from the itinerary', kind: 'code',
-          lead: 'Every bookable need in a plan becomes a typed search with a time window.',
+        { n: 'Slot builder', d: 'Needs + time windows', t: 'Slots', kind: 'code',
+          lead: 'Turns each plan into typed searches with time windows.',
           how: [
-            '<b>Walk the plan</b> day by day: flights, nights, legs, timed tickets.',
-            '<b>Derive each window</b> from its neighbours, so day 1 is usable and trains leave after checkout.',
-            '<b>Carry the constraints</b> from the trip state: 2 adults, a lift, veg, the budget.',
+            '<b>List</b> every flight, night, train and ticket',
+            '<b>Set</b> each time window from the plan',
+            '<b>Carry</b> the traveller’s constraints',
           ],
-          math: fx('slot = (type, where, window, constraints)')
-            + fx('flight lands ≤ 14:00 on day 1')
-            + fx('train departs ≥ checkout + 30 min')
-            + fx('at the airport ≥ 3 h before departure'),
-          ex: eh('Plan A, nine slots') + `<ul class="slots">${[
+          ex: `<div class="ex2"><div>${eh('Getting there and around')}${slots([
               ['plane', 'BLR → Tokyo', 'lands 28 Apr, by 14:00', '2 adults'],
-              ['bed-double', 'Tokyo, Ueno', '28–30 Apr · 2 nights', 'lift'],
               ['train-front', 'Tokyo → Kanazawa', '30 Apr · 09:30–11:30', 'reserved seats'],
-              ['bed-double', 'Kanazawa, Higashi Chaya', '30 Apr – 2 May', 'lift'],
               ['train-front', 'Kanazawa → Kyoto', '2 May · 10:00–12:00', 'via Tsuruga'],
-              ['bed-double', 'Kyoto, Karasuma-Shijo', '2–4 May · 2 nights', 'lift'],
               ['train-front', 'Kyoto → KIX', '4 May · at KIX by 10:25', 'Haruka'],
               ['plane', 'KIX → BLR', '4 May · after 13:00', '2 adults'],
+            ])}</div>
+            <div>${eh('Stays and tickets')}${slots([
+              ['bed-double', 'Tokyo, Ueno', '28–30 Apr · 2 nights', 'lift'],
+              ['bed-double', 'Kanazawa, Higashi Chaya', '30 Apr – 2 May', 'lift'],
+              ['bed-double', 'Kyoto, Karasuma-Shijo', '2–4 May · 2 nights', 'lift'],
               ['ticket', 'Shojin lunch', '3 May · 10:45', 'veg, dashi-free'],
-            ].map(([i, w, t, c]) => `<li>${ic(i)}<b>${w}</b><span>${t}</span><em>${c}</em></li>`).join('')}</ul>` },
-        { tab: 'Rank', n: 'Rank options per slot', kind: 'code', terms: ['cost', 'transit'],
-          lead: 'Price alone picks badly. Each option is ranked by money plus time.',
+            ])}${note('Windows come from the plan: land by 14:00 so day 1 is usable, trains after checkout, at the airport 3 h early.')}</div></div>` },
+        { n: 'Option ranker', d: 'Money + time', t: 'Rank', kind: 'code', terms: ['cost', 'transit'],
+          lead: 'Ranks real options. The cheapest is not always the best.',
           how: [
-            '<b>Query live</b> fares, rooms and seats for each slot.',
-            '<b>Drop</b> anything outside the window or the constraints.',
-            '<b>Rank by generalized cost:</b> price, plus time valued in rupees, plus penalties.',
-            '<b>Keep the top 3</b> per slot.',
+            '<b>Search</b> live fares, rooms and seats',
+            '<b>Drop</b> options outside the window',
+            '<b>Rank</b> by price plus the value of time',
+            '<b>Keep</b> the top 3 per slot',
           ],
-          math: fx('g(o) = price(o) + VoT · hours(o) · travellers + penalties(o)')
-            + vars([['VoT', '₹1,200 an hour per person, from the budget dial'], ['penalty', '₹5k per connection, for the bad knee']])
-            + fx('buy the rail pass only if pass &lt; Σ fares it covers'),
-          ex: eh('BLR → Tokyo, 28 Apr, 2 adults') + tb(['Option', '#Price', '#Time', '#Time cost', '#Penalty', '#g(o)'], [
+          ex: `<div class="ex2 wide"><div>${eh('BLR → Tokyo, 28 Apr, 2 adults')}${tb(['Option', '#Price', '#Flight time', '#Time in ₹', '#Knee', '#Total'], [
               ['via Singapore', '₹82k', '11 h 40', '₹28.0k', '₹5k', '₹115.0k'],
               ['via Delhi', '₹68k', '16 h 20', '₹39.2k', '₹5k', '₹112.2k'],
               { c: ['via Bangkok', '₹71k', '12 h 30', '₹30.0k', '₹5k', '<b>₹106.0k</b>'], cls: 'hi' },
-            ]) + nt('Bangkok wins on total cost. Delhi is cheaper and Singapore is faster.')
-            + eh('Rail for Plan A, per person, approximate fares') + `<div class="cmp2"><div><span>7-day JR Pass</span><b>¥50,000</b></div>
-              <div class="is-pick"><span>Single tickets: ¥14.4k + ¥7.8k + ¥3.6k</span><b>≈ ¥25,800</b></div></div>` },
-        { tab: 'Bundle', n: 'Bundle per itinerary', kind: 'code', terms: ['cost', 'transit'],
-          lead: 'Combines slot options into consistent bundles, and keeps the best ones.',
+            ])}${note('Time is valued at ₹1,200 an hour per person, and each connection adds ₹5k for the knee. Bangkok wins: Delhi is cheaper, Singapore is faster.')}</div>
+            <div>${eh('Rail: pass or single tickets?')}<div class="cmp2"><div><span>7-day JR Pass</span><b>¥50,000</b></div>
+              <div class="is-pick"><span>Single tickets</span><b>≈ ¥25,800</b></div></div>${note('Per person, approximate fares for Plan A’s three train legs. Single tickets win.')}</div></div>` },
+        { n: 'Bundle assembler', d: 'Consistent sets → C6', t: 'Bundle', kind: 'code', terms: ['cost', 'transit'],
+          lead: 'Builds consistent sets of options for each plan, ready to check.',
           how: [
-            '<b>Beam search</b> through the slots in time order, keeping the best 20 partial bundles.',
-            '<b>Check each link:</b> landing to check-in, checkout to train.',
-            '<b>Keep the top 3 bundles</b> per itinerary and pass them to C6.',
+            '<b>Combine</b> options slot by slot',
+            '<b>Check</b> each link: landing to check-in',
+            '<b>Keep</b> the 3 best bundles per plan',
           ],
-          math: fx('g(B) = Σ<sub>s</sub> g(o<sub>s</sub>)')
-            + fx('arrive(o<sub>s</sub>) + buffer ≤ depart(o<sub>s+1</sub>)') + nt('A beam of 20 keeps 9 slots × 3 options fast.'),
-          ex: eh('Plan A, top 3 bundles') + tb(['#', 'Flights', 'Kyoto base', '#Bookable', '#g(B)'], [
+          ex: `<div class="ex2"><div>${eh('Plan A, top 3 bundles')}${tb(['#', 'Flights', 'Kyoto base', '#Bookable', '#vs best'], [
               { c: ['1', 'via Bangkok, both ways', 'Karasuma-Shijo', '₹2.38 L', '<b>best</b>'], cls: 'hi' },
               ['2', 'via Delhi', 'Kyoto Station', '₹2.31 L', '+₹4k'],
               ['3', 'via Singapore', 'Karasuma-Shijo', '₹2.49 L', '+₹9k'],
-            ]) + eh('Bundle 1, ₹2.38 L bookable') + `<div class="stack" role="img" aria-label="Flights 1.15 lakh, hotels 0.88, rail 0.29, tickets 0.06">
+            ])}${note('“vs best” counts money and time together, so the cheapest bundle is not first.')}</div>
+            <div>${eh('Bundle 1, ₹2.38 L bookable')}<div class="stack" role="img" aria-label="Flights 1.15 lakh, hotels 0.88, rail 0.29, tickets 0.06">
               <i style="flex:115;background:var(--accent)"></i><i style="flex:88;background:var(--accent-2)"></i><i style="flex:29;background:var(--t-transit)"></i><i style="flex:6;background:var(--amber)"></i></div>
-              <div class="stack-l"><span style="--k:var(--accent)">Flights <b>₹1.15 L</b></span><span style="--k:var(--accent-2)">Hotels <b>₹0.88 L</b></span><span style="--k:var(--t-transit)">Rail <b>₹0.29 L</b></span><span style="--k:var(--amber)">Tickets <b>₹0.06 L</b></span></div>`
-            + nt('With ₹0.77 L of daily spend, the trip comes to ₹3.15 L: 0.98 of the budget.') },
+              <div class="stack-l"><span style="--k:var(--accent)">Flights <b>₹1.15 L</b></span><span style="--k:var(--accent-2)">Hotels <b>₹0.88 L</b></span><span style="--k:var(--t-transit)">Rail <b>₹0.29 L</b></span><span style="--k:var(--amber)">Tickets <b>₹0.06 L</b></span></div>
+              ${note('Add ₹0.77 L of daily spend and the trip comes to ₹3.15 L, just inside the ₹3.2 L budget.')}</div></div>` },
       ] },
 
-    { id: 6, code: 'C6', name: 'Validator', short: 'Validator', kinds: ['code'],
-      role: 'Re-checks every plan on live data, then gives it a final score.',
-      in: 'Itineraries with options from C5 · fresh facts from C3',
-      out: 'Valid, scored plans → C7 · repairs → C4 · rejections → trade-off log',
+    { id: 6, code: 'C6', name: 'Feasibility validator', short: 'Feasibility validator', kinds: ['code'], seq: true,
+      role: 'Re-checks every plan on live data, then scores it again.',
+      in: 'Bundles from C5 · fresh facts from C3',
+      out: 'Scored plans → C7 · repairs → C4 · rejections → log',
       subs: [
-        { tab: 'Checks', n: 'Hard checks on real data', kind: 'code',
-          lead: 'Every rule is code, run on the quoted times and prices.',
+        { n: 'Constraint checks', d: 'On real times and prices', t: 'Check', kind: 'code',
+          lead: 'Checks every rule in code, on quoted times and prices.',
           how: [
-            '<b>Time:</b> each stop inside its hours on that date, and legs connect with buffers.',
-            '<b>Body:</b> walking, stairs and active hours within limits.',
-            '<b>Food:</b> a veg, dashi-free meal near lunch and dinner every day.',
-            '<b>Money and facts:</b> total within budget, every fact within its TTL, rooms still free.',
+            '<b>Time</b>: hours, buffers, connections',
+            '<b>Body</b>: walking, stairs, active hours',
+            '<b>Food</b>: a veg meal at lunch and dinner',
+            '<b>Money and facts</b>: budget, freshness, availability',
           ],
-          math: fx('valid(I) = ∧<sub>k</sub> check<sub>k</sub>(I)') + nt('One failed check fails the plan.')
-            + fx('land + 90 min + transfer ≤ first stop')
-            + fx('at the airport ≥ departure − 3 h'),
-          ex: tb(['Check', 'A', 'B', 'C'], [
+          ex: `<div class="ex2 wide"><div>${tb(['Check', 'A', 'B', 'C'], [
               ['Opening hours on the date', yes, yes, yes],
               ['Connections and buffers', yes, yes, yes],
               ['Walking ≤ 4 km a day', `${yes} 3.6`, `${no} 4.6, day 5`, yes],
               ['Stairs low at every stop', yes, yes, yes],
               ['Veg meal at lunch and dinner', yes, yes, yes],
               ['Total ≤ ₹3.2 L', `${yes} 3.15`, `${yes} 2.69`, `${yes} 3.04`],
-              ['Facts within their TTL', yes, yes, yes],
+              ['Facts within their freshness limit', yes, yes, yes],
               ['Rooms and seats still free', yes, yes, `${no} Takayama`],
               { c: ['<b>Result</b>', pl('Valid', 'ok'), pl('Repair', 'warn'), pl('Reject', 'bad')], cls: 'tot' },
-            ]) },
-        { tab: 'Repair', n: 'Reject or repair', kind: 'code',
-          lead: 'A failure is fixed locally by C4, or the plan is rejected with a reason.',
+            ])}</div>
+            <div>${eh('Each rule is plain code')}<pre class="rules">walking(day)       ≤ 4 km
+stairs(stop)       = low
+veg_meal(day)      lunch and dinner
+open(stop, date, time)
+buffer(leg)        ≥ 30 min
+total(plan)        ≤ ₹3.2 L
+age(fact)          ≤ freshness limit
+rooms_left(night)  ≥ 1</pre>${note('Rules come from the trip state’s hard constraints, so a new constraint needs no new prompt.')}</div></div>` },
+        { n: 'Repair or reject', d: 'Fix locally, or drop', t: 'Repair', kind: 'code',
+          lead: 'Fixes small failures locally and drops the rest, with a reason.',
           how: [
-            '<b>A local failure</b>, one day or one slot, goes back to C4 with the failing rule pinned.',
-            '<b>C4 re-solves only that day.</b> The plan is then checked again from scratch.',
-            '<b>A structural failure</b>, or two failed repairs, means reject.',
-            '<b>Every rejection</b> goes to the trade-off log for C7.',
+            '<b>One bad day</b>: back to C4 to fix it',
+            '<b>A bigger problem</b>: reject the plan',
+            '<b>Two failed repairs</b>: reject',
+            '<b>Every rejection</b> goes to the log',
           ],
-          math: fx('repair if days affected ≤ 1 and rounds &lt; 2')
-            + fx('else reject → log { plan, check, reason }'),
           ex: `<div class="cases">
               <div class="case"><p class="case-h">${pl('Repair', 'warn')}<b>Plan B · day 5</b></p><p>Walking is 4.6 km, over the 4 km limit.</p>
                 <p class="case-fix">${ic('arrow-right')}<span>C4 swaps a 1.2 km walk for a 6-minute taxi. Walking drops to 3.4 km, for ₹1.2k.</span></p>
                 <p class="case-r">${pl('Valid', 'ok')}after one round</p></div>
               <div class="case"><p class="case-h">${pl('Reject', 'bad')}<b>Plan C · Takayama</b></p><p>No rooms on 1 May. The nearest are 40 minutes away by bus.</p>
-                <p class="case-fix">${ic('arrow-right')}<span>That adds 1.3 h of transit and a new base, which is a structural change.</span></p>
+                <p class="case-fix">${ic('arrow-right')}<span>That adds 1.3 h of transit and a new base, which is too big to repair.</span></p>
                 <p class="case-r">Logged: <code>{ plan: C, check: rooms, reason: "sold out, 1 May" }</code></p></div>
             </div>` },
-        { tab: 'Final score', n: 'Final trip score', kind: 'code', terms: ['score'],
-          lead: 'Scores each valid plan again with quoted prices and real times.',
+        { n: 'Final scorer', d: 'Score with real quotes', t: 'Score', kind: 'code', terms: ['score'],
+          lead: 'Scores every valid plan and bundle again, with real numbers.',
           how: [
-            '<b>Replace estimates</b> with quotes: cost from bundles, transit from timetables.',
-            '<b>Run the trip score</b> from C4 again, with the same weights.',
-            '<b>Re-rank.</b> If the order changes, that is logged too.',
+            '<b>Swap</b> estimates for real quotes',
+            '<b>Re-score</b> with the same trip score',
+            '<b>Re-rank</b> plans and bundles',
+            '<b>Send</b> the best bundle per plan to C7',
           ],
-          math: fx('S<sub>final</sub> = Fit − λ<sub>c</sub>·Cost<sub>quoted</sub> − λ<sub>t</sub>·Transit<sub>actual</sub> − λ<sub>s</sub>·Stay')
-            + calc('A: 0.88 − 0.15 − 0.15 − 0.12 = <b>0.46</b><br>B: 0.76 − 0.13 − 0.12 − 0.08 = <b>0.43</b>'),
-          ex: tb(['Plan', '#Estimate', '#Final', 'What changed'], [
-              { c: ['A · Classic, slow', '0.47', '<b>0.46</b>', 'Golden Week fares, ₹22k over the estimate'], cls: 'hi' },
-              ['B · Fewer moves', '0.43', '<b>0.43</b>', 'A cheaper Kyoto hotel, one taxi added'],
-              { c: ['C · Mountain towns', '0.35', '–', 'Rejected: no rooms'], cls: 'mute' },
-            ]) + nt('A stays first. Both valid plans go to C7.') },
+          ex: `<div class="ex2 wide"><div>${eh('Every plan and bundle, scored again')}${tb(['Plan · bundle', '#Estimate', '#Final', 'What changed'], [
+              { c: ['A · 1 · Bangkok, Karasuma', '0.47', '<b>0.46</b>', 'Fares ₹22k over the estimate'], cls: 'hi' },
+              ['A · 2 · Delhi, Kyoto Station', '0.47', '0.45', 'Cheaper, but a long flight eats day 1'],
+              { c: ['A · 3 · Singapore', '0.47', '–', 'Rejected: ₹3.26 L, over budget'], cls: 'mute' },
+              { c: ['B · 1 · Bangkok', '0.43', '<b>0.43</b>', 'Cheaper Kyoto hotel, one taxi'], cls: 'hi' },
+              ['B · 2 · Delhi', '0.43', '0.42', 'Same long flight as A · 2'],
+              { c: ['C · all bundles', '0.35', '–', 'Rejected: no rooms in Takayama'], cls: 'mute' },
+            ])}</div>
+            <div>${eh('Sent to C7')}<div class="tiles">
+              <div class="tile is-pick"><strong>A · Classic, slow</strong><b>0.46</b><span>Bundle 1 · ₹3.15 L</span></div>
+              <div class="tile"><strong>B · Fewer moves</strong><b>0.43</b><span>Bundle 1 · ₹2.69 L</span></div></div>
+              ${note('The best bundle of each valid plan moves on. A stays first, but by less than C4 estimated.')}</div></div>` },
       ] },
 
-    { id: 7, code: 'C7', name: 'Presentation & narration', short: 'Presentation', kinds: ['llm'], cls: 'is-llm',
+    { id: 7, code: 'C7', name: 'Plan presenter & narrator', short: 'Presenter & narrator', kinds: ['llm'], cls: 'is-llm', seq: false,
       role: 'Explains the plans using only what is in them.',
-      in: 'Valid plans from C6 · trade-off log from C4 and C6 · trip state from C1',
+      in: 'Valid plans (C6) · trade-off log (C4, C6) · trip state (C1)',
       out: 'Itinerary and narration → traveller · follow-ups → C1',
       subs: [
-        { tab: 'Narrate', n: 'Narrate from the plan', kind: 'llm',
-          lead: 'The LLM writes the words. Every claim must point to a field in the plan.',
+        { n: 'Grounded narration', d: 'Every claim cited', t: 'Narrate', kind: 'llm',
+          lead: 'The LLM writes the story. Every claim points to the plan.',
           how: [
-            '<b>Input</b> is the plan as JSON, its scores and the top trade-offs.',
-            '<b>The LLM writes</b> a short story per plan, citing fields.',
-            '<b>A checker</b> pulls every number, name and time from the text and matches it to the JSON.',
-            '<b>A mismatch</b> means rewrite, twice at most, then fall back to a template.',
+            '<b>Write</b> from the plan’s data only',
+            '<b>Cite</b> a field for every claim',
+            '<b>Check</b> every number and name in code',
+            '<b>Rewrite</b> on any mismatch',
           ],
-          math: fx('faithful = matched claims / all claims') + fx('publish only if faithful = 1'),
-          ex: `<div class="narr">Plan A keeps it slow: <mark>two nights each<sup>1</sup></mark> in Tokyo, Kanazawa and Kyoto, with <mark>6 hours<sup>2</sup></mark> on trains between cities. On <mark>3 May<sup>3</sup></mark> you reach Fushimi Inari at <mark>07:00<sup>4</sup></mark>, before the crowds, and walk the <mark>lower gates<sup>5</sup></mark>.</div>
-            <ol class="srcs"><li><code>cities[*].nights = 2</code>${yes}</li><li><code>legs.hours = 6.0</code>${yes}</li><li><code>days[6].date = "3 May"</code>${yes}</li>
-            <li><code>days[6].stops[0].start = "07:00"</code>${yes}</li><li><code>days[6].stops[0].part = "lower gates"</code>${yes}</li></ol>`
-            + calc('faithful = 5 / 5 = <b>1</b> → publish') },
-        { tab: 'Left out', n: 'What was left out, and why', kind: 'llm',
-          lead: 'Picks the trade-offs the traveller will notice, and explains each in a line.',
+          ex: `<div class="ex2"><div>${eh('What the traveller reads')}<div class="narr">Plan A keeps it slow: <mark>two nights each<sup>1</sup></mark> in Tokyo, Kanazawa and Kyoto, with <mark>6 hours<sup>2</sup></mark> on trains between cities. On <mark>3 May<sup>3</sup></mark> you reach Fushimi Inari at <mark>07:00<sup>4</sup></mark>, before the crowds, and walk the <mark>lower gates<sup>5</sup></mark>.</div></div>
+            <div>${eh('What the checker matched')}<ol class="srcs"><li><code>cities[*].nights = 2</code>${yes}</li><li><code>legs.hours = 6.0</code>${yes}</li><li><code>days[6].date = "3 May"</code>${yes}</li>
+              <li><code>days[6].stops[0].start = "07:00"</code>${yes}</li><li><code>days[6].stops[0].part = "lower gates"</code>${yes}</li></ol>
+              <div class="chips-row">${pl('5 of 5 claims match', 'ok')}${pl('Publish', 'acc')}</div></div></div>` },
+        { n: 'Trade-off explainer', d: 'What was left out', t: 'Explain', kind: 'llm',
+          lead: 'Explains what was left out, and why.',
           how: [
-            '<b>Read the trade-off log</b> from C4 and C6.',
-            '<b>Rank entries</b> by how much the traveller would notice them.',
-            '<b>Explain the top 3</b> in plain words, and offer to undo one.',
+            '<b>Read</b> the trade-off log',
+            '<b>Pick</b> what the traveller will notice',
+            '<b>Explain</b> each in one line',
+            '<b>Offer</b> to undo one',
           ],
-          math: fx('salience(e) = 0.6·fame(item) + 0.4·|Δ| / max|Δ|') + nt('A hard rule counts as the largest |Δ|. A famous place that was dropped comes first.'),
-          ex: tb(['Log entry', '#Fame', '#|Δ|', '#Salience'], [
-              { c: ['Kinkaku-ji', '0.98', '0.03', '<b>0.99</b>'], cls: 'hi' },
-              { c: ['Inari summit', '0.70', 'hard', '<b>0.82</b>'], cls: 'hi' },
-              { c: ['Gion ryokan', '0.65', '0.01', '<b>0.52</b>'], cls: 'hi' },
-              ['21st Century Museum', '0.60', '0.01', '0.49'],
-            ]) + `<ul class="says">
+          ex: `<div class="ex2"><div>${eh('Trade-off log, most noticeable first')}${tb(['Entry', '#Fame', '#Score lost', 'Explain'], [
+              { c: ['Kinkaku-ji', '0.98', '0.03', pl('yes', 'acc')], cls: 'hi' },
+              { c: ['Inari summit', '0.70', 'hard rule', pl('yes', 'acc')], cls: 'hi' },
+              { c: ['Gion ryokan', '0.65', '0.01', pl('yes', 'acc')], cls: 'hi' },
+              ['21st Century Museum', '0.60', '0.01', pl('no', 'mute')],
+            ])}${note('Famous places that were dropped come first.')}</div>
+            <div>${eh('What the traveller reads')}<ul class="says">
               <li><b>Kinkaku-ji</b> is packed all day in Golden Week. Shoren-in, a quiet temple garden, takes its place.</li>
               <li><b>Fushimi Inari’s summit</b> path is steep stairs. You walk the lower gates at 07:00 instead.</li>
-              <li><b>A Gion ryokan</b> costs ₹16k more for two nights and is far from the station. <span class="undo">Want it anyway? → C1</span></li></ul>` },
-        { tab: 'Compare', n: 'Compare and follow up', kind: 'llm',
-          lead: 'Shows the plans side by side, and sends every follow-up back through C1.',
+              <li><b>A Gion ryokan</b> costs ₹16k more for two nights and is far from the station. <span class="undo">Want it anyway? → C1</span></li></ul></div></div>` },
+        { n: 'Plan comparison', d: 'Side by side, then follow-ups', t: 'Compare', kind: 'llm',
+          lead: 'Shows the plans side by side, then handles follow-ups.',
           how: [
-            '<b>Compare term by term:</b> fit, cost, transit, stay.',
-            '<b>Lead with the biggest difference,</b> in one sentence.',
-            '<b>Send follow-ups to C1.</b> Questions are answered from the plan. Changes go to C8.',
+            '<b>Compare</b> plans term by term',
+            '<b>Lead</b> with the biggest difference',
+            '<b>Send</b> follow-ups through C1',
           ],
-          math: fx('headline = argmax<sub>term</sub> |term(A) − term(B)|') + nt('Fit differs by 0.12, the most, so it leads.'),
-          ex: tb(['Term', '#A', '#B', 'Better'], [
+          ex: `<div class="ex2"><div>${eh('A against B')}${tb(['Term', '#A', '#B', 'Better'], [
               ['Fit', '0.88', '0.76', 'A, by 0.12'],
               ['Cost', '−0.15', '−0.13', 'B, ₹45k less'],
               ['Transit', '−0.15', '−0.12', 'B, 2 h less'],
               ['Stay', '−0.12', '−0.08', 'B, one move less'],
               { c: ['<b>Trip score</b>', '<b>0.46</b>', '<b>0.43</b>', '<b>A</b>'], cls: 'tot' },
-            ]) + '<p class="say">“A suits you better, with Kanazawa’s quiet old streets. B is ₹45k cheaper and has one hotel change fewer.”</p>'
-            + `<ul class="fwd"><li><q>Can we add Nara?</q><span>C1: change</span><span>→ C8</span></li>
-              <li><q>Why Karasuma and not Gion?</q><span>C1: question</span><span>→ C7 reads the log</span></li></ul>` },
+            ])}</div>
+            <div>${eh('Headline, from the biggest difference')}<p class="say">“A suits you better, with Kanazawa’s quiet old streets. B is ₹45k cheaper and has one hotel change fewer.”</p>
+              ${eh('Follow-ups go through C1')}<ul class="fwd"><li><q>Can we add Nara?</q><span>C1: change</span><span>→ C8</span></li>
+              <li><q>Why Karasuma and not Gion?</q><span>C1: question</span><span>→ C7 reads the log</span></li></ul></div></div>` },
       ] },
 
-    { id: 8, code: 'C8', name: 'Revision loop', short: 'Revision loop', kinds: ['llm', 'code'],
+    { id: 8, code: 'C8', name: 'Re-planning loop', short: 'Re-planning loop', kinds: ['llm', 'code'], seq: true,
       role: 'Changes the plan without starting over.',
-      in: 'Change requests from C1 · disruption alerts from C3',
+      in: 'Change requests (C1) · alerts such as flight status (C3)',
       out: 'A partial re-plan → C4, then C5, C6 and C7',
       subs: [
-        { tab: 'Triggers', n: 'Triggers', kind: 'code',
-          lead: 'Change comes from two places: the traveller and the world.',
+        { n: 'Change triggers', d: 'Traveller or the world', t: 'Trigger', kind: 'code',
+          lead: 'Changes come from two places: the traveller and the world.',
           how: [
-            '<b>Traveller:</b> a change request, classified by C1.',
-            '<b>World:</b> live alerts from C3, such as a cancelled flight, a closure or a sold-out room.',
-            '<b>Match alerts</b> to the plan by ID. Only alerts that touch the plan trigger anything.',
+            '<b>Traveller</b>: a change request, via C1',
+            '<b>World</b>: an alert from C3',
+            '<b>Act</b> only on alerts that touch the plan',
           ],
-          math: fx('trigger if alert.entity ∈ plan.entities<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧ severity ≥ medium') + nt('Thousands of alerts a day come down to a handful per plan.'),
           ex: `<div class="trig">
               <div class="tg"><p class="tg-h">${ic('user')}Traveller</p><q>Day 6 is too much for my knee.</q><p class="tg-r">C1: change · P 0.93 → C8</p></div>
-              <div class="tg"><p class="tg-h">${ic('zap')}World</p><p class="tg-q">Disruption feed: BLR → Tokyo via Bangkok, 28 Apr, cancelled. The next seat lands 29 Apr at 07:40.</p><p class="tg-r">Matches slot 1 of Plan A → C8</p></div>
-            </div>` },
-        { tab: 'Understand', n: 'Change understanding', kind: 'llm',
-          lead: 'Turns the change into a typed edit that code can apply.',
+              <div class="tg"><p class="tg-h">${ic('zap')}World</p><p class="tg-q">Flight status: BLR → Tokyo via Bangkok, 28 Apr, cancelled. The next seat lands 29 Apr at 07:40.</p><p class="tg-r">Matches Plan A’s first flight → C8</p></div>
+              <div class="tg is-skip"><p class="tg-h">${ic('zap')}World, ignored</p><p class="tg-q">Weather: heavy rain in Sapporo on 2 May.</p><p class="tg-r">Not in the plan → no action</p></div>
+            </div>${note('Thousands of alerts a day come down to a handful that touch any one plan.')}` },
+        { n: 'Change interpreter', d: 'Words → typed edit', t: 'Interpret', kind: 'llm',
+          lead: 'Turns a change into a typed edit that code can apply.',
           how: [
-            '<b>Classify the change:</b> constraint, preference, add, remove, swap or shift.',
-            '<b>Fill a typed edit:</b> target, operation, value and scope.',
-            '<b>Confirm with the traveller</b> if confidence is low or the edit is costly.',
+            '<b>Classify</b> the change',
+            '<b>Write</b> it as a typed edit',
+            '<b>Confirm</b> costly or unclear edits',
           ],
-          math: fx('apply if P ≥ 0.75 and the edit is small,<br>else confirm first') + nt('The same gate as C1. The LLM never edits the plan directly.'),
-          ex: `<div class="edit"><q>“Day 6 is too much for my knee.”</q>${json({ op: 'set', path: 'days[6].active_hours_max', value: 4, scope: 'day 6' })}
-              <p class="tg-r">P 0.93 · small edit → apply</p></div>
+          ex: `<div class="edits"><div class="edit"><q>“Day 6 is too much for my knee.”</q>${json({ op: 'set', path: 'days[6].active_hours_max', value: 4, scope: 'day 6' })}
+              <p class="tg-r">Sure (0.93), a small edit → apply</p></div>
             <div class="edit"><q>Flight cancelled. The next seat lands 29 Apr, 07:40.</q>${json({ op: 'shift', path: 'arrival', from: '28 Apr 07:40', to: '29 Apr 07:40' })}
-              <p class="tg-r">P 0.99 · loses a day → confirm with the traveller</p></div>` },
-        { tab: 'Impact', n: 'Impact analysis', kind: 'code',
-          lead: 'Finds the smallest part of the plan that the change touches.',
+              <p class="tg-r">Sure (0.99), but it loses a day → confirm first</p></div></div>
+            ${note('The LLM never edits the plan itself. It writes the edit, and code applies it.')}` },
+        { n: 'Impact analyzer', d: 'What the change touches', t: 'Impact', kind: 'code',
+          lead: 'Finds the smallest part of the plan the change touches.',
           how: [
-            '<b>Treat the plan as a graph:</b> flights → days → stays → stops → slots.',
-            '<b>Start at the changed node</b> and follow its edges.',
-            '<b>Everything reached</b> is impacted. Everything else is frozen.',
+            '<b>The plan is a graph</b>: flights, days, stays, stops',
+            '<b>Follow</b> the links from what changed',
+            '<b>Freeze</b> everything else',
           ],
-          math: fx('impacted = descendants(changed)') + fx('frozen = plan − impacted'),
-          ex: eh('The cancelled flight') + `<ul class="tree">
+          ex: `<div class="ex2"><div>${eh('The cancelled flight')}<ul class="tree">
               <li><span>${ic('plane')}Arrival flight · 28 → 29 Apr</span>${pl('changed', 'warn')}
                 <ul><li><span>Day 1 · 28 Apr</span>${pl('lost', 'bad')}
                     <ul><li><span>Yanaka walk, shojin lunch</span>${pl('move or drop', 'warn')}</li></ul></li>
                   <li><span>Tokyo hotel · 2 → 1 night</span>${pl('changed', 'warn')}</li>
                   <li><span>Day 2 · 29 Apr</span>${pl('re-plan', 'warn')}</li></ul></li>
               <li class="frz"><span>Days 3–7 · Kanazawa, Kyoto</span>${pl('frozen', 'mute')}</li>
-              <li class="frz"><span>Legs, hotels and tickets from day 3</span>${pl('frozen', 'mute')}</li></ul>`
-            + calc('Impacted: <b>2 of 7 days</b>, 2 of 9 slots') },
-        { tab: 'Re-plan', n: 'Partial re-planning', kind: 'code', terms: ['score'],
-          lead: 'Re-solves only the impacted part, and prefers small changes.',
+              <li class="frz"><span>Legs, hotels and tickets from day 3</span>${pl('frozen', 'mute')}</li></ul></div>
+            <div>${eh('Result')}<div class="tiles">
+              <div class="tile is-bad"><strong>Impacted</strong><b>2 of 7 days</b><span>2 of 9 slots</span></div>
+              <div class="tile"><strong>Frozen</strong><b>5 days</b><span>Kanazawa, Kyoto and all their slots</span></div></div>
+              ${note('Only days 1 and 2 and the Tokyo hotel need work.')}</div></div>` },
+        { n: 'Partial re-planner', d: 'Re-solve only that', t: 'Re-plan', kind: 'code', terms: ['score'],
+          lead: 'Re-solves only what changed, and keeps the rest.',
           how: [
-            '<b>Re-run only the C4 steps needed:</b> here, POIs and routes for Tokyo.',
-            '<b>Add a stability term</b> so the new plan stays close to the old one.',
-            '<b>Then run C5</b> for changed slots, <b>C6</b> for every check and <b>C7</b> to explain what changed.',
+            '<b>Re-run</b> only the C4 steps needed',
+            '<b>Prefer</b> small changes',
+            '<b>Re-check</b> with C5 and C6, explain with C7',
           ],
-          math: fx('max S(I′) − μ·Δ(I, I′) s.t. frozen(I′) = frozen(I)')
-            + fx('Δ = changed stops + 3 × changed stays · μ = 0.01')
-            + calc('Partial: 0.43 − 0.01 × 6 = <b>0.37</b><br>Full re-plan: 0.44 − 0.01 × 25 = 0.19'),
-          ex: `<div class="ba">
+          ex: `<div class="ex2"><div>${eh('Tokyo, before and after')}<div class="ba">
               <div><p class="label">Before</p><ol><li><b>Day 1</b>Yanaka walk · shojin lunch</li><li><b>Day 2</b>Senso-ji at 07:30 · Kiyosumi garden</li></ol></div>
-              <div><p class="label">After</p><ol><li><b>Day 1</b><span class="gone">in the air</span></li><li><b>Day 2</b>Yanaka walk · shojin lunch · Kiyosumi garden</li></ol></div>
-            </div>`
-            + `<div class="chips-row">${pl('Senso-ji dropped, logged', 'warn')}${pl('Days 3–7 unchanged', 'ok')}${pl('2 slots searched again', 'acc')}${pl('Trip score 0.46 → 0.43', 'acc')}</div>`
-            + nt('A full re-plan scores 0.44 but changes 25 things. The partial one wins once stability counts.') },
+              <div><p class="label">After</p><ol><li><b>Day 1</b><span class="gone">in the air</span></li><li><b>Day 2</b>Yanaka walk · shojin lunch · Kiyosumi garden</li></ol></div></div>
+              <div class="chips-row">${pl('Senso-ji dropped, logged', 'warn')}${pl('Days 3–7 unchanged', 'ok')}${pl('2 slots searched again', 'acc')}</div></div>
+            <div>${eh('Why partial')}<div class="tiles">
+              <div class="tile is-pick"><strong>Partial re-plan</strong><b>6 changes</b><span>Trip score 0.46 → 0.43</span></div>
+              <div class="tile"><strong>Full re-plan</strong><b>25 changes</b><span>Trip score 0.44</span></div></div>
+              ${note('A full re-plan scores a little higher but rewrites most of the trip. Stability wins, and C7 explains only what changed.')}</div></div>` },
       ] },
   ];
   const RSTEPS = [{ k: 0, s: 0 }];
   RK.forEach(c => c.subs.forEach((x, s) => RSTEPS.push({ k: c.id, s })));
   RSTEPS.push({ k: 9, s: 0 });
-  // Chip boxes [left, top, width, height]: a compact band while a component is open, a spread-out map at the end.
+  // Chip boxes [left, top, width, height]: a band above the open component, a spread-out map at the end.
   const RPOS = {
-    band: { in: [0, 0, 150, 40], 1: [186, 0, 220, 40], 8: [442, 0, 220, 40], 7: [954, 0, 220, 40], out: [1226, 0, 150, 40],
-            2: [186, 60, 220, 40], 4: [442, 60, 220, 40], 5: [698, 60, 220, 40], 6: [954, 60, 220, 40], 3: [186, 120, 988, 40] },
-    over: { in: [0, 52, 150, 160], 1: [186, 52, 220, 160], 8: [442, 52, 220, 160], 7: [954, 52, 220, 160], out: [1226, 52, 150, 160],
-            2: [186, 334, 220, 160], 4: [442, 334, 220, 160], 5: [698, 334, 220, 160], 6: [954, 334, 220, 160], 3: [186, 628, 988, 118] },
+    band: { in: [0, 0, 150, 50], 1: [186, 0, 220, 50], 8: [442, 0, 220, 50], 7: [954, 0, 220, 50], out: [1226, 0, 150, 50],
+            2: [186, 78, 220, 50], 4: [442, 78, 220, 50], 5: [698, 78, 220, 50], 6: [954, 78, 220, 50], 3: [186, 156, 988, 50] },
+    over: { in: [0, 46, 150, 170], 1: [186, 46, 220, 170], 8: [442, 46, 220, 170], 7: [954, 46, 220, 170], out: [1226, 46, 150, 170],
+            2: [186, 328, 220, 170], 4: [442, 328, 220, 170], 5: [698, 328, 220, 170], 6: [954, 328, 220, 170], 3: [186, 620, 988, 130] },
   };
   // Wires: `n` is the component that reveals them; `over` ones only show on the spread-out map, as do all labels.
   const RW = [
     { a: 'in', b: 1, n: 1 },
     { a: 1, b: 2, n: 2, dx: -56, label: 'trip state' },
     { a: 3, b: 2, n: 3, label: 'places, cities' },
-    { a: 2, b: 4, n: 4, label: 'ranked lists' },
-    { a: 3, b: 4, n: 4, label: 'travel times, crowds' },
+    { a: 2, b: 4, n: 4, label: 'shortlists' },
+    { a: 3, b: 4, n: 4, label: 'travel times' },
     { a: 4, b: 1, n: 4, over: 1, diag: 1, both: 1, dashed: 1, label: 'decisions' },
     { a: 4, b: 5, n: 5, label: 'top-K plans' },
     { a: 3, b: 5, n: 5, label: 'live fares, rooms' },
-    { a: 5, b: 6, n: 6, label: 'options' },
+    { a: 5, b: 6, n: 6, label: 'bundles' },
     { a: 3, b: 6, n: 6, label: 'fresh facts' },
     { a: 6, b: 7, n: 7, label: 'valid, scored' },
     { a: 7, b: 'out', n: 7 },
@@ -3042,12 +3062,14 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
     rmap.insertBefore(el, fk);
     chips[key] = { k, el };
   }
+  const subTags = c => `<span class="rk-subs">${c.subs.filter((x, i) => !(c.obj && !i)).map((x, i, a) =>
+    `<i>${x.t}</i>${i < a.length - 1 && c.seq ? '<b>→</b>' : ''}`).join('')}</span>`;
   addChip('in', 0, '', `<span class="rk-h">${ic('user')}<span class="rk-name">Trip request</span></span>
     <span class="rk-more"><span class="rk-role">Japan · 2 adults · 7 days · vegetarian · bad knee · no crowds</span></span>`);
   RK.forEach(c => addChip(c.id, c.id, c.cls || '', `<span class="rk-h"><span class="rk-code">${c.code}</span><span class="rk-name">${c.short}</span></span>
     <span class="rk-more"><span class="rk-kinds">${c.kinds.map(kp).join('')}</span><span class="rk-role">${c.role}</span>${c.id === 3
-      ? '<span class="rk-feeds"><b>Live</b><i>Flights</i><i>Hotels</i><i>Weather</i><i>Disruptions</i><b>Periodic</b><i>Places</i><i>Maps, timetables</i><i>Festivals</i><i>Crowd patterns</i></span>'
-      : `<span class="rk-subs">${c.subs.map(x => `<i>${x.tab}</i>`).join('')}</span>`}</span>`));
+      ? '<span class="rk-feeds"><b>Real-time</b><i>Flights</i><i>Hotels</i><i>Weather</i><b>Periodic</b><i>POIs</i><i>Maps</i><i>Festivals</i></span>'
+      : subTags(c)}</span>`));
   addChip('out', 0, 'is-out', `<span class="rk-h">${ic('scroll-text')}<span class="rk-name">Itinerary</span></span>
     <span class="rk-more"><span class="rk-role">Top plans with narration, from C7</span></span>`);
 
@@ -3115,12 +3137,20 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
     const tick = () => { rlayout(); if (performance.now() < rUntil) requestAnimationFrame(tick); else rUntil = 0; };
     requestAnimationFrame(tick);
   }
+  function subChips(c) {                                  // arrows where the parts run in order
+    return c.subs.map((x, i) => {
+      const chip = `<button type="button" class="stab${c.obj && !i ? ' is-obj' : ''}" data-sub="${i}"><i>${c.obj ? (i || 'S') : i + 1}</i><span><b>${x.n}</b><em>${x.d}</em></span></button>`;
+      if (i === c.subs.length - 1) return chip;
+      if (c.obj && !i) return chip + '<span class="stab-gap" aria-hidden="true"></span>';
+      return chip + (c.seq ? `<span class="stab-arr" aria-hidden="true">${ic('arrow-right')}</span>` : '');
+    }).join('');
+  }
   function subView(x) {
-    return `<div class="sv-h"><h4>${x.n}</h4>${kp(x.kind)}<span></span>${x.terms
-      ? `<span class="terms"><span class="label">Optimizes</span>${x.terms.map(k => T(k)).join('')}</span>` : ''}<p>${x.lead}</p></div>
-      <div class="sv-g">
+    const terms = x.terms ? `<span class="terms"><span class="label">Optimizes</span>${x.terms.map(k => T(k)).join('')}</span>` : '';
+    return `<div class="sv-h"><p>${x.lead}</p>${kp(x.kind)}${terms}</div>
+      <div class="sv-g${x.math ? ' has-math' : ''}">
         <section class="sv-col"><p class="label">How it works</p><ol class="how">${x.how.map(h => `<li><span>${h}</span></li>`).join('')}</ol></section>
-        <section class="sv-col"><p class="label">The maths</p>${x.math}</section>
+        ${x.math ? `<section class="sv-col"><p class="label">The maths</p>${x.math}</section>` : ''}
         <section class="sv-col"><p class="label">Example</p>${x.ex}</section>
       </div>`;
   }
@@ -3131,17 +3161,19 @@ button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
       fk.dataset.s = '';
       fk.innerHTML = `<header class="fk-h"><span class="fk-code">${c.code}</span>
           <div class="fk-t"><h3>${c.name}${c.kinds.map(kp).join('')}</h3><p>${c.role}</p></div>
-          <dl class="fk-io"><div><dt>In</dt><dd>${c.in}</dd></div><div><dt>Out</dt><dd>${c.out}</dd></div></dl></header>
-        <div class="stabs" aria-label="Parts of ${c.code}">${c.subs.map((x, i) =>
-          `<button type="button" class="stab" data-sub="${i}"><i>${i + 1}</i>${x.tab}</button>`).join('')}<span class="stabs-r"></span></div>
+          <dl class="fk-io"><div><dt>In</dt><dd>${c.in}</dd></div><div><dt>Out</dt><dd>${c.out}</dd></div>
+            <div><dt>Example</dt><dd>Japan trip, 28 Apr – 4 May · illustrative numbers</dd></div></dl></header>
+        <div class="stabs" aria-label="Parts of ${c.code}">${subChips(c)}<span class="stabs-r"></span></div>
         <div class="sv"></div>`;
       restart(fk, 'enter');
     }
-    fk.querySelectorAll('.stab').forEach((b, i) => { b.classList.toggle('is-on', i === S.s); if (i === S.s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    fk.querySelectorAll('.stab').forEach((b, i) => {
+      b.classList.toggle('is-on', i === S.s);
+      if (i === S.s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
     const st = RSTEPS[rcur];
     fk.querySelector('.stabs-r').innerHTML = rpeek
-      ? `<button type="button" class="fk-back" data-rclose>${ic('chevron-left')}Back to ${st.k === 9 ? 'all components' : `${RK[st.k - 1].code} · ${RK[st.k - 1].subs[st.s].tab}`}</button>`
-      : 'Example trip: Japan, 28 Apr – 4 May · illustrative numbers';
+      ? `<button type="button" class="fk-back" data-rclose>${ic('chevron-left')}Back to ${st.k === 9 ? 'all components' : `${RK[st.k - 1].code} · ${RK[st.k - 1].subs[st.s].n}`}</button>` : '';
     const sv = fk.querySelector('.sv');
     if (fk.dataset.s !== String(S.s)) { fk.dataset.s = S.s; sv.innerHTML = subView(c.subs[S.s]); restart(sv, 'enter'); }
     const p = RPOS.band[S.k];
