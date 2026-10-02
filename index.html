@@ -595,70 +595,114 @@ button { font: inherit; color: inherit; }
 .takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
 /* ---------- Research ---------- */
-.papers {
-  flex: 1; min-height: 0; display: grid; gap: 14px; cursor: pointer;
-  grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));
+.research {
+  flex: 1; min-height: 0; display: grid; gap: 18px; cursor: pointer;
+  grid-template-columns: 318px minmax(0, 1fr);
 }
-.paper {
-  min-width: 0; display: flex; flex-direction: column; gap: 9px; padding: 15px 16px 16px;
-  border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+.minis { list-style: none; margin: 0; padding: 2px 0 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.minis li { position: relative; padding-left: 22px; }
+.minis li::before {
+  content: ""; position: absolute; left: 5px; top: 22px; bottom: -14px; width: 2px; background: var(--line);
 }
-.paper .label { margin-bottom: 4px; }
-.pp-h { display: flex; align-items: center; gap: 8px; min-height: 18px; }
+.minis li:last-child::before { display: none; }
+.minis li::after {
+  content: ""; position: absolute; left: 1px; top: 15px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent);
+}
+.mini {
+  appearance: none; width: 100%; text-align: left; cursor: pointer;
+  display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 8px; row-gap: 2px;
+  padding: 9px 12px 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+  transition: border-color .2s, box-shadow .2s;
+}
+.mini:hover { border-color: var(--edge); }
+.mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mini.is-focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.mini-year { grid-row: span 2; font: 600 11.5px/1.5 var(--f-mono); color: var(--accent); }
+.mini-name { font-size: 13.5px; font-weight: 650; }
+.mini-take { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.mini.sum .mini-year { color: var(--ink-3); }
+
+.focus { min-width: 0; min-height: 0; display: flex; }
+.fcard {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px; padding: 22px 26px 24px;
+  border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.fc-meta { display: flex; align-items: center; gap: 8px; }
 .pp-year { font: 600 13px/1 var(--f-mono); color: var(--accent); }
 .pp-venue {
-  margin-left: auto; padding: 4px 6px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--line);
+  padding: 4px 6px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--line);
   font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3);
 }
-.pp-name { font: 720 17px/1.2 var(--f-display); font-stretch: 110%; text-wrap: balance; }
-.pp-by { margin-top: -5px; font-size: 12px; color: var(--ink-2); }
-.pp-vis {
-  flex: none; height: 92px; padding: 10px 12px; border-radius: 10px; background: var(--sunk);
-  display: flex; flex-direction: column; justify-content: center; gap: 8px;
+.fc-count { margin-left: auto; font: 500 11px/1 var(--f-mono); color: var(--ink-3); }
+.fc-name { margin-top: 10px; font: 760 31px/1.1 var(--f-display); font-stretch: 112%; text-wrap: balance; }
+.fc-title { margin-top: 7px; font-size: 15px; line-height: 1.4; color: var(--ink-2); }
+.fc-title b { font-weight: 600; color: var(--ink); }
+.fc-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 30px; }
+.fc-col { min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.fcard .label { font-size: 11px; }
+.fc-sec .label { margin-bottom: 7px; }
+.fc-sec > p:not(.label) { font-size: 15px; line-height: 1.55; }
+.fc-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.fc-points li { position: relative; padding-left: 17px; font-size: 14.5px; line-height: 1.5; }
+.fc-points li::before {
+  content: ""; position: absolute; left: 2px; top: .58em; width: 6px; height: 6px; border-radius: 2px; background: var(--accent);
 }
-.pp-take { font-size: 13.5px; font-weight: 650; line-height: 1.35; }
-.pp-us-sec { margin-top: auto; }
-.pp-us { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
-.pp-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.lvl { padding: 3px 7px; border-radius: 6px; font: 600 10.5px/1.2 var(--f-mono); white-space: nowrap; color: var(--accent); background: var(--accent-soft); }
-.pp-svg { width: 100%; height: 50px; overflow: visible; }
+.fc-points li.caveat::before { background: var(--red); }
+.fc-points li.caveat { color: var(--red); font-weight: 550; }
+.fc-vis {
+  flex: none; min-height: 150px; padding: 18px 20px; border-radius: 12px; background: var(--sunk);
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+}
+.fc-take { padding: 14px 16px 15px; border-radius: 12px; background: var(--accent-soft); }
+.fc-take .label { color: var(--accent); }
+.fc-take p:not(.label) { font: 680 19px/1.4 var(--f-display); font-stretch: 104%; }
+.fc-design p:not(.label) { font-size: 15px; line-height: 1.55; }
+
+.pp-svg { width: 100%; height: 78px; overflow: visible; }
 .v-route, .v-best { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .v-branch { fill: none; stroke: var(--edge); stroke-width: 1.5; stroke-linecap: round; }
 .v-pick { fill: var(--accent); }
 .v-skip { fill: var(--surface); stroke: var(--edge); stroke-width: 1.5; }
-.chain { display: flex; align-items: center; gap: 4px; }
-.chain span { padding: 4px 6px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
-.chain i { font-style: normal; font-size: 11px; color: var(--ink-3); }
-.stat { display: flex; align-items: center; gap: 12px; }
-.stat b { font: 760 34px/1 var(--f-display); font-stretch: 100%; color: var(--red); }
-.stat span { font-size: 12px; line-height: 1.4; color: var(--ink-2); }
-.stat strong { display: block; color: var(--ink); font-weight: 650; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.chain span { padding: 6px 9px; border-radius: 7px; background: var(--surface); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.chain i { font-style: normal; font-size: 12px; color: var(--ink-3); }
+.stat { display: flex; align-items: center; gap: 16px; }
+.stat b { font: 760 52px/1 var(--f-display); font-stretch: 100%; color: var(--red); }
+.stat span { font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+.stat strong { display: block; color: var(--ink); font-weight: 650; font-size: 14px; }
 .loop { display: flex; flex-direction: column; align-items: flex-start; }
-.loop-row { display: flex; align-items: center; gap: 4px; }
-.loop-row span { padding: 4px 7px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 600; }
-.loop-row i { font-style: normal; font-size: 11px; color: var(--ink-3); }
+.loop-row { display: flex; align-items: center; gap: 6px; }
+.loop-row span { padding: 6px 10px; border-radius: 7px; background: var(--surface); font-size: 13px; font-weight: 600; }
+.loop-row i { font-style: normal; font-size: 12px; color: var(--ink-3); }
 .loop-back {
-  position: relative; align-self: stretch; height: 14px; margin: 0 34px 0 26px;
-  border: 1.5px solid var(--accent); border-top: 0; border-radius: 0 0 8px 8px;
+  position: relative; align-self: stretch; height: 18px; margin: 0 42px 0 32px;
+  border: 1.5px solid var(--accent); border-top: 0; border-radius: 0 0 9px 9px;
 }
 .loop-back::before {
   content: ""; position: absolute; left: -5.5px; top: -5px;
   border: 4.5px solid transparent; border-bottom: 6px solid var(--accent); border-top: 0;
 }
-.loop-back .label { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); margin: 0; padding: 0 5px; background: var(--sunk); color: var(--accent); }
-.split { display: flex; gap: 2px; height: 14px; border-radius: 4px; overflow: hidden; }
+.loop-back .label { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); margin: 0; padding: 0 6px; background: var(--sunk); color: var(--accent); }
+.split { display: flex; gap: 2px; height: 18px; border-radius: 5px; overflow: hidden; }
 .split i { display: block; height: 100%; }
 .s1 { background: var(--accent); } .s2 { background: var(--accent-2); } .s3 { background: var(--red); }
-.split-l { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--ink-2); }
-.split-l span { display: inline-flex; align-items: center; gap: 5px; }
-.split-l span::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--k); }
-.split-l b { font: 600 11px var(--f-mono); color: var(--ink); }
-.paper.sum { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.paper.sum .pp-year, .paper.sum .pp-name { color: var(--accent-ink); }
-.roles { display: grid; margin: 4px 0 0; }
+.split-l { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); }
+.split-l span { display: inline-flex; align-items: center; gap: 6px; }
+.split-l span::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--k); }
+.split-l b { font: 600 12px var(--f-mono); color: var(--ink); }
+
+.fcard.sum { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.fcard.sum .pp-year, .fcard.sum .fc-title, .fcard.sum .fc-count, .fcard.sum .label { color: var(--accent-ink); }
+.fcard.sum .label { opacity: .8; }
+.implies { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; counter-reset: k; }
+.implies li { counter-increment: k; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px; font-size: 14.5px; line-height: 1.45; }
+.implies li::before { content: counter(k); font: 600 12px/1.45 var(--f-mono); opacity: .75; }
+.implies b { display: block; font-weight: 700; }
+.roles { display: grid; margin: 0; }
 .roles div {
-  display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 10px; padding: 9px 0;
-  border-top: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent); font-size: 12.5px; line-height: 1.35;
+  display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 12px; padding: 13px 0;
+  border-top: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent); font-size: 14.5px; line-height: 1.45;
 }
 .roles dt { font-weight: 700; }
 .roles dd { margin: 0; }
@@ -720,7 +764,14 @@ button { font: inherit; color: inherit; }
   .gap p { font-size: 11.5px; }
   .board-h { flex-wrap: wrap; }
   .view { gap: 22px; }
-  .papers { grid-template-columns: 1fr; grid-template-rows: none; }
+  .research { grid-template-columns: 1fr; }
+  .focus { order: -1; }
+  .fcard { padding: 18px 16px 20px; }
+  .fc-name { font-size: 23px; }
+  .fc-sec > p:not(.label), .fc-design p:not(.label), .fc-points li, .implies li, .roles div { font-size: 14px; }
+  .fc-take p:not(.label) { font-size: 17px; }
+  .fc-body { grid-template-columns: 1fr; gap: 18px; }
+  .stat b { font-size: 40px; }
   .takeaway { flex-direction: column; gap: 6px; margin-top: 0; }
   .takeaway p { font-size: 21px; }
 }
@@ -1207,114 +1258,9 @@ button { font: inherit; color: inherit; }
 
       <!-- ===== Research: papers appear one at a time ===== -->
       <div class="view" id="view-research" role="tabpanel" aria-labelledby="tab-research" hidden>
-        <div class="papers" id="papers" aria-live="polite">
-          <article class="paper" data-r="1" hidden>
-            <header class="pp-h"><span class="pp-year">2014</span></header>
-            <h3 class="pp-name">Tourist Trip Design survey</h3>
-            <p class="pp-by">Gavalas et al.</p>
-            <div class="pp-vis">
-              <span class="label">Select + sequence</span>
-              <svg class="pp-svg" viewBox="0 0 280 50" aria-hidden="true">
-                <polyline class="v-route" points="8,38 62,12 118,32 176,10 236,28 272,12"/>
-                <circle class="v-skip" cx="90" cy="45" r="4.5"/><circle class="v-skip" cx="148" cy="44" r="4.5"/><circle class="v-skip" cx="208" cy="5" r="4.5"/>
-                <circle class="v-pick" cx="8" cy="38" r="5"/><circle class="v-pick" cx="62" cy="12" r="5"/><circle class="v-pick" cx="118" cy="32" r="5"/>
-                <circle class="v-pick" cx="176" cy="10" r="5"/><circle class="v-pick" cx="236" cy="28" r="5"/><circle class="v-pick" cx="272" cy="12" r="5"/>
-              </svg>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">Building an itinerary is constrained optimization, not recommendation.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">A solver under the LLM selects, orders and times the stops.</p><div class="pp-chips"><span class="lvl">L3 Plan · solver</span></div></div>
-          </article>
-
-          <article class="paper" data-r="2" hidden>
-            <header class="pp-h"><span class="pp-year">2022</span></header>
-            <h3 class="pp-name">Tourist Trip Design review</h3>
-            <p class="pp-by">Ruiz-Meza &amp; Montoya-Torres</p>
-            <div class="pp-vis">
-              <div class="chain"><span>City</span><i>→</i><span>Days</span><i>→</i><span>POIs</span><i>→</i><span>Base</span><i>→</i><span>Route</span></div>
-              <span class="label">102 papers reviewed</span>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">Real trips are multi-objective and interlocked, not a shortest path.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Plan top-down: cities, days, base, then routes, with feedback.</p><div class="pp-chips"><span class="lvl">L3 Plan · top-down</span></div></div>
-          </article>
-
-          <article class="paper" data-r="3" hidden>
-            <header class="pp-h"><span class="pp-year">2024</span><span class="pp-venue">ICML</span></header>
-            <h3 class="pp-name">TravelPlanner</h3>
-            <p class="pp-by">Xie et al.</p>
-            <div class="pp-vis">
-              <div class="stat"><b>0.6%</b><span><strong>GPT-4’s success rate</strong>1,225 queries · ~4M records</span></div>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">A plausible itinerary is not a valid one.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">The LLM proposes. Code checks facts, travel times and hard rules.</p><div class="pp-chips"><span class="lvl">Validators</span><span class="lvl">Eval scorecard</span></div></div>
-          </article>
-
-          <article class="paper" data-r="4" hidden>
-            <header class="pp-h"><span class="pp-year">2024</span></header>
-            <h3 class="pp-name">LLM-Modulo</h3>
-            <p class="pp-by">Kambhampati et al.</p>
-            <div class="pp-vis">
-              <div class="loop">
-                <div class="loop-row"><span>Propose</span><i>→</i><span>Verify</span><i>→</i><span>Feedback</span></div>
-                <div class="loop-back"><span class="label">revise</span></div>
-              </div>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">Not LLM versus planner: an LLM and a verifier working in a loop.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Keep trip state, check every plan, send violations back to re-plan.</p><div class="pp-chips"><span class="lvl">Validate loop</span><span class="lvl">L4 re-plan</span></div></div>
-          </article>
-
-          <article class="paper" data-r="5" hidden>
-            <header class="pp-h"><span class="pp-year">2025</span><span class="pp-venue">NAACL</span></header>
-            <h3 class="pp-name">Formal verification</h3>
-            <p class="pp-by">Hao et al.</p>
-            <div class="pp-vis">
-              <div class="chain"><span>Intent</span><i>→</i><span>Constraints</span><i>→</i><span>Solver</span><i>→</i><span>Verified</span></div>
-              <span class="label">93.9% on TravelPlanner, in their setup</span>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">The LLM formalizes intent; a solver decides if a valid plan exists.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Parse into dials, confirm before solving, say when nothing fits.</p><div class="pp-chips"><span class="lvl">L2 Parse + confirm</span><span class="lvl">Relax soft dials</span></div></div>
-          </article>
-
-          <article class="paper" data-r="6" hidden>
-            <header class="pp-h"><span class="pp-year">2025</span><span class="pp-venue">ICLR</span></header>
-            <h3 class="pp-name">AoT+ structured search</h3>
-            <p class="pp-by">Sel, Jia &amp; Jin</p>
-            <div class="pp-vis">
-              <span class="label">Explore before committing</span>
-              <svg class="pp-svg" viewBox="0 0 280 50" aria-hidden="true">
-                <path class="v-branch" d="M10 25L92 7M10 25L92 43M92 7L176 5M92 25L176 32M92 43L176 46"/>
-                <path class="v-best" d="M10 25L92 25L176 18L262 18"/>
-                <circle class="v-skip" cx="92" cy="7" r="4"/><circle class="v-skip" cx="92" cy="43" r="4"/>
-                <circle class="v-skip" cx="176" cy="5" r="4"/><circle class="v-skip" cx="176" cy="32" r="4"/><circle class="v-skip" cx="176" cy="46" r="4"/>
-                <circle class="v-pick" cx="10" cy="25" r="5"/><circle class="v-pick" cx="92" cy="25" r="4.5"/><circle class="v-pick" cx="176" cy="18" r="4.5"/><circle class="v-pick" cx="262" cy="18" r="6"/>
-              </svg>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">Some LLM planning failures are search failures, not inability.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Use LLM search to propose options; keep hard checks in code.</p><div class="pp-chips"><span class="lvl">LLM judges anchors</span></div></div>
-          </article>
-
-          <article class="paper" data-r="7" hidden>
-            <header class="pp-h"><span class="pp-year">2026</span><span class="pp-venue">ACL</span></header>
-            <h3 class="pp-name">TravelBench</h3>
-            <p class="pp-by">Cheng et al.</p>
-            <div class="pp-vis">
-              <div class="split" role="img" aria-label="1,100 tasks: 500 single-turn, 500 multi-turn, 100 unsolvable"><i class="s1" style="flex:500"></i><i class="s2" style="flex:500"></i><i class="s3" style="flex:100"></i></div>
-              <div class="split-l"><span style="--k:var(--accent)"><b>500</b>single-turn</span><span style="--k:var(--accent-2)"><b>500</b>multi-turn</span><span style="--k:var(--red)"><b>100</b>unsolvable</span></div>
-            </div>
-            <div><p class="label">Takeaway</p><p class="pp-take">A real agent asks, uses tools, plans, and knows when it can’t.</p></div>
-            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Ask when unclear, admit when impossible, re-plan on every change.</p><div class="pp-chips"><span class="lvl">Confirm card</span><span class="lvl">L4 Edit</span></div></div>
-          </article>
-
-          <article class="paper sum" data-r="8" hidden>
-            <header class="pp-h"><span class="pp-year">Synthesis</span></header>
-            <h3 class="pp-name">What it means for us</h3>
-            <dl class="roles">
-              <div><dt>LLM</dt><dd>Understand, judge, narrate</dd></div>
-              <div><dt>Data and tools</dt><dd>L1 Know, the ground truth</dd></div>
-              <div><dt>Planning</dt><dd>L2 Find and L3 Plan, in code</dd></div>
-              <div><dt>Verification</dt><dd>Checks at every level</dd></div>
-              <div><dt>Re-planning</dt><dd>L4 Edit, changing only what’s affected</dd></div>
-            </dl>
-          </article>
+        <div class="research" id="research">
+          <ol class="minis" id="minis" aria-label="Papers so far"></ol>
+          <div class="focus" id="focus" aria-live="polite"></div>
         </div>
         <footer class="takeaway is-hidden" id="takeaway-r">
           <span class="label">Takeaway</span>
@@ -1402,17 +1348,157 @@ button { font: inherit; color: inherit; }
   };
   // Classes that hold until a beat, and elements that pulse to invite a click.
   const STATES = [{ id: 'n-tkr', cls: 'is-empty', until: '2.3' }];
-  // Research tab: one station per paper, revealed one at a time.
-  const PAPERS = [
-    { year: '2014', name: 'TTDP survey' },
-    { year: '2022', name: 'TTDP review' },
-    { year: '2024', name: 'TravelPlanner' },
-    { year: '2024', name: 'LLM-Modulo' },
-    { year: '2025', name: 'Formal checks' },
-    { year: '2025', name: 'AoT+' },
-    { year: '2026', name: 'TravelBench' },
-    { year: '', name: 'Our design' },
+  // Research tab: seven papers and a synthesis, revealed one at a time.
+  const VIS = {
+    route: `<span class="label">Select + sequence under a time budget</span>
+      <svg class="pp-svg" viewBox="0 0 280 60" aria-hidden="true">
+        <polyline class="v-route" points="8,44 62,14 118,38 176,12 236,32 272,14"/>
+        <circle class="v-skip" cx="90" cy="54" r="4.5"/><circle class="v-skip" cx="148" cy="52" r="4.5"/><circle class="v-skip" cx="208" cy="6" r="4.5"/>
+        <circle class="v-pick" cx="8" cy="44" r="5"/><circle class="v-pick" cx="62" cy="14" r="5"/><circle class="v-pick" cx="118" cy="38" r="5"/>
+        <circle class="v-pick" cx="176" cy="12" r="5"/><circle class="v-pick" cx="236" cy="32" r="5"/><circle class="v-pick" cx="272" cy="14" r="5"/>
+      </svg>`,
+    chain: `<div class="chain"><span>City</span><i>→</i><span>Days</span><i>→</i><span>POIs</span><i>→</i><span>Base</span><i>→</i><span>Route</span></div>
+      <span class="label">102 papers reviewed</span>`,
+    stat: `<div class="stat"><b>0.6%</b><span><strong>GPT-4’s success rate</strong>1,225 queries · ~4M records</span></div>`,
+    loop: `<div class="loop">
+        <div class="loop-row"><span>Propose</span><i>→</i><span>Verify</span><i>→</i><span>Feedback</span></div>
+        <div class="loop-back"><span class="label">revise</span></div>
+      </div>`,
+    formal: `<div class="chain"><span>Intent</span><i>→</i><span>Constraints</span><i>→</i><span>Solver</span><i>→</i><span>Verified</span></div>
+      <span class="label">93.9% on TravelPlanner, in their setup</span>`,
+    tree: `<span class="label">Explore before committing</span>
+      <svg class="pp-svg" viewBox="0 0 280 60" aria-hidden="true">
+        <path class="v-branch" d="M10 30L92 9M10 30L92 51M92 9L176 6M92 30L176 39M92 51L176 55"/>
+        <path class="v-best" d="M10 30L92 30L176 22L262 22"/>
+        <circle class="v-skip" cx="92" cy="9" r="4"/><circle class="v-skip" cx="92" cy="51" r="4"/>
+        <circle class="v-skip" cx="176" cy="6" r="4"/><circle class="v-skip" cx="176" cy="39" r="4"/><circle class="v-skip" cx="176" cy="55" r="4"/>
+        <circle class="v-pick" cx="10" cy="30" r="5"/><circle class="v-pick" cx="92" cy="30" r="4.5"/><circle class="v-pick" cx="176" cy="22" r="4.5"/><circle class="v-pick" cx="262" cy="22" r="6"/>
+      </svg>`,
+    split: `<div class="split" role="img" aria-label="1,100 tasks: 500 single-turn, 500 multi-turn, 100 unsolvable"><i class="s1" style="flex:500"></i><i class="s2" style="flex:500"></i><i class="s3" style="flex:100"></i></div>
+      <div class="split-l"><span style="--k:var(--accent)"><b>500</b>single-turn</span><span style="--k:var(--accent-2)"><b>500</b>multi-turn</span><span style="--k:var(--red)"><b>100</b>unsolvable</span></div>`,
+  };
+  const PAPER_DATA = [
+    { year: '2014', short: 'TTDP survey', name: 'Tourist Trip Design survey', by: 'Gavalas et al.',
+      title: 'A Survey on Algorithmic Approaches for Solving Tourist Trip Design Problems',
+      mini: 'Constrained optimization, not recommendation',
+      problem: 'How should a traveler choose and order points of interest when time, cost, travel time, opening hours and personal preferences all constrain the trip?',
+      approach: 'Surveys algorithms for the Tourist Trip Design Problem (TTDP), linking travel planning to classic operations-research problems: orienteering, team orienteering and their time-window variants. Methods range from exact optimization to heuristics and metaheuristics.',
+      points: [
+        'Each POI has a reward, and visiting it spends scarce time and money.',
+        'Planning is both selection and sequencing: what to visit, and in what order.',
+        'Hard constraints and objectives differ: a plan can be attractive but infeasible.',
+        'Exact methods give guarantees on small problems; heuristics scale to large ones.',
+      ],
+      take: 'Itinerary generation is a constrained optimization problem, not merely a recommendation problem.',
+      design: 'Put a deterministic planner under the LLM. It handles POI selection, ordering, time budgets and routing, while the LLM handles natural-language intent.',
+      vis: 'route' },
+    { year: '2022', short: 'TTDP review', name: 'Tourist Trip Design review', by: 'Ruiz-Meza & Montoya-Torres',
+      title: 'A Systematic Literature Review for the Tourist Trip Design Problem',
+      mini: 'Multi-objective and interlocked, not a shortest path',
+      problem: 'Does the classic TTDP formulation represent real travel, and what extensions have researchers added?',
+      approach: 'A systematic review of 102 TTDP papers published through February 2021, mapping formulations, objectives, constraints, solution techniques and future directions.',
+      points: [
+        'Most work is single-objective, but a large share trades off experience, cost and time.',
+        'Extensions cover multi-day trips, mixed preferences, groups, transport modes, time windows and uncertainty.',
+        'Formulations vary: orienteering, team orienteering, maximum coverage, knapsack and vehicle routing.',
+        'Decisions are coupled: one attraction changes route time, which changes what else fits.',
+      ],
+      take: 'Real travel is a multi-objective, highly constrained and interconnected planning problem, not simply a shortest-path problem.',
+      design: 'Plan hierarchically with feedback: city, then days, then POIs, then base hotel, then daily routes, rather than one ranking model.',
+      vis: 'chain' },
+    { year: '2024', venue: 'ICML', short: 'TravelPlanner', name: 'TravelPlanner', by: 'Xie et al.',
+      title: 'TravelPlanner: A Benchmark for Real-World Planning with Language Agents',
+      mini: 'Plausible is not valid: GPT-4 at 0.6%',
+      problem: 'Can language agents build valid travel plans when they must satisfy many constraints and retrieve real-world information?',
+      approach: '1,225 curated planning intents with reference plans and nearly 4 million records in a sandbox. Agents must use tools and reason over many travel constraints instead of writing free text.',
+      points: [
+        'Exposes the gap between sounding plausible and actually satisfying constraints.',
+        'Naive LLM agents lose track of constraints as the itinerary grows.',
+        'Retrieving the right information does not by itself make the plan feasible.',
+        'It scores whether the whole plan is valid, not whether it sounds reasonable.',
+      ],
+      take: 'A plausible itinerary is not necessarily a valid one. LLM-only planning struggles when many constraints and tools interact.',
+      design: 'Separate LLM reasoning from deterministic verification. The LLM proposes; code retrieves facts, calculates travel times and checks hard constraints.',
+      vis: 'stat' },
+    { year: '2024', short: 'LLM-Modulo', name: 'LLM-Modulo', by: 'Kambhampati et al.',
+      title: 'LLMs Can’t Plan, But Can Help Planning in LLM-Modulo Frameworks',
+      mini: 'An LLM and verifier loop, not either alone',
+      problem: 'If LLMs are weak at rigorous planning, should they be kept out of planning, or can they work productively alongside classical planners?',
+      approach: 'A position paper proposing the LLM-Modulo framework: the LLM produces candidate plans, external model-based components check them, and their feedback goes back to the LLM for revision.',
+      points: [
+        'Rejects both extremes: the LLM as a fully autonomous planner, or as a passive parser.',
+        'External components can verify, check constraints, plan or give domain feedback.',
+        'The loop is proposal, verification, feedback, revision.',
+        'A position paper: cite it as an architectural argument, not as benchmark proof.',
+      ],
+      take: 'The useful architecture is not “LLM versus planner”. It is an iterative loop between the LLM and a planner or verifier.',
+      design: 'An orchestrator keeps the trip state, calls specialized services, sends candidate plans to validators and feeds violations back for re-planning.',
+      vis: 'loop' },
+    { year: '2025', venue: 'NAACL', short: 'Formal checks', name: 'Formal verification', by: 'Hao et al.',
+      title: 'Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools',
+      mini: 'The LLM formalizes, a solver decides',
+      problem: 'Can natural-language planning requests become formal constraints, so a rigorous solver can decide whether a valid plan exists?',
+      approach: 'Formalizes planning requests as constrained satisfiability problems and uses sound, complete solvers to solve and verify them. It also detects infeasible requests and suggests changes.',
+      points: [
+        'The LLM is the semantic bridge: language becomes variables, constraints and goals.',
+        'The solver is the rigorous part: it decides whether the formal problem is satisfiable.',
+        'Reports 93.9% success on TravelPlanner in its own evaluation setup.',
+        'It can explain infeasible requests and name the constraints to relax.',
+        { caveat: true, text: 'Caveat: garbage in, rigorous garbage out. A wrong formalization gets solved faithfully.' },
+      ],
+      take: 'Let the LLM translate fuzzy intent into a formal problem, and let a rigorous solver decide whether a valid solution exists.',
+      design: 'Intent parser, constraint model, solver, verifier, explanation. Ask a clarifying question before optimizing when the intent is ambiguous.',
+      vis: 'formal' },
+    { year: '2025', venue: 'ICLR', short: 'AoT+', name: 'AoT+ structured search', by: 'Sel, Jia & Jin',
+      title: 'LLMs Can Plan Only If We Tell Them',
+      mini: 'Some failures are search failures',
+      problem: 'Are LLMs inherently unable to plan, or do some failures come from how inference-time search is structured?',
+      approach: 'Introduces AoT+ (Algorithm-of-Thoughts+), a structured inference-time search that improves planning, and reports strong results across planning benchmarks.',
+      points: [
+        'Challenges the blanket claim that LLMs cannot plan.',
+        'The search procedure and inference structure materially change planning performance.',
+        'Structured reasoning explores alternatives instead of committing to the first plausible sequence.',
+        'Verification still matters: better search improves candidates, deterministic checks give guarantees.',
+      ],
+      take: 'Some LLM planning failures may be search failures rather than a fundamental inability to plan.',
+      design: 'Use structured LLM search to generate candidates and explore strategies, but keep deterministic checks for production-critical constraints.',
+      vis: 'tree' },
+    { year: '2026', venue: 'ACL', short: 'TravelBench', name: 'TravelBench', by: 'Cheng et al.',
+      title: 'Beyond Itinerary Planning: A Real-World Benchmark for Multi-Turn and Tool-Using Travel Tasks',
+      mini: 'Ask, use tools, know when you can’t',
+      problem: 'A real travel agent does more than write a one-shot itinerary. Can an agent talk with the user, uncover hidden preferences, use tools and recognize impossible requests?',
+      approach: '1,100 test instances (500 single-turn, 500 multi-turn, 100 unsolvable) on real map and travel data, with ten travel tools and a sandbox of cached tool responses for reproducible scoring.',
+      points: [
+        'Single-turn: solve the request on its own.',
+        'Multi-turn: ask useful questions to surface implicit preferences instead of assuming them.',
+        'Unsolvable: recognize capability limits instead of hallucinating an answer.',
+        'Scores the whole agent: reasoning, tool use, presentation, interaction and abstention.',
+        'Most relevant for vague preferences like “I hate early mornings”.',
+      ],
+      take: 'A production travel agent needs conversation, preference elicitation, tool use, planning, and the sense to say when it cannot fulfill a request.',
+      design: 'Make clarification and capability checks first-class. User changes and outside disruptions feed the same re-planning engine instead of restarting the conversation.',
+      vis: 'split' },
   ];
+  const SYN = {
+    implies: [
+      ['The problem is not “recommend places”', 'It is choosing places, allocating scarce time, sequencing and meeting hard constraints.'],
+      ['Preferences are not all the same', 'Some are hard rules, some soft goals, some ambiguous, like “I hate early mornings”.'],
+      ['Planning is hierarchical', 'City choice shapes days, the base shapes travel time, routes decide what fits.'],
+      ['LLMs help where meaning dominates', 'Intent, preferences, clarification, options, changes and explanations.'],
+      ['Code helps where guarantees dominate', 'Routing, travel times, time windows, budgets, opening hours, feasibility.'],
+      ['Verify apart from generating', 'Whatever proposes a plan should not be the only judge of whether it is valid.'],
+      ['Keep a re-planning loop', 'A cancelled flight or “remove Kyoto” updates the trip and re-plans only part of it.'],
+      ['Know when to ask or abstain', 'A sharp question or an honest “this can’t work” beats a hallucinated plan.'],
+    ],
+    roles: [
+      ['LLM', 'Understands intent and preferences, asks clarifying questions, proposes options, interprets changes, explains'],
+      ['Data and tools', 'Current POIs, hotels, maps, transit, weather, events and local rules as ground truth'],
+      ['Planning', 'Deterministic city choice, day allocation, POI and base selection, scheduling and routing'],
+      ['Verification', 'Hard constraints, feasibility, consistency and capability limits'],
+      ['Re-planning', 'Updates the trip state when users or the world change, and re-optimizes only what’s affected'],
+    ],
+  };
+  const PAPERS = [...PAPER_DATA.map(d => ({ year: d.year, name: d.short })), { year: '', name: 'Our design' }];
   const HINTS = { '2.3': 'n-tkr', '2.5': 'n-proc' };
 
   // ---------- Setup ----------
@@ -1671,8 +1757,10 @@ button { font: inherit; color: inherit; }
     const tb = t.closest('[data-tab]');
     if (tb) { setTab(tb.dataset.tab); return; }
     const rv = t.closest('[data-rev]');
-    if (rv) { reveal(+rv.dataset.rev); return; }
-    if (tab === 'research') { if (t.closest('#view-research')) reveal(rev + 1); return; }
+    if (rv) { const i = +rv.dataset.rev; i <= rev ? showPaper(i) : reveal(i); return; }
+    const pk = t.closest('[data-peek]');
+    if (pk) { showPaper(+pk.dataset.peek); return; }
+    if (tab === 'research') { if (t.closest('#view-research')) researchStep(1); return; }
     const goEl = t.closest('[data-go]');
     if (goEl) { const i = IDX[goEl.dataset.go]; i === cur ? flow(BEATS[cur].id) : go(i); return; }
     if (t.closest('.pop-x')) { closePop(); return; }
@@ -1689,7 +1777,7 @@ button { font: inherit; color: inherit; }
   stage.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
-  const step = d => (tab === 'research' ? reveal(rev + d) : go(cur + d));
+  const step = d => (tab === 'research' ? researchStep(d) : go(cur + d));
   $('prev').addEventListener('click', () => step(-1));
   $('next').addEventListener('click', () => step(1));
   addEventListener('keydown', e => {
@@ -1765,15 +1853,69 @@ button { font: inherit; color: inherit; }
       </button>
       ${i < PAPERS.length - 1 ? '<span class="seg"><span class="seg-fill"></span></span>' : ''}
     </li>`).join('');
+  let peek = 0;                                           // an earlier paper pulled back into focus
+  const focusIdx = () => peek || rev;
+  function paperCard(d, i) {
+    const pts = d.points.map(p => typeof p === 'string' ? `<li>${p}</li>` : `<li class="caveat">${p.text}</li>`).join('');
+    return `<article class="fcard">
+      <header>
+        <div class="fc-meta"><span class="pp-year">${d.year}</span>${d.venue ? `<span class="pp-venue">${d.venue}</span>` : ''}<span class="fc-count">${i} of ${PAPER_DATA.length}</span></div>
+        <h3 class="fc-name">${d.name}</h3>
+        <p class="fc-title">${d.title} · <b>${d.by}</b></p>
+      </header>
+      <div class="fc-body">
+        <div class="fc-col">
+          <section class="fc-sec"><p class="label">Problem</p><p>${d.problem}</p></section>
+          <section class="fc-sec"><p class="label">Approach</p><p>${d.approach}</p></section>
+          <section class="fc-sec"><p class="label">Important points</p><ul class="fc-points">${pts}</ul></section>
+        </div>
+        <div class="fc-col">
+          <div class="fc-vis">${VIS[d.vis]}</div>
+          <section class="fc-sec fc-take"><p class="label">Key takeaway</p><p>${d.take}</p></section>
+          <section class="fc-sec fc-design"><p class="label">What it means for our design</p><p>${d.design}</p></section>
+        </div>
+      </div>
+    </article>`;
+  }
+  function synthesisCard() {
+    return `<article class="fcard sum">
+      <header>
+        <div class="fc-meta"><span class="pp-year">Synthesis</span></div>
+        <h3 class="fc-name">What the seven papers add up to</h3>
+        <p class="fc-title">The architecture these papers point to, in one place</p>
+      </header>
+      <div class="fc-body">
+        <div class="fc-col">
+          <p class="label">What they imply</p>
+          <ol class="implies">${SYN.implies.map(([t, s]) => `<li><span><b>${t}</b>${s}</span></li>`).join('')}</ol>
+        </div>
+        <div class="fc-col">
+          <p class="label">Resulting system</p>
+          <dl class="roles">${SYN.roles.map(([r, s]) => `<div><dt>${r}</dt><dd>${s}</dd></div>`).join('')}</dl>
+        </div>
+      </div>
+    </article>`;
+  }
+  function renderResearch(grow) {
+    const minis = $('minis'), focus = $('focus'), f = focusIdx();
+    minis.innerHTML = PAPERS.slice(0, rev).map((pp, k) => {
+      const i = k + 1, d = PAPER_DATA[k];
+      return `<li${grow && i === rev ? ' class="enter"' : ''}><button type="button" class="mini${d ? '' : ' sum'}${i === f ? ' is-focus' : ''}" data-peek="${i}" aria-label="Show ${pp.name}">
+        <span class="mini-year">${d ? d.year : ''}</span>
+        <span class="mini-name">${d ? d.name : 'Synthesis'}</span>
+        <span class="mini-take">${d ? d.mini : 'What the seven papers add up to'}</span>
+      </button></li>`;
+    }).join('');
+    focus.innerHTML = f ? (f <= PAPER_DATA.length ? paperCard(PAPER_DATA[f - 1], f) : synthesisCard()) : '';
+    const card = focus.firstElementChild;
+    if (card) { card.classList.remove('enter'); void card.offsetWidth; card.classList.add('enter'); }
+  }
   function reveal(n) {
     n = Math.max(0, Math.min(PAPERS.length, n));
     const grow = n > rev;
     rev = n;
-    document.querySelectorAll('.paper').forEach(c => {
-      const on = +c.dataset.r <= n, was = !c.hidden;
-      c.hidden = !on;
-      if (on && !was && grow) { c.classList.remove('enter'); void c.offsetWidth; c.classList.add('enter'); }
-    });
+    peek = 0;
+    renderResearch(grow);
     railR.querySelectorAll('.st').forEach((li, i) => {
       li.classList.toggle('is-done', i + 1 < n);
       li.classList.toggle('is-current', i + 1 === n);
@@ -1786,13 +1928,23 @@ button { font: inherit; color: inherit; }
     tk.classList.toggle('is-hidden', !show);
     syncNav();
   }
+  function showPaper(i) {                                 // bring an earlier paper back into focus
+    peek = i === rev ? 0 : i;
+    renderResearch(false);
+    syncNav();
+  }
+  function researchStep(d) {
+    if (d < 0 && peek) { showPaper(rev); return; }
+    if (d > 0 && peek) { showPaper(rev); return; }
+    reveal(rev + d);
+  }
   function syncNav() {
     const r = tab === 'research';
     $('prev').disabled = r ? rev <= 0 : cur <= 0;
-    $('next').disabled = r ? rev >= PAPERS.length : cur >= BEATS.length - 1;
+    $('next').disabled = r ? rev >= PAPERS.length && !peek : cur >= BEATS.length - 1;
     $('next').classList.toggle('hint', r && rev === 0);
     if (r) {
-      const pp = PAPERS[rev - 1];
+      const pp = PAPERS[focusIdx() - 1];
       $('now').innerHTML = `Research · ${rev} of ${PAPERS.length}` + (pp ? `<span class="now-beat">${pp.year ? pp.year + ' · ' : ''}${pp.name}</span>` : '');
     } else if (cur >= 0) {
       const beat = BEATS[cur], f = FLOWS[beat.flow];
