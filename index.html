@@ -30,6 +30,10 @@
   --green: #17804C;
   --green-soft: #E1F2E8;
   --green-line: #A6D9BC;
+  --amber: #B5590A;
+  --amber-soft: #FDF0E3;
+  --amber-line: #F0C9A2;
+  --accent-2: #9AA4EC;
   --shadow: 0 1px 2px rgb(20 26 49 / .05), 0 6px 18px rgb(20 26 49 / .06);
   --pop-shadow: 0 2px 6px rgb(20 26 49 / .08), 0 16px 44px rgb(20 26 49 / .18);
   --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -43,6 +47,7 @@
     --accent-ring: rgb(141 154 255 / .35);
     --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
     --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
+    --amber: #FFA65C; --amber-soft: #2D1C0F; --amber-line: #6B4019; --accent-2: #4A56B0;
     --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
     --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
     color-scheme: dark;
@@ -54,6 +59,7 @@
   --accent-ring: rgb(141 154 255 / .35);
   --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
   --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
+  --amber: #FFA65C; --amber-soft: #2D1C0F; --amber-line: #6B4019; --accent-2: #4A56B0;
   --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
   --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
   color-scheme: dark;
@@ -94,7 +100,7 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Top bar + step rail ---------- */
 .topbar { flex: none; height: 62px; display: flex; align-items: flex-start; gap: 28px; padding-top: 4px; }
-.brand { display: flex; align-items: center; gap: 10px; width: 200px; flex: none; padding-top: 0; }
+.brand { display: flex; align-items: center; gap: 10px; flex: none; }
 .brand-mark {
   width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
   background: var(--ink); color: var(--bg);
@@ -148,6 +154,19 @@ button { font: inherit; color: inherit; }
 .navbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .navbtn:disabled { color: var(--ink-3); opacity: .45; cursor: default; }
 .now { display: none; }
+
+/* Tabs */
+.tabs { flex: none; display: flex; gap: 2px; padding: 3px; margin-top: -1px; border-radius: 10px; background: var(--sunk); }
+.tab {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2);
+}
+.tab .ic { width: 15px; height: 15px; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(20 26 49 / .1), 0 0 0 1px var(--line); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.view { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
 
 /* ---------- Canvas ---------- */
 .canvas { position: relative; flex: none; height: 528px; }
@@ -422,6 +441,7 @@ button { font: inherit; color: inherit; }
   transition: color .5s, background-color .5s, border-color .5s;
 }
 .gx.is-closed { color: var(--green); background: var(--green-soft); border-color: var(--green-line); }
+.gx.is-partial { color: var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
 
 /* ---------- Explanation popovers ---------- */
 .pop {
@@ -535,9 +555,12 @@ button { font: inherit; color: inherit; }
   color: var(--red); background: var(--red-soft); border: 1px solid var(--red-line);
 }
 .count.all-closed { color: var(--green); background: var(--green-soft); border-color: var(--green-line); }
-.legend { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-3); }
+.count.no-open { color: var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
+.scope { margin-left: auto; font-size: 11.5px; color: var(--ink-3); }
+.legend { margin-left: 14px; display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-3); }
 .sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; }
 .sw-open { background: var(--red-soft); border: 1.5px solid var(--red); }
+.sw-part { background: var(--amber-soft); border: 1.5px solid var(--amber); margin-left: 8px; }
 .sw-closed { background: var(--green-soft); border: 1.5px solid var(--green); margin-left: 8px; }
 .gaps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .gap {
@@ -547,6 +570,7 @@ button { font: inherit; color: inherit; }
   transition: background-color .5s, border-color .5s, opacity .25s, box-shadow .2s; outline: none;
 }
 .gap.is-closed { --c: var(--green); --c-soft: var(--green-soft); --c-line: var(--green-line); }
+.gap.is-partial { --c: var(--amber); --c-soft: var(--amber-soft); --c-line: var(--amber-line); }
 .gap:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
 .gap-ic {
   position: relative; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
@@ -570,10 +594,81 @@ button { font: inherit; color: inherit; }
 .takeaway .label { color: var(--accent); font-weight: 600; letter-spacing: .14em; flex: none; }
 .takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
+/* ---------- Research ---------- */
+.papers {
+  flex: 1; min-height: 0; display: grid; gap: 14px; cursor: pointer;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+.paper {
+  min-width: 0; display: flex; flex-direction: column; gap: 9px; padding: 15px 16px 16px;
+  border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.paper .label { margin-bottom: 4px; }
+.pp-h { display: flex; align-items: center; gap: 8px; min-height: 18px; }
+.pp-year { font: 600 13px/1 var(--f-mono); color: var(--accent); }
+.pp-venue {
+  margin-left: auto; padding: 4px 6px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--line);
+  font: 500 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3);
+}
+.pp-name { font: 720 17px/1.2 var(--f-display); font-stretch: 110%; text-wrap: balance; }
+.pp-by { margin-top: -5px; font-size: 12px; color: var(--ink-2); }
+.pp-vis {
+  flex: none; height: 92px; padding: 10px 12px; border-radius: 10px; background: var(--sunk);
+  display: flex; flex-direction: column; justify-content: center; gap: 8px;
+}
+.pp-take { font-size: 13.5px; font-weight: 650; line-height: 1.35; }
+.pp-us-sec { margin-top: auto; }
+.pp-us { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+.pp-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.lvl { padding: 3px 7px; border-radius: 6px; font: 600 10.5px/1.2 var(--f-mono); white-space: nowrap; color: var(--accent); background: var(--accent-soft); }
+.pp-svg { width: 100%; height: 50px; overflow: visible; }
+.v-route, .v-best { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.v-branch { fill: none; stroke: var(--edge); stroke-width: 1.5; stroke-linecap: round; }
+.v-pick { fill: var(--accent); }
+.v-skip { fill: var(--surface); stroke: var(--edge); stroke-width: 1.5; }
+.chain { display: flex; align-items: center; gap: 4px; }
+.chain span { padding: 4px 6px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.chain i { font-style: normal; font-size: 11px; color: var(--ink-3); }
+.stat { display: flex; align-items: center; gap: 12px; }
+.stat b { font: 760 34px/1 var(--f-display); font-stretch: 100%; color: var(--red); }
+.stat span { font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.stat strong { display: block; color: var(--ink); font-weight: 650; }
+.loop { display: flex; flex-direction: column; align-items: flex-start; }
+.loop-row { display: flex; align-items: center; gap: 4px; }
+.loop-row span { padding: 4px 7px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 600; }
+.loop-row i { font-style: normal; font-size: 11px; color: var(--ink-3); }
+.loop-back {
+  position: relative; align-self: stretch; height: 14px; margin: 0 34px 0 26px;
+  border: 1.5px solid var(--accent); border-top: 0; border-radius: 0 0 8px 8px;
+}
+.loop-back::before {
+  content: ""; position: absolute; left: -5.5px; top: -5px;
+  border: 4.5px solid transparent; border-bottom: 6px solid var(--accent); border-top: 0;
+}
+.loop-back .label { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); margin: 0; padding: 0 5px; background: var(--sunk); color: var(--accent); }
+.split { display: flex; gap: 2px; height: 14px; border-radius: 4px; overflow: hidden; }
+.split i { display: block; height: 100%; }
+.s1 { background: var(--accent); } .s2 { background: var(--accent-2); } .s3 { background: var(--red); }
+.split-l { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--ink-2); }
+.split-l span { display: inline-flex; align-items: center; gap: 5px; }
+.split-l span::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--k); }
+.split-l b { font: 600 11px var(--f-mono); color: var(--ink); }
+.paper.sum { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.paper.sum .pp-year, .paper.sum .pp-name { color: var(--accent-ink); }
+.roles { display: grid; margin: 4px 0 0; }
+.roles div {
+  display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 10px; padding: 9px 0;
+  border-top: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent); font-size: 12.5px; line-height: 1.35;
+}
+.roles dt { font-weight: 700; }
+.roles dd { margin: 0; }
+.takeaway.is-hidden { visibility: hidden; }
+
 /* ---------- Linking a gap to where it shows up ---------- */
 [data-gaps] { transition: background-color .2s, box-shadow .2s; }
 [data-gaps].lit { background: var(--red-soft) !important; box-shadow: 0 0 0 1.5px var(--red) !important; }
 [data-gaps].lit.ok { background: var(--green-soft) !important; box-shadow: 0 0 0 1.5px var(--green) !important; }
+[data-gaps].lit.part { background: var(--amber-soft) !important; box-shadow: 0 0 0 1.5px var(--amber) !important; }
 .linking .gap:not(.lit) { opacity: .4; }
 .gap.lit { box-shadow: 0 0 0 2px var(--c); }
 
@@ -585,9 +680,11 @@ button { font: inherit; color: inherit; }
   .topbar { height: auto; flex-wrap: wrap; gap: 14px 12px; padding-top: 0; }
   .brand { width: auto; flex: 1; }
   .nav { order: 2; }
-  .rail { order: 3; flex-basis: 100%; }
+  .tabs { order: 3; flex-basis: 100%; }
+  .tab { flex: 1; }
+  .rail { order: 4; flex-basis: 100%; }
   .st-name, .st-beat, .tick { display: none; }
-  .now { display: block; order: 4; flex-basis: 100%; font-size: 13px; font-weight: 650; }
+  .now { display: block; order: 5; flex-basis: 100%; font-size: 13px; font-weight: 650; }
   .now .st-code { font-size: 12px; }
   .now .now-beat { display: block; margin-top: 3px; font: 500 11.5px var(--f-mono); color: var(--accent); }
   .canvas { height: auto; display: flex; flex-direction: column; gap: 40px; padding-top: 18px; }
@@ -622,6 +719,8 @@ button { font: inherit; color: inherit; }
   .gap h3 { font-size: 12.5px; }
   .gap p { font-size: 11.5px; }
   .board-h { flex-wrap: wrap; }
+  .view { gap: 22px; }
+  .papers { grid-template-columns: 1fr; grid-template-rows: none; }
   .takeaway { flex-direction: column; gap: 6px; margin-top: 0; }
   .takeaway p { font-size: 21px; }
 }
@@ -664,6 +763,7 @@ button { font: inherit; color: inherit; }
 <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></symbol>
 <symbol id="i-circle-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
 <symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></symbol>
+<symbol id="i-contrast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 18a6 6 0 0 0 0-12v12z"/></symbol>
 <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
 <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
 <symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol>
@@ -692,6 +792,8 @@ button { font: inherit; color: inherit; }
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
 <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+<symbol id="i-workflow" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></symbol>
+<symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
 </defs></svg>
 
 <div class="viewport">
@@ -703,7 +805,12 @@ button { font: inherit; color: inherit; }
           <span class="brand-mark"><svg class="ic" aria-hidden="true"><use href="#i-route"/></svg></span>
           <span class="brand-name">AI Trip Planner</span>
         </div>
+        <div class="tabs" role="tablist" aria-label="Views">
+          <button type="button" class="tab" role="tab" id="tab-arch" aria-selected="true" aria-controls="view-arch" data-tab="arch"><svg class="ic" aria-hidden="true"><use href="#i-workflow"/></svg>Architecture</button>
+          <button type="button" class="tab" role="tab" id="tab-research" aria-selected="false" aria-controls="view-research" data-tab="research"><svg class="ic" aria-hidden="true"><use href="#i-book-open"/></svg>Research</button>
+        </div>
         <ol class="rail" id="rail" aria-label="Steps"></ol>
+        <ol class="rail" id="rail-r" aria-label="Papers" hidden></ol>
         <div class="nav">
           <button type="button" class="navbtn" id="prev" aria-label="Previous"><svg class="ic" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
           <button type="button" class="navbtn" id="next" aria-label="Next"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
@@ -711,6 +818,7 @@ button { font: inherit; color: inherit; }
         <p class="now" id="now"></p>
       </header>
 
+      <div class="view" id="view-arch" role="tabpanel" aria-labelledby="tab-arch">
       <section class="canvas" id="canvas" aria-label="Architecture">
         <svg class="wires" id="wires" aria-hidden="true">
           <defs>
@@ -1044,7 +1152,8 @@ button { font: inherit; color: inherit; }
         <div class="board-h">
           <h2 class="eyebrow" id="gaps-h">Gaps</h2>
           <span class="count" id="count">10 open</span>
-          <span class="legend"><i class="sw sw-open"></i>Open<i class="sw sw-closed"></i>Closed</span>
+          <span class="scope">Booking and payment are out of scope</span>
+          <span class="legend"><i class="sw sw-open"></i>Open<i class="sw sw-part"></i>Partial<i class="sw sw-closed"></i>Closed</span>
         </div>
         <div class="gaps" id="gaps">
           <article class="gap" data-gap="G1" tabindex="0">
@@ -1061,7 +1170,7 @@ button { font: inherit; color: inherit; }
           </article>
           <article class="gap" data-gap="G4" tabindex="0">
             <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-ticket-x"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
-            <div><h3><span class="gcode">G4</span>Not bookable</h3><p>Out of scope for now</p></div>
+            <div><h3><span class="gcode">G4</span>Not bookable</h3><p>No hotel, price or availability</p></div>
           </article>
           <article class="gap" data-gap="G5" tabindex="0">
             <span class="gap-ic"><svg class="ic" aria-hidden="true"><use href="#i-coins"/></svg><svg class="ic st" aria-hidden="true"><use href="#i-circle-x"/></svg></span>
@@ -1094,6 +1203,124 @@ button { font: inherit; color: inherit; }
         <span class="label">Takeaway</span>
         <p id="takeaway">AI needs factual data to plan and act.</p>
       </footer>
+      </div>
+
+      <!-- ===== Research: papers appear one at a time ===== -->
+      <div class="view" id="view-research" role="tabpanel" aria-labelledby="tab-research" hidden>
+        <div class="papers" id="papers" aria-live="polite">
+          <article class="paper" data-r="1" hidden>
+            <header class="pp-h"><span class="pp-year">2014</span></header>
+            <h3 class="pp-name">Tourist Trip Design survey</h3>
+            <p class="pp-by">Gavalas et al.</p>
+            <div class="pp-vis">
+              <span class="label">Select + sequence</span>
+              <svg class="pp-svg" viewBox="0 0 280 50" aria-hidden="true">
+                <polyline class="v-route" points="8,38 62,12 118,32 176,10 236,28 272,12"/>
+                <circle class="v-skip" cx="90" cy="45" r="4.5"/><circle class="v-skip" cx="148" cy="44" r="4.5"/><circle class="v-skip" cx="208" cy="5" r="4.5"/>
+                <circle class="v-pick" cx="8" cy="38" r="5"/><circle class="v-pick" cx="62" cy="12" r="5"/><circle class="v-pick" cx="118" cy="32" r="5"/>
+                <circle class="v-pick" cx="176" cy="10" r="5"/><circle class="v-pick" cx="236" cy="28" r="5"/><circle class="v-pick" cx="272" cy="12" r="5"/>
+              </svg>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">Building an itinerary is constrained optimization, not recommendation.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">A solver under the LLM selects, orders and times the stops.</p><div class="pp-chips"><span class="lvl">L3 Plan · solver</span></div></div>
+          </article>
+
+          <article class="paper" data-r="2" hidden>
+            <header class="pp-h"><span class="pp-year">2022</span></header>
+            <h3 class="pp-name">Tourist Trip Design review</h3>
+            <p class="pp-by">Ruiz-Meza &amp; Montoya-Torres</p>
+            <div class="pp-vis">
+              <div class="chain"><span>City</span><i>→</i><span>Days</span><i>→</i><span>POIs</span><i>→</i><span>Base</span><i>→</i><span>Route</span></div>
+              <span class="label">102 papers reviewed</span>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">Real trips are multi-objective and interlocked, not a shortest path.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Plan top-down: cities, days, base, then routes, with feedback.</p><div class="pp-chips"><span class="lvl">L3 Plan · top-down</span></div></div>
+          </article>
+
+          <article class="paper" data-r="3" hidden>
+            <header class="pp-h"><span class="pp-year">2024</span><span class="pp-venue">ICML</span></header>
+            <h3 class="pp-name">TravelPlanner</h3>
+            <p class="pp-by">Xie et al.</p>
+            <div class="pp-vis">
+              <div class="stat"><b>0.6%</b><span><strong>GPT-4’s success rate</strong>1,225 queries · ~4M records</span></div>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">A plausible itinerary is not a valid one.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">The LLM proposes. Code checks facts, travel times and hard rules.</p><div class="pp-chips"><span class="lvl">Validators</span><span class="lvl">Eval scorecard</span></div></div>
+          </article>
+
+          <article class="paper" data-r="4" hidden>
+            <header class="pp-h"><span class="pp-year">2024</span></header>
+            <h3 class="pp-name">LLM-Modulo</h3>
+            <p class="pp-by">Kambhampati et al.</p>
+            <div class="pp-vis">
+              <div class="loop">
+                <div class="loop-row"><span>Propose</span><i>→</i><span>Verify</span><i>→</i><span>Feedback</span></div>
+                <div class="loop-back"><span class="label">revise</span></div>
+              </div>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">Not LLM versus planner: an LLM and a verifier working in a loop.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Keep trip state, check every plan, send violations back to re-plan.</p><div class="pp-chips"><span class="lvl">Validate loop</span><span class="lvl">L4 re-plan</span></div></div>
+          </article>
+
+          <article class="paper" data-r="5" hidden>
+            <header class="pp-h"><span class="pp-year">2025</span><span class="pp-venue">NAACL</span></header>
+            <h3 class="pp-name">Formal verification</h3>
+            <p class="pp-by">Hao et al.</p>
+            <div class="pp-vis">
+              <div class="chain"><span>Intent</span><i>→</i><span>Constraints</span><i>→</i><span>Solver</span><i>→</i><span>Verified</span></div>
+              <span class="label">93.9% on TravelPlanner, in their setup</span>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">The LLM formalizes intent; a solver decides if a valid plan exists.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Parse into dials, confirm before solving, say when nothing fits.</p><div class="pp-chips"><span class="lvl">L2 Parse + confirm</span><span class="lvl">Relax soft dials</span></div></div>
+          </article>
+
+          <article class="paper" data-r="6" hidden>
+            <header class="pp-h"><span class="pp-year">2025</span><span class="pp-venue">ICLR</span></header>
+            <h3 class="pp-name">AoT+ structured search</h3>
+            <p class="pp-by">Sel, Jia &amp; Jin</p>
+            <div class="pp-vis">
+              <span class="label">Explore before committing</span>
+              <svg class="pp-svg" viewBox="0 0 280 50" aria-hidden="true">
+                <path class="v-branch" d="M10 25L92 7M10 25L92 43M92 7L176 5M92 25L176 32M92 43L176 46"/>
+                <path class="v-best" d="M10 25L92 25L176 18L262 18"/>
+                <circle class="v-skip" cx="92" cy="7" r="4"/><circle class="v-skip" cx="92" cy="43" r="4"/>
+                <circle class="v-skip" cx="176" cy="5" r="4"/><circle class="v-skip" cx="176" cy="32" r="4"/><circle class="v-skip" cx="176" cy="46" r="4"/>
+                <circle class="v-pick" cx="10" cy="25" r="5"/><circle class="v-pick" cx="92" cy="25" r="4.5"/><circle class="v-pick" cx="176" cy="18" r="4.5"/><circle class="v-pick" cx="262" cy="18" r="6"/>
+              </svg>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">Some LLM planning failures are search failures, not inability.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Use LLM search to propose options; keep hard checks in code.</p><div class="pp-chips"><span class="lvl">LLM judges anchors</span></div></div>
+          </article>
+
+          <article class="paper" data-r="7" hidden>
+            <header class="pp-h"><span class="pp-year">2026</span><span class="pp-venue">ACL</span></header>
+            <h3 class="pp-name">TravelBench</h3>
+            <p class="pp-by">Cheng et al.</p>
+            <div class="pp-vis">
+              <div class="split" role="img" aria-label="1,100 tasks: 500 single-turn, 500 multi-turn, 100 unsolvable"><i class="s1" style="flex:500"></i><i class="s2" style="flex:500"></i><i class="s3" style="flex:100"></i></div>
+              <div class="split-l"><span style="--k:var(--accent)"><b>500</b>single-turn</span><span style="--k:var(--accent-2)"><b>500</b>multi-turn</span><span style="--k:var(--red)"><b>100</b>unsolvable</span></div>
+            </div>
+            <div><p class="label">Takeaway</p><p class="pp-take">A real agent asks, uses tools, plans, and knows when it can’t.</p></div>
+            <div class="pp-us-sec"><p class="label">For our design</p><p class="pp-us">Ask when unclear, admit when impossible, re-plan on every change.</p><div class="pp-chips"><span class="lvl">Confirm card</span><span class="lvl">L4 Edit</span></div></div>
+          </article>
+
+          <article class="paper sum" data-r="8" hidden>
+            <header class="pp-h"><span class="pp-year">Synthesis</span></header>
+            <h3 class="pp-name">What it means for us</h3>
+            <dl class="roles">
+              <div><dt>LLM</dt><dd>Understand, judge, narrate</dd></div>
+              <div><dt>Data and tools</dt><dd>L1 Know, the ground truth</dd></div>
+              <div><dt>Planning</dt><dd>L2 Find and L3 Plan, in code</dd></div>
+              <div><dt>Verification</dt><dd>Checks at every level</dd></div>
+              <div><dt>Re-planning</dt><dd>L4 Edit, changing only what’s affected</dd></div>
+            </dl>
+          </article>
+        </div>
+        <footer class="takeaway is-hidden" id="takeaway-r">
+          <span class="label">Takeaway</span>
+          <p>The LLM handles meaning. Data, solvers and validators handle guarantees.</p>
+        </footer>
+      </div>
     </main>
   </div>
 </div>
@@ -1155,14 +1382,14 @@ button { font: inherit; color: inherit; }
     '2.4': [['w-rt-tkr', 'w-pd-tkr']],
     '2.5': [['w-in-query', 'w-in-llm'], 'w-llm-query', ['w-query-proc', 'w-tkr-proc'], 'w-proc-llm', 'w-llm-out'],
   };
-  // Beat at which each gap closes, and what closed it.
+  // How each gap changes: [beat, state, what the card says from then on].
   const GAPS = {
-    G1:  { at: '2.5', fix: 'Real places with IDs and status' },
-    G2:  { at: '2.5', fix: 'Festival calendar, seasonal crowds' },
-    G3:  { at: '2.4', fix: 'Curated, timestamped feeds' },
-    G7:  { at: '2.5', fix: 'Varied picks, hidden gems' },
-    G8:  { at: '2.5', fix: 'Veg and stairs are hard filters' },
-    G10: { at: '2.4', fix: 'Ingested once, queried fast' },
+    G1:  [['2.5', 'closed', 'Real places with IDs and status']],
+    G2:  [['2.5', 'partial', 'Dates known, hours unchecked']],
+    G3:  [['2.4', 'closed', 'Curated, timestamped feeds']],
+    G7:  [['2.5', 'partial', 'Varied pool, LLM still picks']],
+    G8:  [['2.5', 'partial', 'Filters hold, pacing doesn’t']],
+    G10: [['2.4', 'closed', 'Ingested once, queried fast']],
   };
   // Popover positions [left, top, width] on the canvas.
   const POP_POS = {
@@ -1175,6 +1402,17 @@ button { font: inherit; color: inherit; }
   };
   // Classes that hold until a beat, and elements that pulse to invite a click.
   const STATES = [{ id: 'n-tkr', cls: 'is-empty', until: '2.3' }];
+  // Research tab: one station per paper, revealed one at a time.
+  const PAPERS = [
+    { year: '2014', name: 'TTDP survey' },
+    { year: '2022', name: 'TTDP review' },
+    { year: '2024', name: 'TravelPlanner' },
+    { year: '2024', name: 'LLM-Modulo' },
+    { year: '2025', name: 'Formal checks' },
+    { year: '2025', name: 'AoT+' },
+    { year: '2026', name: 'TravelBench' },
+    { year: '', name: 'Our design' },
+  ];
   const HINTS = { '2.3': 'n-tkr', '2.5': 'n-proc' };
 
   // ---------- Setup ----------
@@ -1187,11 +1425,16 @@ button { font: inherit; color: inherit; }
   const narrow = matchMedia('(max-width: 999px)');
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   const SVG = 'http://www.w3.org/2000/svg';
-  let cur = -1;
+  let cur = -1, tab = 'arch', rev = 0;
 
   const span = (a, b) => [a ? IDX[a] : 0, b ? IDX[b] : Infinity];
   const shownAt = (a, b, i) => { const [lo, hi] = span(a, b); return i >= lo && i <= hi; };
-  const isClosed = code => GAPS[code] && cur >= IDX[GAPS[code].at];
+  const gapAt = code => {
+    let st = { state: 'open', text: null };
+    (GAPS[code] || []).forEach(([b, state, text]) => { if (IDX[b] <= cur) st = { state, text }; });
+    return st;
+  };
+  const STATE_ICON = { open: '#i-circle-x', partial: '#i-contrast', closed: '#i-circle-check' };
 
   // ---------- Step rail ----------
   const rail = $('rail');
@@ -1265,7 +1508,7 @@ button { font: inherit; color: inherit; }
     return { d: `M${x} ${y1}L${x} ${y2}`, mx: x, my: (y1 + y2) / 2 };
   }
   function layout() {
-    if (narrow.matches || cur < 0) return;
+    if (narrow.matches || cur < 0 || tab !== 'arch') return;
     Object.values(wires).forEach(({ w, p, label }) => {
       const on = shownAt(w.in, w.out, cur) && !$(w.from).classList.contains('off') && !$(w.to).classList.contains('off');
       p.classList.toggle('off', !on);
@@ -1367,36 +1610,43 @@ button { font: inherit; color: inherit; }
   // ---------- Gaps ----------
   document.querySelectorAll('.gap p').forEach(p => { p.dataset.open = p.textContent; });
   function paintGaps(animate) {
-    let open = 0;
-    const cards = document.querySelectorAll('.gap');
-    cards.forEach(g => {
-      const code = g.dataset.gap, closed = !!isClosed(code);
-      const was = g.classList.contains('is-closed');
-      g.classList.toggle('is-closed', closed);
-      g.querySelector('.st use').setAttribute('href', closed ? '#i-circle-check' : '#i-circle-x');
+    const n = { open: 0, partial: 0, closed: 0 };
+    document.querySelectorAll('.gap').forEach(g => {
+      const code = g.dataset.gap, { state, text } = gapAt(code);
+      const was = g.dataset.state || 'open';
+      g.dataset.state = state;
+      g.classList.toggle('is-closed', state === 'closed');
+      g.classList.toggle('is-partial', state === 'partial');
+      g.querySelector('.st use').setAttribute('href', STATE_ICON[state]);
       const p = g.querySelector('p');
-      p.textContent = closed ? GAPS[code].fix : p.dataset.open;
-      g.setAttribute('aria-label', `${code} ${g.querySelector('h3').textContent.replace(code, '')}: ${closed ? 'closed. ' : 'open. '}${p.textContent}`);
-      if (closed && !was && animate) { g.classList.remove('pop-in'); void g.offsetWidth; g.classList.add('pop-in'); }
-      if (!closed) open++;
+      p.textContent = text || p.dataset.open;
+      g.setAttribute('aria-label', `${code} ${g.querySelector('h3').textContent.replace(code, '')}: ${state}. ${p.textContent}`);
+      if (state !== was && state !== 'open' && animate) { g.classList.remove('pop-in'); void g.offsetWidth; g.classList.add('pop-in'); }
+      n[state]++;
     });
-    document.querySelectorAll('.gx').forEach(x => x.classList.toggle('is-closed', !!isClosed(x.textContent.trim())));
+    document.querySelectorAll('.gx').forEach(x => {
+      const { state } = gapAt(x.textContent.trim());
+      x.classList.toggle('is-closed', state === 'closed');
+      x.classList.toggle('is-partial', state === 'partial');
+    });
     const count = $('count');
-    count.textContent = open === cards.length ? `${open} open` : `${open} open · ${cards.length - open} closed`;
-    count.classList.toggle('all-closed', open === 0);
+    count.textContent = [`${n.open} open`, n.partial && `${n.partial} partial`, n.closed && `${n.closed} closed`].filter(Boolean).join(' · ');
+    count.classList.toggle('all-closed', !n.open && !n.partial);
+    count.classList.toggle('no-open', !n.open && !!n.partial);
   }
 
   // Hover a gap card or a gap chip to see where that gap shows up.
   let pinned = [];
   function light(codes) {
-    stage.querySelectorAll('.lit').forEach(e => e.classList.remove('lit', 'ok'));
+    stage.querySelectorAll('.lit').forEach(e => e.classList.remove('lit', 'ok', 'part'));
     stage.classList.toggle('linking', codes.length > 0);
     codes.forEach(c => {
-      const ok = isClosed(c);
+      const { state } = gapAt(c);
       stage.querySelectorAll(`[data-gaps~="${c}"]`).forEach(e => {
         if (e.closest('.off')) return;
         e.classList.add('lit');
-        if (ok) e.classList.add('ok');
+        if (state === 'closed') e.classList.add('ok');
+        if (state === 'partial') e.classList.add('part');
       });
       const card = stage.querySelector(`.gap[data-gap="${c}"]`);
       if (card) card.classList.add('lit');
@@ -1417,6 +1667,12 @@ button { font: inherit; color: inherit; }
   // ---------- Clicks ----------
   stage.addEventListener('click', e => {
     const t = e.target;
+    if (t.closest('.nav')) return;
+    const tb = t.closest('[data-tab]');
+    if (tb) { setTab(tb.dataset.tab); return; }
+    const rv = t.closest('[data-rev]');
+    if (rv) { reveal(+rv.dataset.rev); return; }
+    if (tab === 'research') { if (t.closest('#view-research')) reveal(rev + 1); return; }
     const goEl = t.closest('[data-go]');
     if (goEl) { const i = IDX[goEl.dataset.go]; i === cur ? flow(BEATS[cur].id) : go(i); return; }
     if (t.closest('.pop-x')) { closePop(); return; }
@@ -1433,13 +1689,15 @@ button { font: inherit; color: inherit; }
   stage.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
-  $('prev').addEventListener('click', () => go(cur - 1));
-  $('next').addEventListener('click', () => go(cur + 1));
+  const step = d => (tab === 'research' ? reveal(rev + d) : go(cur + d));
+  $('prev').addEventListener('click', () => step(-1));
+  $('next').addEventListener('click', () => step(1));
   addEventListener('keydown', e => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape' && openId) { closePop(); return; }
-    if (e.key === 'ArrowRight' || e.key === 'PageDown') { go(cur + 1); e.preventDefault(); }
-    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { go(cur - 1); e.preventDefault(); }
+    if (e.target.closest && e.target.closest('[role="tab"]')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { step(1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { step(-1); e.preventDefault(); }
   });
 
   // ---------- Beat change ----------
@@ -1484,10 +1742,7 @@ button { font: inherit; color: inherit; }
       });
       li.querySelector('.st-beat').textContent = current && fl.beats.length > 1 ? `${beat.id} · ${beat.name}` : '';
     });
-    $('now').innerHTML = `Step ${beat.flow + 1} of ${FLOWS.length} · ${f.code ? `<span class="st-code">${f.code}</span>` : ''}${f.name}` +
-      (f.beats.length > 1 ? `<span class="now-beat">${beat.id} · ${beat.name}</span>` : '');
-    $('prev').disabled = i <= 0;
-    $('next').disabled = i >= BEATS.length - 1;
+    syncNav();
     $('takeaway').textContent = f.takeaway || '';
 
     paintGaps(prev >= 0);
@@ -1498,6 +1753,70 @@ button { font: inherit; color: inherit; }
     layout();
     follow(900);
     if (prev >= 0) flow(beat.id);
+  }
+
+  // ---------- Research tab ----------
+  const railR = $('rail-r');
+  railR.innerHTML = PAPERS.map((pp, i) => `<li class="st">
+      <button type="button" class="st-btn" data-rev="${i + 1}" aria-label="${pp.year ? pp.year + ' ' : ''}${pp.name}">
+        <span class="st-dot">${i + 1}</span>
+        <span class="st-name">${pp.year || pp.name}</span>
+        <span class="st-beat"></span>
+      </button>
+      ${i < PAPERS.length - 1 ? '<span class="seg"><span class="seg-fill"></span></span>' : ''}
+    </li>`).join('');
+  function reveal(n) {
+    n = Math.max(0, Math.min(PAPERS.length, n));
+    const grow = n > rev;
+    rev = n;
+    document.querySelectorAll('.paper').forEach(c => {
+      const on = +c.dataset.r <= n, was = !c.hidden;
+      c.hidden = !on;
+      if (on && !was && grow) { c.classList.remove('enter'); void c.offsetWidth; c.classList.add('enter'); }
+    });
+    railR.querySelectorAll('.st').forEach((li, i) => {
+      li.classList.toggle('is-done', i + 1 < n);
+      li.classList.toggle('is-current', i + 1 === n);
+      li.querySelector('.st-beat').textContent = i < n && PAPERS[i].year ? PAPERS[i].name : '';
+      const fill = li.querySelector('.seg-fill');
+      if (fill) fill.style.width = (i + 1 < n ? 100 : 0) + '%';
+    });
+    const tk = $('takeaway-r'), show = n === PAPERS.length;
+    if (show && tk.classList.contains('is-hidden')) { tk.classList.remove('enter'); void tk.offsetWidth; tk.classList.add('enter'); }
+    tk.classList.toggle('is-hidden', !show);
+    syncNav();
+  }
+  function syncNav() {
+    const r = tab === 'research';
+    $('prev').disabled = r ? rev <= 0 : cur <= 0;
+    $('next').disabled = r ? rev >= PAPERS.length : cur >= BEATS.length - 1;
+    $('next').classList.toggle('hint', r && rev === 0);
+    if (r) {
+      const pp = PAPERS[rev - 1];
+      $('now').innerHTML = `Research · ${rev} of ${PAPERS.length}` + (pp ? `<span class="now-beat">${pp.year ? pp.year + ' · ' : ''}${pp.name}</span>` : '');
+    } else if (cur >= 0) {
+      const beat = BEATS[cur], f = FLOWS[beat.flow];
+      $('now').innerHTML = `Step ${beat.flow + 1} of ${FLOWS.length} · ${f.code ? `<span class="st-code">${f.code}</span>` : ''}${f.name}` +
+        (f.beats.length > 1 ? `<span class="now-beat">${beat.id} · ${beat.name}</span>` : '');
+    }
+  }
+  function setTab(t) {
+    if (t === tab) return;
+    tab = t;
+    const r = t === 'research';
+    $('view-arch').hidden = r;
+    $('view-research').hidden = !r;
+    $('rail').hidden = r;
+    railR.hidden = !r;
+    $('tab-arch').setAttribute('aria-selected', String(!r));
+    $('tab-research').setAttribute('aria-selected', String(r));
+    closePop();
+    token++;
+    hideDots();
+    pinned = [];
+    light(pinned);
+    if (r) reveal(rev); else { syncNav(); layout(); }
+    try { history.replaceState(null, '', r ? '#research' : '#architecture'); } catch (err) { /* not allowed here */ }
   }
 
   // ---------- Fit the stage to the screen ----------
@@ -1518,6 +1837,7 @@ button { font: inherit; color: inherit; }
   narrow.addEventListener('change', fit);
 
   go(0);
+  if (location.hash === '#research') setTab('research');
   fit();
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { layout(); flow(BEATS[cur].id); });
 })();
