@@ -145,7 +145,7 @@ button { font: inherit; color: inherit; }
 .is-done .st-name { color: var(--ink-2); }
 .st-code { font: 600 11px var(--f-mono); color: var(--accent); margin-right: 5px; }
 .st-beat { font: 500 10.5px/1 var(--f-mono); color: var(--accent); white-space: nowrap; min-height: 11px; }
-.nav { display: flex; gap: 8px; flex: none; }
+.nav { display: flex; gap: 8px; flex: none; margin-left: auto; }
 .navbtn {
   width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink);
@@ -594,11 +594,18 @@ button { font: inherit; color: inherit; }
 .takeaway .label { color: var(--accent); font-weight: 600; letter-spacing: .14em; flex: none; }
 .takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
+/* ---------- Revised architecture ---------- */
+.canvas-r { flex: 1; height: auto; }
+#r-input  { left: 0; top: 96px; width: 300px; }
+#r-output { left: 1076px; top: 96px; width: 300px; }
+.out-empty { flex: 1; border-radius: 10px; border: 1.5px dashed var(--line); }
+
 /* ---------- Research ---------- */
 .research {
   flex: 1; min-height: 0; display: grid; gap: 18px; cursor: pointer;
   grid-template-columns: 318px minmax(0, 1fr);
 }
+#rail-r .st-beat { display: none; }
 .minis { list-style: none; margin: 0; padding: 2px 0 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .minis li { position: relative; padding-left: 22px; }
 .minis li::before {
@@ -692,20 +699,32 @@ button { font: inherit; color: inherit; }
 .split-l span::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--k); }
 .split-l b { font: 600 12px var(--f-mono); color: var(--ink); }
 
-.fcard.sum { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.fcard.sum .pp-year, .fcard.sum .fc-title, .fcard.sum .fc-count, .fcard.sum .label { color: var(--accent-ink); }
-.fcard.sum .label { opacity: .8; }
-.implies { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; counter-reset: k; }
-.implies li { counter-increment: k; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px; font-size: 14.5px; line-height: 1.45; }
-.implies li::before { content: counter(k); font: 600 12px/1.45 var(--f-mono); opacity: .75; }
-.implies b { display: block; font-weight: 700; }
-.roles { display: grid; margin: 0; }
-.roles div {
-  display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 12px; padding: 13px 0;
-  border-top: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent); font-size: 14.5px; line-height: 1.45;
+.syn-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.syn-llm, .syn-core { min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: 24px 26px; border-radius: 16px; }
+.syn-llm { background: var(--sunk); }
+.syn-core { background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 6px var(--accent-soft); }
+.syn-h { display: flex; align-items: center; gap: 14px; }
+.syn-ic { flex: none; width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); }
+.syn-core .syn-ic { background: var(--accent-ink); color: var(--accent); }
+.syn-ic .ic { width: 27px; height: 27px; }
+.syn-h h4 { margin: 4px 0 0; font: 720 22px/1.25 var(--f-display); font-stretch: 106%; text-wrap: balance; }
+.syn-core .label { color: var(--accent-ink); opacity: .85; }
+.syn-not { display: flex; flex-wrap: wrap; gap: 8px; }
+.syn-not span {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px; border-radius: 999px;
+  font-size: 13.5px; font-weight: 650; color: var(--red); background: var(--red-soft);
 }
-.roles dt { font-weight: 700; }
-.roles dd { margin: 0; }
+.syn-not .ic { width: 15px; height: 15px; stroke-width: 2.2; }
+.syn-jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; }
+.syn-jobs li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; font-size: 16px; line-height: 1.45; }
+.syn-jobs .ic { width: 19px; height: 19px; margin-top: 2px; color: var(--accent); stroke-width: 2.2; }
+.syn-tiles { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.syn-tiles div {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 14px; padding: 18px;
+  border-radius: 12px; background: color-mix(in srgb, var(--accent-ink) 14%, transparent);
+}
+.syn-tiles .ic { width: 28px; height: 28px; }
+.syn-tiles b { font: 720 20px/1.2 var(--f-display); font-stretch: 104%; }
 .takeaway.is-hidden { visibility: hidden; }
 
 /* ---------- Linking a gap to where it shows up ---------- */
@@ -725,7 +744,10 @@ button { font: inherit; color: inherit; }
   .brand { width: auto; flex: 1; }
   .nav { order: 2; }
   .tabs { order: 3; flex-basis: 100%; }
-  .tab { flex: 1; }
+  .tab { flex: 1; padding-inline: 6px; }
+  .tab-long { display: none; }
+  .canvas-r > .node::before { content: none !important; }
+  .out-empty { min-height: 140px; }
   .rail { order: 4; flex-basis: 100%; }
   .st-name, .st-beat, .tick { display: none; }
   .now { display: block; order: 5; flex-basis: 100%; font-size: 13px; font-weight: 650; }
@@ -768,7 +790,9 @@ button { font: inherit; color: inherit; }
   .focus { order: -1; }
   .fcard { padding: 18px 16px 20px; }
   .fc-name { font-size: 23px; }
-  .fc-sec > p:not(.label), .fc-design p:not(.label), .fc-points li, .implies li, .roles div { font-size: 14px; }
+  .fc-sec > p:not(.label), .fc-design p:not(.label), .fc-points li, .syn-jobs li { font-size: 14px; }
+  .syn-body { grid-template-columns: 1fr; }
+  .syn-tiles b { font-size: 17px; }
   .fc-take p:not(.label) { font-size: 17px; }
   .fc-body { grid-template-columns: 1fr; gap: 18px; }
   .stat b { font-size: 40px; }
@@ -845,6 +869,8 @@ button { font: inherit; color: inherit; }
 <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
 <symbol id="i-workflow" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></symbol>
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
+<symbol id="i-drafting-compass" viewBox="0 0 24 24"><path d="m12.99 6.74 1.93 3.44"/><path d="M19.136 12a10 10 0 0 1-14.271 0"/><path d="m21 21-2.16-3.84"/><path d="m3 21 8.02-14.26"/><circle cx="12" cy="5" r="2"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></symbol>
 </defs></svg>
 
 <div class="viewport">
@@ -859,8 +885,8 @@ button { font: inherit; color: inherit; }
         <div class="tabs" role="tablist" aria-label="Views">
           <button type="button" class="tab" role="tab" id="tab-arch" aria-selected="true" aria-controls="view-arch" data-tab="arch"><svg class="ic" aria-hidden="true"><use href="#i-workflow"/></svg>Architecture</button>
           <button type="button" class="tab" role="tab" id="tab-research" aria-selected="false" aria-controls="view-research" data-tab="research"><svg class="ic" aria-hidden="true"><use href="#i-book-open"/></svg>Research</button>
+          <button type="button" class="tab" role="tab" id="tab-revised" aria-selected="false" aria-controls="view-revised" data-tab="revised"><svg class="ic" aria-hidden="true"><use href="#i-drafting-compass"/></svg>Revised<span class="tab-long">&nbsp;architecture</span></button>
         </div>
-        <ol class="rail" id="rail" aria-label="Steps"></ol>
         <ol class="rail" id="rail-r" aria-label="Papers" hidden></ol>
         <div class="nav">
           <button type="button" class="navbtn" id="prev" aria-label="Previous"><svg class="ic" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
@@ -1266,6 +1292,47 @@ button { font: inherit; color: inherit; }
           <span class="label">Takeaway</span>
           <p>The LLM handles meaning. Data, solvers and validators handle guarantees.</p>
         </footer>
+
+      </div>
+
+      <!-- ===== Revised architecture: rebuilt from scratch ===== -->
+      <div class="view" id="view-revised" role="tabpanel" aria-labelledby="tab-revised" hidden>
+        <section class="canvas canvas-r" id="canvas-r" aria-label="Revised architecture">
+        <article class="node card" id="r-input">
+          <header class="node-h">
+            <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
+            <h2>Trip input</h2>
+          </header>
+          <dl class="facts">
+            <div class="fact"><dt class="label">Country</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-earth"/></svg>Japan</dd></div>
+            <div class="fact"><dt class="label">Travelers</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>2 adults</dd></div>
+            <div class="fact"><dt class="label">Days</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>7</dd></div>
+            <div class="fact"><dt class="label">From</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-plane-takeoff"/></svg>Bengaluru</dd></div>
+            <div class="fact span2"><dt class="label">Dates</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-calendar-days"/></svg>28 Apr – 4 May</dd></div>
+            <div class="fact span3"><dt class="label">Interests</dt>
+              <dd class="chips">
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-utensils"/></svg>Food</span>
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-landmark"/></svg>Temples</span>
+                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Photography</span>
+              </dd>
+            </div>
+          </dl>
+          <div class="prompt">
+            <p class="label">Prompt</p>
+            <p>“We're <mark>vegetarian</mark>, one of us has a <mark>bad knee</mark>, we <mark>hate crowds</mark>, and we want it to feel like <mark>old Japan</mark>.”</p>
+          </div>
+        </article>
+
+          <div class="node out" id="r-output">
+            <article class="card out-card">
+              <header class="node-h">
+                <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-scroll-text"/></svg></span>
+                <h2>Itinerary</h2>
+              </header>
+              <div class="out-empty"></div>
+            </article>
+          </div>
+        </section>
       </div>
     </main>
   </div>
@@ -1479,25 +1546,6 @@ button { font: inherit; color: inherit; }
       design: 'Make clarification and capability checks first-class. User changes and outside disruptions feed the same re-planning engine instead of restarting the conversation.',
       vis: 'split' },
   ];
-  const SYN = {
-    implies: [
-      ['The problem is not “recommend places”', 'It is choosing places, allocating scarce time, sequencing and meeting hard constraints.'],
-      ['Preferences are not all the same', 'Some are hard rules, some soft goals, some ambiguous, like “I hate early mornings”.'],
-      ['Planning is hierarchical', 'City choice shapes days, the base shapes travel time, routes decide what fits.'],
-      ['LLMs help where meaning dominates', 'Intent, preferences, clarification, options, changes and explanations.'],
-      ['Code helps where guarantees dominate', 'Routing, travel times, time windows, budgets, opening hours, feasibility.'],
-      ['Verify apart from generating', 'Whatever proposes a plan should not be the only judge of whether it is valid.'],
-      ['Keep a re-planning loop', 'A cancelled flight or “remove Kyoto” updates the trip and re-plans only part of it.'],
-      ['Know when to ask or abstain', 'A sharp question or an honest “this can’t work” beats a hallucinated plan.'],
-    ],
-    roles: [
-      ['LLM', 'Understands intent and preferences, asks clarifying questions, proposes options, interprets changes, explains'],
-      ['Data and tools', 'Current POIs, hotels, maps, transit, weather, events and local rules as ground truth'],
-      ['Planning', 'Deterministic city choice, day allocation, POI and base selection, scheduling and routing'],
-      ['Verification', 'Hard constraints, feasibility, consistency and capability limits'],
-      ['Re-planning', 'Updates the trip state when users or the world change, and re-optimizes only what’s affected'],
-    ],
-  };
   const PAPERS = [...PAPER_DATA.map(d => ({ year: d.year, name: d.short })), { year: '', name: 'Our design' }];
   const HINTS = { '2.3': 'n-tkr', '2.5': 'n-proc' };
 
@@ -1521,23 +1569,6 @@ button { font: inherit; color: inherit; }
     return st;
   };
   const STATE_ICON = { open: '#i-circle-x', partial: '#i-contrast', closed: '#i-circle-check' };
-
-  // ---------- Step rail ----------
-  const rail = $('rail');
-  rail.innerHTML = FLOWS.map((f, fi) => {
-    const built = !!f.beats;
-    const ticks = built ? f.beats.slice(1).map((b, k) =>
-      `<button type="button" class="tick" data-go="${b.id}" style="left:${(k + 1) / f.beats.length * 100}%" aria-label="${b.id} ${b.name}"></button>`).join('') : '';
-    return `<li class="st">
-      <button type="button" class="st-btn" ${built ? `data-go="${f.beats[0].id}"` : 'disabled'}
-        aria-label="Step ${fi + 1}: ${f.name}${built ? '' : ' (not built yet)'}">
-        <span class="st-dot">${fi + 1}</span>
-        <span class="st-name">${f.code ? `<span class="st-code">${f.code}</span>` : ''}${f.name}</span>
-        <span class="st-beat"></span>
-      </button>
-      ${fi < FLOWS.length - 1 ? `<span class="seg"><span class="seg-fill"></span>${ticks}</span>` : ''}
-    </li>`;
-  }).join('');
 
   // ---------- Wires ----------
   const wires = {};
@@ -1761,6 +1792,7 @@ button { font: inherit; color: inherit; }
     const pk = t.closest('[data-peek]');
     if (pk) { showPaper(+pk.dataset.peek); return; }
     if (tab === 'research') { if (t.closest('#view-research')) researchStep(1); return; }
+    if (tab === 'revised') return;
     const goEl = t.closest('[data-go]');
     if (goEl) { const i = IDX[goEl.dataset.go]; i === cur ? flow(BEATS[cur].id) : go(i); return; }
     if (t.closest('.pop-x')) { closePop(); return; }
@@ -1777,13 +1809,12 @@ button { font: inherit; color: inherit; }
   stage.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
-  const step = d => (tab === 'research' ? researchStep(d) : go(cur + d));
+  const step = d => (tab === 'research' ? researchStep(d) : tab === 'arch' ? go(cur + d) : null);
   $('prev').addEventListener('click', () => step(-1));
   $('next').addEventListener('click', () => step(1));
   addEventListener('keydown', e => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape' && openId) { closePop(); return; }
-    if (e.target.closest && e.target.closest('[role="tab"]')) return;
     if (e.key === 'ArrowRight' || e.key === 'PageDown') { step(1); e.preventDefault(); }
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { step(-1); e.preventDefault(); }
   });
@@ -1816,20 +1847,6 @@ button { font: inherit; color: inherit; }
     if (HINTS[beat.id]) $(HINTS[beat.id]).classList.add('hint');
     place();
 
-    rail.querySelectorAll('.st').forEach((li, fi) => {
-      const fl = FLOWS[fi], current = fi === beat.flow, done = fi < beat.flow;
-      li.classList.toggle('is-current', current);
-      li.classList.toggle('is-done', done);
-      const btn = li.querySelector('.st-btn');
-      if (current) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current');
-      const fill = li.querySelector('.seg-fill');
-      if (fill) fill.style.width = (done ? 100 : current && fl.beats ? beat.at / fl.beats.length * 100 : 0) + '%';
-      li.querySelectorAll('.tick').forEach((t, k) => {
-        t.classList.toggle('on', done || (current && k + 1 <= beat.at));
-        t.classList.toggle('now', current && k + 1 === beat.at);
-      });
-      li.querySelector('.st-beat').textContent = current && fl.beats.length > 1 ? `${beat.id} · ${beat.name}` : '';
-    });
     syncNav();
     $('takeaway').textContent = f.takeaway || '';
 
@@ -1878,21 +1895,32 @@ button { font: inherit; color: inherit; }
     </article>`;
   }
   function synthesisCard() {
-    return `<article class="fcard sum">
+    const ic = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+    const jobs = [
+      'Converts natural-language intent into a structured preference and constraint model',
+      'Asks high-value clarification questions',
+      'Generates candidate strategies',
+      'Interprets changes',
+      'Explains the optimizer’s output',
+    ];
+    const core = [['database', 'Factual grounding'], ['circle-check', 'Feasibility'], ['route', 'Routing'], ['lock', 'Hard constraints']];
+    return `<article class="fcard">
       <header>
         <div class="fc-meta"><span class="pp-year">Synthesis</span></div>
         <h3 class="fc-name">What the seven papers add up to</h3>
-        <p class="fc-title">The architecture these papers point to, in one place</p>
       </header>
-      <div class="fc-body">
-        <div class="fc-col">
-          <p class="label">What they imply</p>
-          <ol class="implies">${SYN.implies.map(([t, s]) => `<li><span><b>${t}</b>${s}</span></li>`).join('')}</ol>
-        </div>
-        <div class="fc-col">
-          <p class="label">Resulting system</p>
-          <dl class="roles">${SYN.roles.map(([r, s]) => `<div><dt>${r}</dt><dd>${s}</dd></div>`).join('')}</dl>
-        </div>
+      <div class="syn-body">
+        <section class="syn-llm">
+          <div class="syn-h"><span class="syn-ic">${ic('brain-circuit')}</span>
+            <div><p class="label">The LLM</p><h4>Semantic interface and search partner</h4></div></div>
+          <p class="syn-not"><span>${ic('x')}Not the source of truth</span><span>${ic('x')}Not the constraint solver</span></p>
+          <ul class="syn-jobs">${jobs.map(j => `<li>${ic('check')}<span>${j}</span></li>`).join('')}</ul>
+        </section>
+        <section class="syn-core">
+          <div class="syn-h"><span class="syn-ic">${ic('cpu')}</span>
+            <div><p class="label">What our design depends on</p><h4>Deterministic tools and optimization algorithms</h4></div></div>
+          <div class="syn-tiles">${core.map(([n, t]) => `<div>${ic(n)}<b>${t}</b></div>`).join('')}</div>
+        </section>
       </div>
     </article>`;
   }
@@ -1939,6 +1967,12 @@ button { font: inherit; color: inherit; }
     reveal(rev + d);
   }
   function syncNav() {
+    if (tab === 'revised') {
+      $('prev').disabled = $('next').disabled = true;
+      $('next').classList.remove('hint');
+      $('now').textContent = 'Revised architecture';
+      return;
+    }
     const r = tab === 'research';
     $('prev').disabled = r ? rev <= 0 : cur <= 0;
     $('next').disabled = r ? rev >= PAPERS.length && !peek : cur >= BEATS.length - 1;
@@ -1952,23 +1986,22 @@ button { font: inherit; color: inherit; }
         (f.beats.length > 1 ? `<span class="now-beat">${beat.id} · ${beat.name}</span>` : '');
     }
   }
+  const VIEWS = { arch: 'view-arch', research: 'view-research', revised: 'view-revised' };
   function setTab(t) {
-    if (t === tab) return;
+    if (t === tab || !VIEWS[t]) return;
     tab = t;
-    const r = t === 'research';
-    $('view-arch').hidden = r;
-    $('view-research').hidden = !r;
-    $('rail').hidden = r;
-    railR.hidden = !r;
-    $('tab-arch').setAttribute('aria-selected', String(!r));
-    $('tab-research').setAttribute('aria-selected', String(r));
+    Object.entries(VIEWS).forEach(([k, id]) => {
+      $(id).hidden = k !== t;
+      $('tab-' + k).setAttribute('aria-selected', String(k === t));
+    });
+    railR.hidden = t !== 'research';
     closePop();
     token++;
     hideDots();
     pinned = [];
     light(pinned);
-    if (r) reveal(rev); else { syncNav(); layout(); }
-    try { history.replaceState(null, '', r ? '#research' : '#architecture'); } catch (err) { /* not allowed here */ }
+    if (t === 'research') reveal(rev); else { syncNav(); layout(); }
+    try { history.replaceState(null, '', '#' + (t === 'arch' ? 'architecture' : t)); } catch (err) { /* not allowed here */ }
   }
 
   // ---------- Fit the stage to the screen ----------
@@ -1990,6 +2023,7 @@ button { font: inherit; color: inherit; }
 
   go(0);
   if (location.hash === '#research') setTab('research');
+  if (location.hash === '#revised') setTab('revised');
   fit();
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { layout(); flow(BEATS[cur].id); });
 })();
