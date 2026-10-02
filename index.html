@@ -34,6 +34,10 @@
   --amber-soft: #FDF0E3;
   --amber-line: #F0C9A2;
   --accent-2: #9AA4EC;
+  --t-transit: #1D6AA8;
+  --t-transit-soft: #E2EEF8;
+  --t-stay: #A33A7E;
+  --t-stay-soft: #F7E5F0;
   --shadow: 0 1px 2px rgb(20 26 49 / .05), 0 6px 18px rgb(20 26 49 / .06);
   --pop-shadow: 0 2px 6px rgb(20 26 49 / .08), 0 16px 44px rgb(20 26 49 / .18);
   --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -48,6 +52,7 @@
     --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
     --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
     --amber: #FFA65C; --amber-soft: #2D1C0F; --amber-line: #6B4019; --accent-2: #4A56B0;
+    --t-transit: #73B6F5; --t-transit-soft: #10243A; --t-stay: #EE90CC; --t-stay-soft: #2E1427;
     --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
     --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
     color-scheme: dark;
@@ -60,6 +65,7 @@
   --red: #FF7D87; --red-soft: #2C141D; --red-line: #5C2432;
   --green: #52D08F; --green-soft: #0E2A1C; --green-line: #1D573A;
   --amber: #FFA65C; --amber-soft: #2D1C0F; --amber-line: #6B4019; --accent-2: #4A56B0;
+    --t-transit: #73B6F5; --t-transit-soft: #10243A; --t-stay: #EE90CC; --t-stay-soft: #2E1427;
   --shadow: 0 1px 2px rgb(0 0 0 / .35), 0 6px 18px rgb(0 0 0 / .22);
   --pop-shadow: 0 2px 6px rgb(0 0 0 / .4), 0 16px 44px rgb(0 0 0 / .5);
   color-scheme: dark;
@@ -596,9 +602,102 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Revised architecture ---------- */
 .canvas-r { flex: 1; height: auto; }
-#r-input  { left: 0; top: 96px; width: 300px; }
-#r-output { left: 1076px; top: 96px; width: 300px; }
+#r-input  { left: 0; top: 0; width: 290px; }
+#r-output { left: 1106px; top: 0; width: 270px; }
 .out-empty { flex: 1; border-radius: 10px; border: 1.5px dashed var(--line); }
+#c1 { left: 320px;  top: 0;     width: 440px;  height: 340px; }
+#c3 { left: 790px;  top: 0;     width: 286px;  height: 108px; }
+#c2 { left: 790px;  top: 133px; width: 286px;  height: 207px; }
+#c4 { left: 0;      top: 366px; width: 1076px; height: 226px; }
+#c7 { left: 1106px; top: 420px; width: 270px;  height: 172px; }
+#c5 { left: 790px;  top: 616px; width: 286px;  height: 172px; }
+#c6 { left: 1106px; top: 616px; width: 270px;  height: 172px; }
+#c8 { left: 0;      top: 616px; width: 760px;  height: 172px; }
+
+.rc {
+  display: flex; flex-direction: column; padding: 10px 12px 12px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+}
+.rc.is-llm { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow); }
+.rc-h { display: flex; align-items: center; gap: 8px; min-height: 22px; margin-bottom: 8px; }
+.rc-code { flex: none; padding: 5px 6px; border-radius: 6px; font: 700 11px/1 var(--f-mono); color: var(--bg); background: var(--ink); transition: background-color .4s, color .4s; }
+.rc.is-new .rc-code { color: var(--accent-ink); background: var(--accent); }
+.rc-h h3 { margin: 0; font: 680 14px/1.2 var(--f-display); font-stretch: 104%; white-space: nowrap; }
+.kind { flex: none; margin-left: auto; padding: 4px 6px; border-radius: 5px; font: 600 9.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; }
+.kind.llm { color: var(--accent-ink); background: var(--accent); }
+.kind.code { color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--edge); }
+.kind.data { color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--line); }
+.rc-part { padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
+.rc-part + .rc-part { margin-top: 8px; }
+.rc-part.is-llm { background: var(--accent-soft); }
+.part-h { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12.5px; }
+.part-h .ic { width: 15px; height: 15px; color: var(--accent); }
+.part-h b { font-weight: 650; }
+.duties { display: flex; flex-wrap: wrap; gap: 5px; }
+.duties span { padding: 3px 8px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 550; }
+.ts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.slot { padding: 6px 8px; border-radius: 8px; background: var(--surface); font-size: 12px; line-height: 1.35; }
+.slot .label { margin-bottom: 3px; }
+.tdial { font: 500 11px/1.45 var(--f-mono); color: var(--ink-2); }
+.tdial b { font-weight: 600; color: var(--accent); }
+.feedrow { display: flex; align-items: center; gap: 5px; }
+.feedrow + .feedrow { margin-top: 5px; }
+.fr-l { flex: none; width: 66px; display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 650; }
+.fr-l .ic { width: 13px; height: 13px; color: var(--accent); }
+.feedrow .f { padding: 3px 7px; border-radius: 6px; background: var(--sunk); font-size: 11.5px; font-weight: 550; }
+.c2-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; counter-reset: c2; }
+.c2-steps li { counter-increment: c2; display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 8px; row-gap: 1px; }
+.c2-steps li::before {
+  content: counter(c2); grid-row: span 2; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 10.5px/1 var(--f-mono); color: var(--accent); background: var(--accent-soft);
+}
+.c2-steps b { font-size: 13px; font-weight: 650; }
+.c2-steps span { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
+.eq { margin-left: 18px; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.eq-l { font-weight: 750; color: var(--ink); }
+.c4-steps { display: flex; align-items: stretch; gap: 6px; }
+.c4s { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
+.c4s.is-top { background: var(--accent-soft); }
+.c4s b { font-size: 13px; font-weight: 650; }
+.c4s > span:not(.terms):not(.leg):not(.leg-how) { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
+.c4s .terms { margin-top: auto; padding-top: 4px; }
+.leg { display: inline-flex; align-items: center; gap: 5px; font: 500 10.5px/1.3 var(--f-mono); color: var(--ink-2); }
+.leg i { padding: 1px 4px; border-radius: 4px; font-style: normal; font-weight: 600; color: var(--surface); background: var(--ink-2); }
+.leg-how { font: 500 10.5px/1.3 var(--f-mono); color: var(--ink-3); }
+.sep { width: 14px; height: 14px; align-self: center; color: var(--ink-3); }
+.terms { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.terms .label { margin-right: 2px; }
+.term { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 5px; font: 600 10.5px/1.35 var(--f-mono); white-space: nowrap; color: var(--tc); background: var(--tb); }
+.term.fit     { --tc: var(--green);     --tb: var(--green-soft); }
+.term.cost    { --tc: var(--amber);     --tb: var(--amber-soft); }
+.term.transit { --tc: var(--t-transit); --tb: var(--t-transit-soft); }
+.term.stay    { --tc: var(--t-stay);    --tb: var(--t-stay-soft); }
+.term.score   { --tc: var(--accent);    --tb: var(--accent-soft); }
+.tlog { margin-top: 8px; display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 9px; border: 1px dashed var(--edge); }
+.tlog-h { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; }
+.tlog-h .ic { width: 14px; height: 14px; color: var(--amber); }
+.tl { padding: 3px 7px; border-radius: 6px; font: 500 11px/1.3 var(--f-mono); white-space: nowrap; color: var(--ink-2); background: var(--sunk); }
+.tlog-to { margin-left: auto; font-size: 11.5px; font-weight: 600; white-space: nowrap; color: var(--accent); }
+.rc-p { margin: 0 0 6px; font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.bk { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
+.bk span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 6px; background: var(--sunk); font-size: 11.5px; font-weight: 550; }
+.bk .ic { width: 13px; height: 13px; color: var(--ink-2); }
+.c5 > .terms { margin-top: auto; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.checks li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; line-height: 1.35; }
+.checks .ic { flex: none; width: 14px; height: 14px; stroke-width: 2.2; color: var(--accent); }
+.checks .ic.xmark { color: var(--red); }
+.c1-link { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--accent); }
+.c1-link .ic { width: 14px; height: 14px; }
+.c8-flow { flex: 1; display: flex; align-items: stretch; gap: 6px; }
+.c8s { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
+.c8s:first-child { flex: 1.25; }
+.c8s.is-llm { background: var(--accent-soft); }
+.c8s b { font-size: 13px; font-weight: 650; }
+.c8s .kind { margin-left: 0; }
+.c8s > span:not(.kind):not(.trg) { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
+.trg { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 550; }
+.trg .ic { flex: none; width: 13px; height: 13px; color: var(--amber); }
 
 /* ---------- Research ---------- */
 .research {
@@ -748,6 +847,16 @@ button { font: inherit; color: inherit; }
   .tab-long { display: none; }
   .canvas-r > .node::before { content: none !important; }
   .out-empty { min-height: 140px; }
+  .canvas-r > .rc { height: auto !important; }
+  .rc-h { flex-wrap: wrap; }
+  .rc-h h3 { white-space: normal; }
+  .eq { margin-left: 0; flex-wrap: wrap; white-space: normal; }
+  .c4-steps, .c8-flow { flex-wrap: wrap; }
+  .c4s, .c8s, .c8s:first-child { flex: 1 1 140px; }
+  .sep { display: none; }
+  .tlog { flex-wrap: wrap; }
+  .tlog-to { margin-left: 0; }
+  .tl { white-space: normal; }
   .rail { order: 4; flex-basis: 100%; }
   .st-name, .st-beat, .tick { display: none; }
   .now { display: block; order: 5; flex-basis: 100%; font-size: 13px; font-weight: 650; }
@@ -871,6 +980,10 @@ button { font: inherit; color: inherit; }
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
 <symbol id="i-drafting-compass" viewBox="0 0 24 24"><path d="m12.99 6.74 1.93 3.44"/><path d="M19.136 12a10 10 0 0 1-14.271 0"/><path d="m21 21-2.16-3.84"/><path d="m3 21 8.02-14.26"/><circle cx="12" cy="5" r="2"/></symbol>
 <symbol id="i-cpu" viewBox="0 0 24 24"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+<symbol id="i-calculator" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></symbol>
+<symbol id="i-arrow-left-right" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
 </defs></svg>
 
 <div class="viewport">
@@ -1298,6 +1411,14 @@ button { font: inherit; color: inherit; }
       <!-- ===== Revised architecture: rebuilt from scratch ===== -->
       <div class="view" id="view-revised" role="tabpanel" aria-labelledby="tab-revised" hidden>
         <section class="canvas canvas-r" id="canvas-r" aria-label="Revised architecture">
+          <svg class="wires" aria-hidden="true">
+            <defs>
+              <marker id="arrow-r" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                <path class="arrowhead" d="M2 1.5 8.5 5 2 8.5"/>
+              </marker>
+            </defs>
+            <g id="wire-layer-r"></g>
+          </svg>
         <article class="node card" id="r-input">
           <header class="node-h">
             <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
@@ -1323,6 +1444,109 @@ button { font: inherit; color: inherit; }
           </div>
         </article>
 
+          <!-- C1 Dialogue manager + trip state -->
+          <div class="node off rc c1" id="c1" data-rin="1">
+            <header class="rc-h"><span class="rc-code">C1</span><h3>Dialogue manager &amp; trip state</h3></header>
+            <div class="rc-part is-llm">
+              <div class="part-h"><svg class="ic" aria-hidden="true"><use href="#i-brain-circuit"/></svg><b>Dialogue manager</b><span class="kind llm">LLM</span></div>
+              <div class="duties"><span>Classify intent</span><span>Request type</span><span>Ask questions</span><span>Options &amp; trade-offs</span></div>
+            </div>
+            <div class="rc-part">
+              <div class="part-h"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg><b>Trip state</b><span class="kind code">State</span></div>
+              <div class="ts-grid">
+                <div class="slot"><p class="label">Hard constraints</p><p>Vegetarian · no long stairs · 28 Apr – 4 May</p></div>
+                <div class="slot"><p class="label">Soft · trip dials</p>
+                  <p class="tdial">pace <b>relaxed</b></p><p class="tdial">crowd_tolerance <b>low</b></p><p class="tdial">hidden_gem_share <b>30%</b></p></div>
+                <div class="slot"><p class="label">Trip context</p><p>2 adults · from Bengaluru · 7 days</p></div>
+                <div class="slot"><p class="label">Residual text</p><p>“feel like old Japan” → semantic search</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- C3 Data feeds -->
+          <div class="node off rc c3" id="c3" data-rin="3">
+            <header class="rc-h"><span class="rc-code">C3</span><h3>Data feeds</h3><span class="kind data">Data</span></header>
+            <div class="feedrow"><span class="fr-l"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>Live</span><span class="f">Flights</span><span class="f">Hotels</span><span class="f">Weather</span></div>
+            <div class="feedrow"><span class="fr-l"><svg class="ic" aria-hidden="true"><use href="#i-refresh-cw"/></svg>Periodic</span><span class="f">POIs</span><span class="f">Maps</span><span class="f">Festivals</span></div>
+          </div>
+
+          <!-- C2 Candidate generation -->
+          <div class="node off rc c2" id="c2" data-rin="2">
+            <header class="rc-h"><span class="rc-code">C2</span><h3>Candidate generation</h3><span class="kind code">Code</span></header>
+            <ol class="c2-steps">
+              <li><b>Plannable universe</b><span>Hard constraints only, applied to C3 data</span></li>
+              <li><b>Rank</b><span>Score by trip dials, plus semantic search on residual text</span></li>
+              <li><b>Ranked cities + POIs</b><span>Handed to the planner, C4</span></li>
+            </ol>
+          </div>
+
+          <!-- C4 Planner / optimizer -->
+          <div class="node off rc c4" id="c4" data-rin="4">
+            <header class="rc-h"><span class="rc-code">C4</span><h3>Planner / optimizer</h3><span class="kind code">Code</span>
+              <div class="eq"><span class="eq-l">Trip score</span> = <span class="term fit">Itinerary fit</span> − <span class="term cost">Cost</span> − <span class="term transit">Transit hours</span> − <span class="term stay">Stay penalty</span> − …</div>
+            </header>
+            <div class="c4-steps">
+              <div class="c4s"><b>City selector</b><span>Which cities, in what order, for how long</span>
+                <span class="leg"><i>Leg</i>Tokyo → Kanazawa</span><span class="leg-how">how: train · when: Day 3</span>
+                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span><span class="term stay">Stay</span></span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c4s"><b>POI selector</b><span>Activities per city by intent, distance and days</span>
+                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span></span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c4s"><b>Base locator</b><span>Neighbourhood to stay in each night, near the chosen POIs</span>
+                <span class="terms"><span class="term transit">Transit</span><span class="term cost">Cost</span></span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c4s"><b>Daily routes</b><span>Order, timings, best and crowded hours, arrival and departure days</span>
+                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span></span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c4s is-top"><b>Top-K itineraries</b><span>The highest-scoring plans</span>
+                <span class="terms"><span class="term score">Trip score</span></span></div>
+            </div>
+            <div class="tlog">
+              <span class="tlog-h"><svg class="ic" aria-hidden="true"><use href="#i-scroll-text"/></svg>Trade-off log</span>
+              <span class="tl">Kyoto cut to 2 nights · crowds</span>
+              <span class="tl">Inari summit dropped · stairs</span>
+              <span class="tl">Kinkaku-ji left out · Golden Week</span>
+              <span class="tlog-to">→ C7 explains it, C1 asks the user</span>
+            </div>
+          </div>
+
+          <!-- C5 Booking search -->
+          <div class="node off rc c5" id="c5" data-rin="5">
+            <header class="rc-h"><span class="rc-code">C5</span><h3>Booking search</h3><span class="kind code">Code</span></header>
+            <p class="rc-p">Top-K options inside each itinerary’s days and time slots</p>
+            <div class="bk">
+              <span><svg class="ic" aria-hidden="true"><use href="#i-plane"/></svg>Flights</span>
+              <span><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Hotels</span>
+              <span><svg class="ic" aria-hidden="true"><use href="#i-car"/></svg>Transfers</span>
+              <span><svg class="ic" aria-hidden="true"><use href="#i-ticket"/></svg>Other</span>
+            </div>
+            <span class="terms"><span class="label">Optimizes</span><span class="term cost">Cost</span><span class="term transit">Transit hours</span></span>
+          </div>
+
+          <!-- C6 Validator -->
+          <div class="node off rc c6" id="c6" data-rin="6">
+            <header class="rc-h"><span class="rc-code">C6</span><h3>Validator</h3><span class="kind code">Code</span></header>
+            <ul class="checks">
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validates every top-K itinerary</li>
+              <li><svg class="ic xmark" aria-hidden="true"><use href="#i-x"/></svg>Rejects anything infeasible</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-calculator"/></svg><span>Final <span class="term score">Trip score</span> with bookings</span></li>
+            </ul>
+          </div>
+
+          <!-- C7 Presentation and narration -->
+          <div class="node off rc is-llm c7" id="c7" data-rin="7">
+            <header class="rc-h"><span class="rc-code">C7</span><h3>Presentation &amp; narration</h3><span class="kind llm">LLM</span></header>
+            <ul class="checks">
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Presents the top itineraries</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Narrates each plan</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>What was left out, and why</li>
+              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Explains the trade-offs</li>
+            </ul>
+            <span class="c1-link"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left-right"/></svg>Follow-up questions go through C1</span>
+          </div>
+
+
           <div class="node out" id="r-output">
             <article class="card out-card">
               <header class="node-h">
@@ -1332,6 +1556,23 @@ button { font: inherit; color: inherit; }
               <div class="out-empty"></div>
             </article>
           </div>
+
+          <!-- C8 Revision loop -->
+          <div class="node off rc c8" id="c8" data-rin="8">
+            <header class="rc-h"><span class="rc-code">C8</span><h3>Revision loop</h3></header>
+            <div class="c8-flow">
+              <div class="c8s"><b>Triggers</b>
+                <span class="trg"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>User change request</span>
+                <span class="trg"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>Env change: flight cancelled</span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c8s is-llm"><b>Change understanding</b><span class="kind llm">LLM</span><span>Turns the change into a typed edit</span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c8s"><b>Impact analysis</b><span class="kind code">Code</span><span>Finds the days and steps it touches</span></div>
+              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              <div class="c8s"><b>Partial re-planning</b><span class="kind code">Code</span><span>Re-solves only those, keeps the rest</span></div>
+            </div>
+          </div>
+
         </section>
       </div>
     </main>
@@ -1588,13 +1829,13 @@ button { font: inherit; color: inherit; }
     wires[w.id] = { w, p, label };
   });
 
-  function box(el) {
+  function box(el, root = canvas) {
     let x = 0, y = 0, n = el;
-    while (n && n !== canvas) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+    while (n && n !== root) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
     return { x, y, w: el.offsetWidth, h: el.offsetHeight, g: +(el.dataset.wgap || 3) };
   }
-  function geom(w) {
-    const A = box($(w.from)), B = box($(w.to));
+  function geom(w, root = canvas) {
+    const A = box($(w.from), root), B = box($(w.to), root);
     if (w.elbow) {                                        // down out of A, then sideways into B
       const x1 = A.x + A.w / 2, y1 = A.y + A.h + A.g;
       const toLeft = B.x + B.w <= x1;
@@ -1809,7 +2050,7 @@ button { font: inherit; color: inherit; }
   stage.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
-  const step = d => (tab === 'research' ? researchStep(d) : tab === 'arch' ? go(cur + d) : null);
+  const step = d => (tab === 'research' ? researchStep(d) : tab === 'arch' ? go(cur + d) : rgo(rcur + d));
   $('prev').addEventListener('click', () => step(-1));
   $('next').addEventListener('click', () => step(1));
   addEventListener('keydown', e => {
@@ -1968,9 +2209,10 @@ button { font: inherit; color: inherit; }
   }
   function syncNav() {
     if (tab === 'revised') {
-      $('prev').disabled = $('next').disabled = true;
-      $('next').classList.remove('hint');
-      $('now').textContent = 'Revised architecture';
+      $('prev').disabled = rcur <= 0;
+      $('next').disabled = rcur >= RNAMES.length - 1;
+      $('next').classList.toggle('hint', rcur === 0);
+      $('now').innerHTML = `Revised · ${rcur} of ${RNAMES.length - 1}` + (rcur ? `<span class="now-beat">${RNAMES[rcur]}</span>` : '');
       return;
     }
     const r = tab === 'research';
@@ -2000,8 +2242,68 @@ button { font: inherit; color: inherit; }
     hideDots();
     pinned = [];
     light(pinned);
-    if (t === 'research') reveal(rev); else { syncNav(); layout(); }
+    if (t === 'research') reveal(rev); else { syncNav(); layout(); rlayout(); }
     try { history.replaceState(null, '', '#' + (t === 'arch' ? 'architecture' : t)); } catch (err) { /* not allowed here */ }
+  }
+
+  // ---------- Revised architecture: one component per step ----------
+  const RNAMES = ['', 'C1 · Dialogue manager & trip state', 'C2 · Candidate generation', 'C3 · Data feeds', 'C4 · Planner / optimizer',
+    'C5 · Booking search', 'C6 · Validator', 'C7 · Presentation & narration', 'C8 · Revision loop'];
+  // Wires on the revised canvas. `in` = the step that reveals them.
+  const RWIRES = [
+    { id: 'rw-in-c1',  from: 'r-input', to: 'c1', in: 1 },
+    { id: 'rw-c1-c2',  from: 'c1', to: 'c2', in: 2 },
+    { id: 'rw-c3-c2',  from: 'c3', to: 'c2', label: 'facts', side: true, in: 3 },
+    { id: 'rw-c2-c4',  from: 'c2', to: 'c4', label: 'ranked cities + POIs', side: true, in: 4 },
+    { id: 'rw-c4-c1',  from: 'c4', to: 'c1', both: true, dashed: true, label: 'critical input · trade-off call', side: true, in: 4 },
+    { id: 'rw-c4-c5',  from: 'c4', to: 'c5', label: 'top-K itineraries', side: true, in: 5 },
+    { id: 'rw-c5-c6',  from: 'c5', to: 'c6', in: 6 },
+    { id: 'rw-c6-c7',  from: 'c6', to: 'c7', label: 'scored', side: true, in: 7 },
+    { id: 'rw-c7-out', from: 'c7', to: 'r-output', in: 7 },
+    { id: 'rw-c8-c4',  from: 'c8', to: 'c4', label: 'partial re-plan', side: true, in: 8 },
+  ];
+  const canvasR = $('canvas-r'), layerR = $('wire-layer-r');
+  let rcur = 0;
+  const rwires = RWIRES.map(w => {
+    const p = document.createElementNS(SVG, 'path');
+    p.setAttribute('class', 'wire off' + (w.dashed ? ' dashed' : ''));
+    p.setAttribute('marker-end', 'url(#arrow-r)');
+    if (w.both) p.setAttribute('marker-start', 'url(#arrow-r)');
+    layerR.appendChild(p);
+    let label = null;
+    if (w.label) {
+      label = document.createElement('span');
+      label.className = 'elabel off' + (w.side ? ' side' : '');
+      label.textContent = w.label;
+      canvasR.appendChild(label);
+    }
+    return { w, p, label };
+  });
+  function rlayout() {
+    if (narrow.matches || tab !== 'revised') return;
+    rwires.forEach(({ w, p, label }) => {
+      const on = rcur >= w.in;
+      p.classList.toggle('off', !on);
+      if (label) label.classList.toggle('off', !on);
+      if (!on) return;
+      const g = geom(w, canvasR);
+      p.setAttribute('d', g.d);
+      if (label) { label.style.left = (w.side ? g.mx + 12 : g.mx) + 'px'; label.style.top = g.my + 'px'; }
+    });
+  }
+  function rgo(n) {
+    n = Math.max(0, Math.min(RNAMES.length - 1, n));
+    if (n === rcur) return;
+    const prev = rcur;
+    rcur = n;
+    canvasR.querySelectorAll('[data-rin]').forEach(el => {
+      const k = +el.dataset.rin, on = k <= n;
+      el.classList.toggle('off', !on);
+      el.classList.toggle('is-new', k === n);
+      if (on && k > prev) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+    });
+    rlayout();
+    syncNav();
   }
 
   // ---------- Fit the stage to the screen ----------
@@ -2017,6 +2319,7 @@ button { font: inherit; color: inherit; }
     wrap.style.width = W * s + 'px';
     wrap.style.height = H * s + 'px';
     layout();
+    rlayout();
   }
   addEventListener('resize', fit);
   narrow.addEventListener('change', fit);
