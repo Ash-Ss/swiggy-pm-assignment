@@ -8,9 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: a fixed 1440x900 stage scaled to fit the screen like a slide. Step rail on top,
-   architecture canvas in the middle (input left, engine centre, output right), gap board and
-   takeaway at the bottom. Below 1000px the stage unrolls into a single column. */
+/* Layout: a fixed 1440x900 stage scaled to fit the screen like a slide, with three tabs.
+   Architecture: input left, engine centre, output right, gap board and takeaway below.
+   Research: papers one at a time, earlier ones minimized on the left.
+   Revised: a map of components on top and one component open in detail below it.
+   Below 1000px the stage unrolls into a single column. */
 :root {
   --bg: #F2F4F8;
   --surface: #FFFFFF;
@@ -601,70 +603,20 @@ button { font: inherit; color: inherit; }
 .takeaway p { font: 720 25px/1.2 var(--f-display); font-stretch: 116%; text-wrap: balance; }
 
 /* ---------- Revised architecture ---------- */
-.canvas-r { flex: 1; height: auto; }
-#r-input  { left: 0; top: 0; width: 290px; }
-#r-output { left: 1106px; top: 0; width: 270px; }
+/* One component is open in a large focus card. The others are chips in a compact map above it,
+   laid out in three lanes: conversation, planning, data. The last step spreads the map out. */
+.rmap { position: relative; flex: 1; min-height: 0; --ease: cubic-bezier(.3,.7,.2,1); }
+#r-input  { left: 0; top: 0; width: 300px; }
+#r-output { left: 1076px; top: 0; width: 300px; }
 .out-empty { flex: 1; border-radius: 10px; border: 1.5px dashed var(--line); }
-#c1 { left: 320px;  top: 0;     width: 440px;  height: 340px; }
-#c3 { left: 790px;  top: 0;     width: 286px;  height: 108px; }
-#c2 { left: 790px;  top: 133px; width: 286px;  height: 207px; }
-#c4 { left: 0;      top: 366px; width: 1076px; height: 226px; }
-#c7 { left: 1106px; top: 420px; width: 270px;  height: 172px; }
-#c5 { left: 790px;  top: 616px; width: 286px;  height: 172px; }
-#c6 { left: 1106px; top: 616px; width: 270px;  height: 172px; }
-#c8 { left: 0;      top: 616px; width: 760px;  height: 172px; }
+#r-output .out-card { min-height: 420px; }
 
-.rc {
-  display: flex; flex-direction: column; padding: 10px 12px 12px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
-}
-.rc.is-llm { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow); }
-.rc-h { display: flex; align-items: center; gap: 8px; min-height: 22px; margin-bottom: 8px; }
-.rc-code { flex: none; padding: 5px 6px; border-radius: 6px; font: 700 11px/1 var(--f-mono); color: var(--bg); background: var(--ink); transition: background-color .4s, color .4s; }
-.rc.is-new .rc-code { color: var(--accent-ink); background: var(--accent); }
-.rc-h h3 { margin: 0; font: 680 14px/1.2 var(--f-display); font-stretch: 104%; white-space: nowrap; }
-.kind { flex: none; margin-left: auto; padding: 4px 6px; border-radius: 5px; font: 600 9.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; }
+/* Kind of work and trip-score terms, used in chips, headers and examples */
+.kind { flex: none; padding: 4px 6px; border-radius: 5px; font: 600 9.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; }
 .kind.llm { color: var(--accent-ink); background: var(--accent); }
 .kind.code { color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--edge); }
 .kind.data { color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--line); }
-.rc-part { padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
-.rc-part + .rc-part { margin-top: 8px; }
-.rc-part.is-llm { background: var(--accent-soft); }
-.part-h { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 12.5px; }
-.part-h .ic { width: 15px; height: 15px; color: var(--accent); }
-.part-h b { font-weight: 650; }
-.duties { display: flex; flex-wrap: wrap; gap: 5px; }
-.duties span { padding: 3px 8px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 550; }
-.ts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.slot { padding: 6px 8px; border-radius: 8px; background: var(--surface); font-size: 12px; line-height: 1.35; }
-.slot .label { margin-bottom: 3px; }
-.tdial { font: 500 11px/1.45 var(--f-mono); color: var(--ink-2); }
-.tdial b { font-weight: 600; color: var(--accent); }
-.feedrow { display: flex; align-items: center; gap: 5px; }
-.feedrow + .feedrow { margin-top: 5px; }
-.fr-l { flex: none; width: 66px; display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 650; }
-.fr-l .ic { width: 13px; height: 13px; color: var(--accent); }
-.feedrow .f { padding: 3px 7px; border-radius: 6px; background: var(--sunk); font-size: 11.5px; font-weight: 550; }
-.c2-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; counter-reset: c2; }
-.c2-steps li { counter-increment: c2; display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 8px; row-gap: 1px; }
-.c2-steps li::before {
-  content: counter(c2); grid-row: span 2; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center;
-  font: 600 10.5px/1 var(--f-mono); color: var(--accent); background: var(--accent-soft);
-}
-.c2-steps b { font-size: 13px; font-weight: 650; }
-.c2-steps span { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
-.eq { margin-left: 18px; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
-.eq-l { font-weight: 750; color: var(--ink); }
-.c4-steps { display: flex; align-items: stretch; gap: 6px; }
-.c4s { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
-.c4s.is-top { background: var(--accent-soft); }
-.c4s b { font-size: 13px; font-weight: 650; }
-.c4s > span:not(.terms):not(.leg):not(.leg-how) { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
-.c4s .terms { margin-top: auto; padding-top: 4px; }
-.leg { display: inline-flex; align-items: center; gap: 5px; font: 500 10.5px/1.3 var(--f-mono); color: var(--ink-2); }
-.leg i { padding: 1px 4px; border-radius: 4px; font-style: normal; font-weight: 600; color: var(--surface); background: var(--ink-2); }
-.leg-how { font: 500 10.5px/1.3 var(--f-mono); color: var(--ink-3); }
-.sep { width: 14px; height: 14px; align-self: center; color: var(--ink-3); }
+.kind.state { color: var(--ink-2); background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); }
 .terms { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .terms .label { margin-right: 2px; }
 .term { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 5px; font: 600 10.5px/1.35 var(--f-mono); white-space: nowrap; color: var(--tc); background: var(--tb); }
@@ -673,31 +625,315 @@ button { font: inherit; color: inherit; }
 .term.transit { --tc: var(--t-transit); --tb: var(--t-transit-soft); }
 .term.stay    { --tc: var(--t-stay);    --tb: var(--t-stay-soft); }
 .term.score   { --tc: var(--accent);    --tb: var(--accent-soft); }
-.tlog { margin-top: 8px; display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 9px; border: 1px dashed var(--edge); }
-.tlog-h { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; }
-.tlog-h .ic { width: 14px; height: 14px; color: var(--amber); }
-.tl { padding: 3px 7px; border-radius: 6px; font: 500 11px/1.3 var(--f-mono); white-space: nowrap; color: var(--ink-2); background: var(--sunk); }
-.tlog-to { margin-left: auto; font-size: 11.5px; font-weight: 600; white-space: nowrap; color: var(--accent); }
-.rc-p { margin: 0 0 6px; font-size: 12px; line-height: 1.35; color: var(--ink-2); }
-.bk { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
-.bk span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 6px; background: var(--sunk); font-size: 11.5px; font-weight: 550; }
-.bk .ic { width: 13px; height: 13px; color: var(--ink-2); }
-.c5 > .terms { margin-top: auto; }
-.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.checks li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; line-height: 1.35; }
-.checks .ic { flex: none; width: 14px; height: 14px; stroke-width: 2.2; color: var(--accent); }
-.checks .ic.xmark { color: var(--red); }
-.c1-link { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; color: var(--accent); }
-.c1-link .ic { width: 14px; height: 14px; }
-.c8-flow { flex: 1; display: flex; align-items: stretch; gap: 6px; }
-.c8s { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px 10px; border-radius: 10px; background: var(--sunk); }
-.c8s:first-child { flex: 1.25; }
-.c8s.is-llm { background: var(--accent-soft); }
-.c8s b { font-size: 13px; font-weight: 650; }
-.c8s .kind { margin-left: 0; }
-.c8s > span:not(.kind):not(.trg) { font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
-.trg { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; border-radius: 6px; background: var(--surface); font-size: 11.5px; font-weight: 550; }
-.trg .ic { flex: none; width: 13px; height: 13px; color: var(--amber); }
+
+/* Chips */
+.rk {
+  position: absolute; z-index: 2; margin: 0; padding: 0 12px; overflow: hidden; text-align: left;
+  display: flex; flex-direction: column; font: inherit; color: var(--ink);
+  border-radius: 11px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow);
+  transition: left .7s var(--ease), top .7s var(--ease), width .7s var(--ease), height .7s var(--ease),
+              background-color .3s, border-color .3s, color .3s, box-shadow .3s, opacity .35s, visibility .35s;
+}
+button.rk { appearance: none; cursor: pointer; }
+button.rk:hover { border-color: var(--edge); }
+button.rk:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rk.off { opacity: 0; visibility: hidden; pointer-events: none; }
+.rk.is-llm { background: var(--accent-soft); }
+.rk.is-data { background: var(--sunk); }
+.rk.is-out { border-style: dashed; box-shadow: none; }
+.rk-h { flex: none; height: 38px; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.rk-h .ic { width: 16px; height: 16px; color: var(--ink-2); }
+.rk-code { flex: none; padding: 4px 6px; border-radius: 6px; font: 700 11px/1 var(--f-mono); color: var(--bg); background: var(--ink); transition: background-color .3s, color .3s; }
+.rk-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 650 13.5px/1.2 var(--f-display); }
+.rk-more { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; padding-bottom: 10px; opacity: 0; transition: opacity .25s; }
+.rk-kinds { display: flex; gap: 4px; }
+.rk-role { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+.rk-subs, .rk-feeds { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.rk-subs i, .rk-feeds i { font: 500 10.5px/1 var(--f-mono); font-style: normal; padding: 3px 5px; border-radius: 5px; color: var(--ink-2); background: var(--sunk); }
+.rk.is-llm .rk-subs i, .rk.is-data .rk-feeds i { background: var(--surface); }
+.rk-feeds b { margin: 0 2px 0 6px; font: 600 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+.rk-feeds b:first-child { margin-left: 0; }
+.rmap.is-over .rk-more { opacity: 1; transition: opacity .4s .35s; }
+.rk.is-focus { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow); }
+.rk.is-focus .rk-code { color: var(--accent); background: var(--accent-ink); }
+
+/* Lanes, shown when the map is spread out */
+.lane { position: absolute; left: 0; width: 150px; margin: 0; display: flex; flex-direction: column; gap: 4px; opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+.lane b { font: 600 10.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .12em; color: var(--accent); }
+.lane span { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.lane-rule { position: absolute; left: 0; right: 0; height: 0; border-top: 1px dashed var(--line); opacity: 0; transition: opacity .3s; }
+.rmap.is-over .lane, .rmap.is-over .lane-rule { opacity: 1; visibility: visible; transition: opacity .4s .35s, visibility .4s .35s; }
+.rmap .elabel { white-space: nowrap; }
+
+/* Focus card */
+.fk {
+  position: absolute; left: 0; right: 0; top: 184px; bottom: 0; z-index: 4;
+  display: flex; flex-direction: column; gap: 12px; padding: 16px 24px 18px;
+  border-radius: 18px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+  transition: opacity .35s, transform .35s, visibility .35s;
+}
+.fk.off { opacity: 0; visibility: hidden; transform: translateY(14px); pointer-events: none; }
+.fk::before {
+  content: ""; position: absolute; top: -9px; left: var(--cx, 50%); margin-left: -9px; width: 0; height: 0;
+  border: 9px solid transparent; border-top: 0; border-bottom-color: var(--accent);
+  transition: left .45s var(--ease);
+}
+.fk-h { flex: none; display: flex; align-items: flex-start; gap: 14px; }
+.fk-code { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; font: 700 15px/1 var(--f-mono); color: var(--accent-ink); background: var(--accent); }
+.fk-t { flex: 1; min-width: 0; }
+.fk-t h3 { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font: 760 23px/1.15 var(--f-display); font-stretch: 112%; text-wrap: balance; }
+.fk-t h3 .kind { font-stretch: 100%; }
+.fk-t p { margin-top: 5px; font-size: 14px; color: var(--ink-2); }
+.fk-io { flex: none; width: 440px; margin: 2px 0 0; display: grid; gap: 5px; }
+.fk-io div { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.fk-io dt { font: 600 10px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
+.fk-io dd { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+
+.stabs { flex: none; display: flex; align-items: center; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.stab {
+  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 4px 11px 4px 5px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+  font-size: 12.5px; font-weight: 600; color: var(--ink-2);
+}
+.stab i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 600 10.5px/1 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
+.stab:hover { border-color: var(--edge); color: var(--ink); }
+.stab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stab.is-on { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
+.stab.is-on i { color: var(--accent-ink); background: var(--accent); }
+.stabs-r { margin-left: auto; font: 500 11px/1.3 var(--f-mono); color: var(--ink-3); text-align: right; }
+.fk-back {
+  appearance: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px;
+  border-radius: 999px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent);
+  font: 600 12.5px/1 var(--f-body);
+}
+.fk-back .ic { width: 15px; height: 15px; }
+.fk-back:hover { background: var(--accent-soft); }
+.fk-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* One part of a component */
+.sv { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.sv-h { flex: none; display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; column-gap: 10px; row-gap: 3px; }
+.sv-h h4 { margin: 0; font: 720 19px/1.2 var(--f-display); font-stretch: 106%; }
+.sv-h > p { grid-column: 1 / -1; font-size: 14px; color: var(--ink-2); }
+.sv-h .terms { grid-column: 4; }
+.sv-h .kind { justify-self: start; }
+.sv-g { flex: 1; min-height: 0; display: grid; grid-template-columns: 286px minmax(0, 1fr) minmax(0, 1.24fr); gap: 26px; }
+.sv-col { min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.sv-col > .label:first-child { color: var(--accent); }
+.how { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; counter-reset: how; }
+.how li { counter-increment: how; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 9px; font-size: 13.5px; line-height: 1.45; }
+.how li::before {
+  content: counter(how); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 11px/1 var(--f-mono); color: var(--accent); background: var(--accent-soft);
+}
+.how b { font-weight: 650; }
+
+/* Maths */
+.fx { padding: 9px 12px; border-radius: 10px; background: var(--sunk); font: 500 13px/1.6 var(--f-mono); color: var(--ink); overflow-x: auto; }
+.fx sub, .fx sup { font-size: .72em; line-height: 0; }
+.fx .term { font-size: 12px; }
+.fx-n { font-size: 12.5px; line-height: 1.4; color: var(--ink-2); }
+.calc { padding: 7px 12px; border-radius: 10px; border: 1px dashed var(--line); font: 500 12px/1.65 var(--f-mono); color: var(--ink-2); }
+.calc b { font-weight: 600; color: var(--ink); }
+.vars { margin: 0; display: grid; gap: 5px; }
+.vars div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; font-size: 12.5px; line-height: 1.4; }
+.vars dt { font: 600 12px/1.4 var(--f-mono); }
+.vars dd { margin: 0; color: var(--ink-2); }
+.eqn { font: 600 14px/2.3 var(--f-mono); }
+.eqn sub { font-size: .72em; line-height: 0; }
+.eqn .term { font-size: 13px; padding: 3px 8px; margin: 0 2px; }
+
+/* Shared bits for examples */
+.ex-h { font-size: 12.5px; font-weight: 650; color: var(--ink); }
+.pl {
+  display: inline-flex; align-items: center; padding: 3px 6px; border-radius: 5px; white-space: nowrap;
+  font: 600 10.5px/1.2 var(--f-mono); color: var(--ink-2); background: var(--sunk);
+}
+.pl.acc { color: var(--accent); background: var(--accent-soft); }
+.pl.ok { color: var(--green); background: var(--green-soft); }
+.pl.bad { color: var(--red); background: var(--red-soft); }
+.pl.warn { color: var(--amber); background: var(--amber-soft); }
+.pl.mute { color: var(--ink-3); background: none; box-shadow: inset 0 0 0 1px var(--line); }
+.ic.ok { width: 14px; height: 14px; stroke-width: 2.4; color: var(--green); vertical-align: -2px; }
+.ic.bad { width: 14px; height: 14px; stroke-width: 2.4; color: var(--red); vertical-align: -2px; }
+.chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tbw { overflow-x: auto; }
+.tb { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.tb th {
+  padding: 0 6px 6px; text-align: left; vertical-align: bottom; white-space: nowrap; border-bottom: 1px solid var(--line);
+  font: 600 9.5px/1.3 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3);
+}
+.tb td { padding: 5px 6px; border-bottom: 1px solid var(--line); line-height: 1.35; }
+.tb .n { text-align: right; white-space: nowrap; }
+.tb td.n { font-family: var(--f-mono); font-size: 12px; }
+.tb tr.hi td { background: var(--accent-soft); }
+.tb tr.tot td { border-bottom: 0; padding-top: 7px; }
+.tb tr.mute td { color: var(--ink-3); }
+.tb td b { font-weight: 650; }
+.tb .bad { color: var(--red); font-weight: 600; }
+
+/* C1 */
+.msgs { display: grid; gap: 7px; }
+.msg { display: grid; gap: 5px; padding: 8px 11px; border-radius: 10px; border: 1px solid var(--line); }
+.msg q { font-size: 13px; font-weight: 600; }
+.cls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+.cls .p { font: 500 11px var(--f-mono); color: var(--ink-3); }
+.cls .to { margin-left: auto; font: 600 11.5px var(--f-mono); color: var(--accent); }
+.msg code { padding: 4px 7px; border-radius: 6px; font: 500 11px/1.45 var(--f-mono); color: var(--ink-2); background: var(--sunk); }
+.ts4 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 8px; }
+.tsc { min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); }
+.tsc > .label { display: flex; align-items: center; gap: 5px; }
+.tsc > .label .ic { width: 13px; height: 13px; color: var(--accent); }
+.kv { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.kv li { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.kv span { color: var(--ink-3); }
+.kv b { font-weight: 600; text-align: right; }
+.dls { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.dls li { display: grid; grid-template-columns: 114px minmax(0, 1fr) 28px 52px; align-items: center; gap: 6px; }
+.dls .dn { font: 500 11px/1.2 var(--f-mono); }
+.dls i { display: block; height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
+.dls b { font: 600 11px var(--f-mono); text-align: right; }
+.src { font: 500 9.5px/1 var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.src.stated { color: var(--green); }
+.src.inferred { color: var(--amber); }
+.res { font-size: 13px; font-weight: 600; }
+.vec { font: 500 11px/1.4 var(--f-mono); color: var(--ink-2); }
+.offer { display: grid; gap: 7px; padding: 10px 12px; border-radius: 10px; border: 1.5px dashed var(--accent); }
+.offer-h { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+.offer-h .ic { width: 15px; height: 15px; color: var(--accent); }
+.offer ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.offer li { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 8px; background: var(--sunk); font-size: 12px; color: var(--ink-2); }
+.offer li b { font-size: 12.5px; color: var(--ink); }
+.offer li.is-pick { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+/* C2 */
+.funnel { display: grid; gap: 7px; }
+.fn { display: grid; grid-template-columns: 150px minmax(0, 1fr) 40px; align-items: center; gap: 10px; font-size: 12.5px; }
+.fn i { display: block; height: 16px; border-radius: 4px; width: calc(var(--v) * 100%); min-width: 3px; background: var(--accent); }
+.fn b { font: 600 12px var(--f-mono); text-align: right; }
+.rbars { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.rbars li { display: grid; grid-template-columns: 82px minmax(0, 1fr) 34px; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 550; }
+.rbars i { display: block; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--sunk) 0); }
+.rbars b { font: 600 11.5px var(--f-mono); text-align: right; }
+
+/* C3 */
+.er { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+.er ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.er li { display: flex; flex-direction: column; padding: 5px 9px; border-radius: 8px; background: var(--sunk); font-size: 12.5px; }
+.er li b { font-weight: 650; }
+.er li span { font: 500 10.5px/1.4 var(--f-mono); color: var(--ink-3); }
+.er-out { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12.5px; text-align: center; }
+.er-out .ic { width: 18px; height: 18px; color: var(--accent); }
+.er-out b { font-weight: 650; }
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.ch-grid { stroke: var(--line); stroke-width: 1; }
+.ch-lab { font: 500 10px var(--f-mono); fill: var(--ink-3); }
+.ch-row { font: 600 12px var(--f-body); fill: var(--ink-2); }
+.ch-val { font: 600 11.5px var(--f-mono); fill: var(--ink); }
+.ch-link { stroke: var(--edge); stroke-width: 1; stroke-dasharray: 2 3; }
+.ch-line { fill: none; stroke: var(--edge); stroke-width: 2; stroke-linejoin: round; }
+.ch-line.gw { stroke: var(--accent); stroke-width: 2.5; }
+.ch-dot.good { fill: var(--green); }
+.ch-dot.bad { fill: var(--red); }
+.ch-note { font: 600 11px var(--f-mono); fill: var(--ink); }
+.wf.fit { fill: var(--green); } .wf.cost { fill: var(--amber); } .wf.transit { fill: var(--t-transit); }
+.wf.stay { fill: var(--t-stay); } .wf.score { fill: var(--accent); }
+.ch-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-2); }
+.ch-leg span { display: inline-flex; align-items: center; gap: 6px; }
+.ch-leg span::before { content: ""; width: 14px; height: 3px; border-radius: 2px; background: var(--k); }
+
+/* C4 */
+.route { list-style: none; margin: 0; padding: 0; display: grid; }
+.route .stop { display: flex; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 650; }
+.route .stop::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); transform: translateY(-1px); }
+.route .stop i { font-style: normal; font-weight: 500; font-size: 12px; color: var(--ink-3); }
+.route .leg { display: flex; align-items: center; gap: 6px; margin-left: 4px; padding: 4px 0 4px 13px; border-left: 2px solid var(--t-transit-soft); font-size: 12px; color: var(--ink-2); }
+.route .leg .ic { width: 14px; height: 14px; color: var(--t-transit); }
+.route .leg b { font-weight: 600; color: var(--ink); }
+.dstrip { position: relative; height: 22px; border-radius: 6px; background: var(--sunk); overflow: hidden; }
+.dstrip i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.dstrip .visit { background: var(--accent); }
+.dstrip .meal { background: var(--green); }
+.dstrip .rest { background: var(--line); }
+.dstrip-ax { position: relative; height: 12px; margin-top: -4px; font: 500 10px/1 var(--f-mono); color: var(--ink-3); }
+.dstrip-ax span { position: absolute; top: 0; transform: translateX(-50%); }
+.dstrip-ax span:first-child { transform: none; }
+.dstrip-ax span:last-child { transform: translateX(-100%); }
+
+/* C5 */
+.slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.slots li { display: grid; grid-template-columns: 18px 170px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 4px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.slots li .ic { width: 15px; height: 15px; color: var(--ink-2); }
+.slots li b { font-weight: 650; }
+.slots li span { font: 500 11.5px var(--f-mono); color: var(--ink-2); }
+.slots li em { font-style: normal; font-size: 11.5px; color: var(--ink-3); }
+.cmp2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cmp2 div { display: flex; flex-direction: column; gap: 3px; padding: 8px 11px; border-radius: 9px; background: var(--sunk); font-size: 12px; color: var(--ink-2); }
+.cmp2 b { font: 650 15px/1.2 var(--f-mono); color: var(--ink); }
+.cmp2 .is-pick { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.stack { display: flex; height: 18px; gap: 2px; border-radius: 5px; overflow: hidden; }
+.stack i { display: block; height: 100%; }
+.stack-l { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); }
+.stack-l span { display: inline-flex; align-items: center; gap: 6px; }
+.stack-l span::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--k); }
+.stack-l b { font: 600 11.5px var(--f-mono); color: var(--ink); }
+
+/* C6 */
+.cases { display: grid; gap: 10px; }
+.case { display: grid; gap: 5px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 12.5px; line-height: 1.4; }
+.case-h { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.case-h b { font-weight: 650; }
+.case-fix { display: flex; gap: 6px; color: var(--ink-2); }
+.case-fix .ic { flex: none; width: 14px; height: 14px; margin-top: 2px; color: var(--accent); }
+.case-r { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--ink-2); }
+.case code { font: 500 11px/1.4 var(--f-mono); color: var(--ink-2); }
+
+/* C7 */
+.narr { padding: 11px 13px; border-radius: 10px; background: var(--accent-soft); font-size: 13.5px; line-height: 1.75; }
+.narr mark {
+  color: var(--ink); font-weight: 650; padding: 1px 3px; border-radius: 4px;
+  background: var(--surface); box-shadow: inset 0 -2px 0 var(--accent);
+}
+.narr sup { margin-left: 2px; font: 600 9.5px var(--f-mono); color: var(--accent); }
+.srcs { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; counter-reset: src; }
+.srcs li { counter-increment: src; display: flex; align-items: center; gap: 8px; font: 500 11.5px/1.4 var(--f-mono); color: var(--ink-2); }
+.srcs li::before { content: counter(src); width: 16px; font-weight: 600; color: var(--accent); }
+.says { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.says li { padding: 7px 10px; border-radius: 9px; background: var(--sunk); font-size: 12.5px; line-height: 1.45; }
+.says b { font-weight: 650; }
+.undo { color: var(--accent); font-weight: 600; white-space: nowrap; }
+.say { padding: 9px 12px; border-radius: 10px; background: var(--accent-soft); font-size: 13px; line-height: 1.5; font-weight: 550; }
+.fwd { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.fwd li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; }
+.fwd q { font-weight: 600; }
+.fwd span { font: 500 11.5px var(--f-mono); color: var(--ink-2); }
+.fwd span:last-child { color: var(--accent); font-weight: 600; }
+
+/* C8 */
+.trig { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tg { display: flex; flex-direction: column; gap: 7px; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); }
+.tg-h { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 650; }
+.tg-h .ic { width: 15px; height: 15px; color: var(--amber); }
+.tg q, .tg .tg-q { font-size: 13px; line-height: 1.45; font-weight: 550; }
+.tg-r { margin-top: auto; font: 500 11.5px/1.4 var(--f-mono); color: var(--accent); }
+.edit { display: grid; gap: 6px; }
+.edit + .edit { margin-top: 6px; }
+.edit q { font-size: 12.5px; font-weight: 600; }
+.json { margin: 0; padding: 8px 12px; border-radius: 10px; background: var(--sunk); font: 500 11.5px/1.5 var(--f-mono); color: var(--ink); white-space: pre; overflow-x: auto; }
+.json .jk { color: var(--accent); }
+.tree, .tree ul { list-style: none; margin: 0; padding: 0; }
+.tree { display: grid; gap: 4px; }
+.tree ul { display: grid; gap: 4px; margin: 4px 0 0 9px; padding-left: 14px; border-left: 1.5px solid var(--line); }
+.tree li > span:first-child { display: inline-flex; align-items: center; gap: 6px; margin-right: 6px; font-size: 12.5px; font-weight: 600; }
+.tree li > span:first-child .ic { width: 14px; height: 14px; color: var(--ink-2); }
+.tree li.frz > span:first-child { color: var(--ink-3); font-weight: 500; }
+.ba { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ba > div { display: flex; flex-direction: column; gap: 6px; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); }
+.ba > div + div { border-color: var(--accent); }
+.ba ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; font-size: 12.5px; line-height: 1.4; }
+.ba ol b { display: inline-block; width: 44px; font: 600 11px var(--f-mono); color: var(--ink-3); }
+.ba .gone { color: var(--ink-3); }
 
 /* ---------- Research ---------- */
 .research {
@@ -845,18 +1081,6 @@ button { font: inherit; color: inherit; }
   .tabs { order: 3; flex-basis: 100%; }
   .tab { flex: 1; padding-inline: 6px; }
   .tab-long { display: none; }
-  .canvas-r > .node::before { content: none !important; }
-  .out-empty { min-height: 140px; }
-  .canvas-r > .rc { height: auto !important; }
-  .rc-h { flex-wrap: wrap; }
-  .rc-h h3 { white-space: normal; }
-  .eq { margin-left: 0; flex-wrap: wrap; white-space: normal; }
-  .c4-steps, .c8-flow { flex-wrap: wrap; }
-  .c4s, .c8s, .c8s:first-child { flex: 1 1 140px; }
-  .sep { display: none; }
-  .tlog { flex-wrap: wrap; }
-  .tlog-to { margin-left: 0; }
-  .tl { white-space: normal; }
   .rail { order: 4; flex-basis: 100%; }
   .st-name, .st-beat, .tick { display: none; }
   .now { display: block; order: 5; flex-basis: 100%; font-size: 13px; font-weight: 650; }
@@ -907,6 +1131,34 @@ button { font: inherit; color: inherit; }
   .stat b { font-size: 40px; }
   .takeaway { flex-direction: column; gap: 6px; margin-top: 0; }
   .takeaway p { font-size: 21px; }
+}
+@media (max-width: 999px) {
+  .rmap { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
+  .rmap > .node, .rmap > .fk { flex: 1 1 100%; }
+  .out-empty { min-height: 140px; }
+  #r-output .out-card { min-height: 0; }
+  .lane, .lane-rule { display: none; }
+  .rk { position: relative; left: auto !important; top: auto !important; width: auto !important; height: auto !important; flex: 0 1 auto; }
+  .rk.off { display: none; }
+  .rk-h { height: 34px; }
+  .rmap:not(.is-over) .rk-more { display: none; }
+  .rmap.is-over .rk { flex: 1 1 100%; }
+  .fk { position: relative; left: auto; right: auto; top: auto; bottom: auto; margin-top: 8px; padding: 16px 16px 18px; }
+  .fk::before { display: none; }
+  .fk.off { display: none; }
+  .fk-h { flex-wrap: wrap; }
+  .fk-t h3 { font-size: 20px; }
+  .fk-io { width: 100%; }
+  .stabs { flex-wrap: wrap; }
+  .stabs-r { flex-basis: 100%; margin-left: 0; text-align: left; }
+  .sv-h { grid-template-columns: auto minmax(0, 1fr); }
+  .sv-h .terms { grid-column: 1 / -1; }
+  .sv-g { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .ts4, .offer ol, .trig, .ba, .cmp2 { grid-template-columns: minmax(0, 1fr); }
+  .fn { grid-template-columns: 112px minmax(0, 1fr) 36px; }
+  .slots li { grid-template-columns: 18px minmax(0, 1fr); }
+  .slots li span, .slots li em { grid-column: 2; }
+  .er { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 380px) {
   .gaps { grid-template-columns: 1fr; }
@@ -980,10 +1232,9 @@ button { font: inherit; color: inherit; }
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
 <symbol id="i-drafting-compass" viewBox="0 0 24 24"><path d="m12.99 6.74 1.93 3.44"/><path d="M19.136 12a10 10 0 0 1-14.271 0"/><path d="m21 21-2.16-3.84"/><path d="m3 21 8.02-14.26"/><circle cx="12" cy="5" r="2"/></symbol>
 <symbol id="i-cpu" viewBox="0 0 24 24"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></symbol>
-<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
-<symbol id="i-calculator" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></symbol>
-<symbol id="i-arrow-left-right" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="m19 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1"/><path d="m5 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M7 21h10"/></symbol>
+<symbol id="i-train-front" viewBox="0 0 24 24"><path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/></symbol>
 </defs></svg>
 
 <div class="viewport">
@@ -1408,9 +1659,9 @@ button { font: inherit; color: inherit; }
 
       </div>
 
-      <!-- ===== Revised architecture: rebuilt from scratch ===== -->
+      <!-- ===== Revised architecture: one component in focus, the rest minimized ===== -->
       <div class="view" id="view-revised" role="tabpanel" aria-labelledby="tab-revised" hidden>
-        <section class="canvas canvas-r" id="canvas-r" aria-label="Revised architecture">
+        <section class="rmap is-start" id="rmap" aria-label="Revised architecture">
           <svg class="wires" aria-hidden="true">
             <defs>
               <marker id="arrow-r" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
@@ -1419,134 +1670,36 @@ button { font: inherit; color: inherit; }
             </defs>
             <g id="wire-layer-r"></g>
           </svg>
-        <article class="node card" id="r-input">
-          <header class="node-h">
-            <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
-            <h2>Trip input</h2>
-          </header>
-          <dl class="facts">
-            <div class="fact"><dt class="label">Country</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-earth"/></svg>Japan</dd></div>
-            <div class="fact"><dt class="label">Travelers</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>2 adults</dd></div>
-            <div class="fact"><dt class="label">Days</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>7</dd></div>
-            <div class="fact"><dt class="label">From</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-plane-takeoff"/></svg>Bengaluru</dd></div>
-            <div class="fact span2"><dt class="label">Dates</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-calendar-days"/></svg>28 Apr – 4 May</dd></div>
-            <div class="fact span3"><dt class="label">Interests</dt>
-              <dd class="chips">
-                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-utensils"/></svg>Food</span>
-                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-landmark"/></svg>Temples</span>
-                <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Photography</span>
-              </dd>
-            </div>
-          </dl>
-          <div class="prompt">
-            <p class="label">Prompt</p>
-            <p>“We're <mark>vegetarian</mark>, one of us has a <mark>bad knee</mark>, we <mark>hate crowds</mark>, and we want it to feel like <mark>old Japan</mark>.”</p>
-          </div>
-        </article>
+          <p class="lane" style="top:12px"><b>Conversation</b><span>Meaning: the LLM’s job</span></p>
+          <i class="lane-rule" style="top:293px"></i>
+          <p class="lane" style="top:300px"><b>Planning</b><span>Guarantees: code and solvers</span></p>
+          <i class="lane-rule" style="top:584px"></i>
+          <p class="lane" style="top:594px"><b>Data</b><span>Facts with a source and a time</span></p>
 
-          <!-- C1 Dialogue manager + trip state -->
-          <div class="node off rc c1" id="c1" data-rin="1">
-            <header class="rc-h"><span class="rc-code">C1</span><h3>Dialogue manager &amp; trip state</h3></header>
-            <div class="rc-part is-llm">
-              <div class="part-h"><svg class="ic" aria-hidden="true"><use href="#i-brain-circuit"/></svg><b>Dialogue manager</b><span class="kind llm">LLM</span></div>
-              <div class="duties"><span>Classify intent</span><span>Request type</span><span>Ask questions</span><span>Options &amp; trade-offs</span></div>
-            </div>
-            <div class="rc-part">
-              <div class="part-h"><svg class="ic" aria-hidden="true"><use href="#i-database"/></svg><b>Trip state</b><span class="kind code">State</span></div>
-              <div class="ts-grid">
-                <div class="slot"><p class="label">Hard constraints</p><p>Vegetarian · no long stairs · 28 Apr – 4 May</p></div>
-                <div class="slot"><p class="label">Soft · trip dials</p>
-                  <p class="tdial">pace <b>relaxed</b></p><p class="tdial">crowd_tolerance <b>low</b></p><p class="tdial">hidden_gem_share <b>30%</b></p></div>
-                <div class="slot"><p class="label">Trip context</p><p>2 adults · from Bengaluru · 7 days</p></div>
-                <div class="slot"><p class="label">Residual text</p><p>“feel like old Japan” → semantic search</p></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- C3 Data feeds -->
-          <div class="node off rc c3" id="c3" data-rin="3">
-            <header class="rc-h"><span class="rc-code">C3</span><h3>Data feeds</h3><span class="kind data">Data</span></header>
-            <div class="feedrow"><span class="fr-l"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>Live</span><span class="f">Flights</span><span class="f">Hotels</span><span class="f">Weather</span></div>
-            <div class="feedrow"><span class="fr-l"><svg class="ic" aria-hidden="true"><use href="#i-refresh-cw"/></svg>Periodic</span><span class="f">POIs</span><span class="f">Maps</span><span class="f">Festivals</span></div>
-          </div>
-
-          <!-- C2 Candidate generation -->
-          <div class="node off rc c2" id="c2" data-rin="2">
-            <header class="rc-h"><span class="rc-code">C2</span><h3>Candidate generation</h3><span class="kind code">Code</span></header>
-            <ol class="c2-steps">
-              <li><b>Plannable universe</b><span>Hard constraints only, applied to C3 data</span></li>
-              <li><b>Rank</b><span>Score by trip dials, plus semantic search on residual text</span></li>
-              <li><b>Ranked cities + POIs</b><span>Handed to the planner, C4</span></li>
-            </ol>
-          </div>
-
-          <!-- C4 Planner / optimizer -->
-          <div class="node off rc c4" id="c4" data-rin="4">
-            <header class="rc-h"><span class="rc-code">C4</span><h3>Planner / optimizer</h3><span class="kind code">Code</span>
-              <div class="eq"><span class="eq-l">Trip score</span> = <span class="term fit">Itinerary fit</span> − <span class="term cost">Cost</span> − <span class="term transit">Transit hours</span> − <span class="term stay">Stay penalty</span> − …</div>
+          <article class="node card" id="r-input">
+            <header class="node-h">
+              <span class="node-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>
+              <h2>Trip input</h2>
             </header>
-            <div class="c4-steps">
-              <div class="c4s"><b>City selector</b><span>Which cities, in what order, for how long</span>
-                <span class="leg"><i>Leg</i>Tokyo → Kanazawa</span><span class="leg-how">how: train · when: Day 3</span>
-                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span><span class="term stay">Stay</span></span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c4s"><b>POI selector</b><span>Activities per city by intent, distance and days</span>
-                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span></span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c4s"><b>Base locator</b><span>Neighbourhood to stay in each night, near the chosen POIs</span>
-                <span class="terms"><span class="term transit">Transit</span><span class="term cost">Cost</span></span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c4s"><b>Daily routes</b><span>Order, timings, best and crowded hours, arrival and departure days</span>
-                <span class="terms"><span class="term fit">Fit</span><span class="term transit">Transit</span></span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c4s is-top"><b>Top-K itineraries</b><span>The highest-scoring plans</span>
-                <span class="terms"><span class="term score">Trip score</span></span></div>
+            <dl class="facts">
+              <div class="fact"><dt class="label">Country</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-earth"/></svg>Japan</dd></div>
+              <div class="fact"><dt class="label">Travelers</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>2 adults</dd></div>
+              <div class="fact"><dt class="label">Days</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>7</dd></div>
+              <div class="fact"><dt class="label">From</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-plane-takeoff"/></svg>Bengaluru</dd></div>
+              <div class="fact span2"><dt class="label">Dates</dt><dd><svg class="ic" aria-hidden="true"><use href="#i-calendar-days"/></svg>28 Apr – 4 May</dd></div>
+              <div class="fact span3"><dt class="label">Interests</dt>
+                <dd class="chips">
+                  <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-utensils"/></svg>Food</span>
+                  <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-landmark"/></svg>Temples</span>
+                  <span class="chip"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Photography</span>
+                </dd>
+              </div>
+            </dl>
+            <div class="prompt">
+              <p class="label">Prompt</p>
+              <p>“We're <mark>vegetarian</mark>, one of us has a <mark>bad knee</mark>, we <mark>hate crowds</mark>, and we want it to feel like <mark>old Japan</mark>.”</p>
             </div>
-            <div class="tlog">
-              <span class="tlog-h"><svg class="ic" aria-hidden="true"><use href="#i-scroll-text"/></svg>Trade-off log</span>
-              <span class="tl">Kyoto cut to 2 nights · crowds</span>
-              <span class="tl">Inari summit dropped · stairs</span>
-              <span class="tl">Kinkaku-ji left out · Golden Week</span>
-              <span class="tlog-to">→ C7 explains it, C1 asks the user</span>
-            </div>
-          </div>
-
-          <!-- C5 Booking search -->
-          <div class="node off rc c5" id="c5" data-rin="5">
-            <header class="rc-h"><span class="rc-code">C5</span><h3>Booking search</h3><span class="kind code">Code</span></header>
-            <p class="rc-p">Top-K options inside each itinerary’s days and time slots</p>
-            <div class="bk">
-              <span><svg class="ic" aria-hidden="true"><use href="#i-plane"/></svg>Flights</span>
-              <span><svg class="ic" aria-hidden="true"><use href="#i-bed-double"/></svg>Hotels</span>
-              <span><svg class="ic" aria-hidden="true"><use href="#i-car"/></svg>Transfers</span>
-              <span><svg class="ic" aria-hidden="true"><use href="#i-ticket"/></svg>Other</span>
-            </div>
-            <span class="terms"><span class="label">Optimizes</span><span class="term cost">Cost</span><span class="term transit">Transit hours</span></span>
-          </div>
-
-          <!-- C6 Validator -->
-          <div class="node off rc c6" id="c6" data-rin="6">
-            <header class="rc-h"><span class="rc-code">C6</span><h3>Validator</h3><span class="kind code">Code</span></header>
-            <ul class="checks">
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validates every top-K itinerary</li>
-              <li><svg class="ic xmark" aria-hidden="true"><use href="#i-x"/></svg>Rejects anything infeasible</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-calculator"/></svg><span>Final <span class="term score">Trip score</span> with bookings</span></li>
-            </ul>
-          </div>
-
-          <!-- C7 Presentation and narration -->
-          <div class="node off rc is-llm c7" id="c7" data-rin="7">
-            <header class="rc-h"><span class="rc-code">C7</span><h3>Presentation &amp; narration</h3><span class="kind llm">LLM</span></header>
-            <ul class="checks">
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Presents the top itineraries</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Narrates each plan</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>What was left out, and why</li>
-              <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Explains the trade-offs</li>
-            </ul>
-            <span class="c1-link"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left-right"/></svg>Follow-up questions go through C1</span>
-          </div>
-
-
+          </article>
           <div class="node out" id="r-output">
             <article class="card out-card">
               <header class="node-h">
@@ -1557,22 +1710,8 @@ button { font: inherit; color: inherit; }
             </article>
           </div>
 
-          <!-- C8 Revision loop -->
-          <div class="node off rc c8" id="c8" data-rin="8">
-            <header class="rc-h"><span class="rc-code">C8</span><h3>Revision loop</h3></header>
-            <div class="c8-flow">
-              <div class="c8s"><b>Triggers</b>
-                <span class="trg"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>User change request</span>
-                <span class="trg"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>Env change: flight cancelled</span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c8s is-llm"><b>Change understanding</b><span class="kind llm">LLM</span><span>Turns the change into a typed edit</span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c8s"><b>Impact analysis</b><span class="kind code">Code</span><span>Finds the days and steps it touches</span></div>
-              <svg class="ic sep" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-              <div class="c8s"><b>Partial re-planning</b><span class="kind code">Code</span><span>Re-solves only those, keeps the rest</span></div>
-            </div>
-          </div>
-
+          <!-- Chips for the input, C1–C8 and the itinerary are added by the script, before the focus card -->
+          <div class="fk off" id="fk" aria-live="polite"></div>
         </section>
       </div>
     </main>
@@ -2033,7 +2172,7 @@ button { font: inherit; color: inherit; }
     const pk = t.closest('[data-peek]');
     if (pk) { showPaper(+pk.dataset.peek); return; }
     if (tab === 'research') { if (t.closest('#view-research')) researchStep(1); return; }
-    if (tab === 'revised') return;
+    if (tab === 'revised') { rclick(t); return; }
     const goEl = t.closest('[data-go]');
     if (goEl) { const i = IDX[goEl.dataset.go]; i === cur ? flow(BEATS[cur].id) : go(i); return; }
     if (t.closest('.pop-x')) { closePop(); return; }
@@ -2050,12 +2189,13 @@ button { font: inherit; color: inherit; }
   stage.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
-  const step = d => (tab === 'research' ? researchStep(d) : tab === 'arch' ? go(cur + d) : rgo(rcur + d));
+  const step = d => (tab === 'research' ? researchStep(d) : tab === 'arch' ? go(cur + d) : rstep(d));
   $('prev').addEventListener('click', () => step(-1));
   $('next').addEventListener('click', () => step(1));
   addEventListener('keydown', e => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape' && openId) { closePop(); return; }
+    if (e.key === 'Escape' && tab === 'revised' && rpeek) { rpeek = null; rrender(); return; }
     if (e.key === 'ArrowRight' || e.key === 'PageDown') { step(1); e.preventDefault(); }
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { step(-1); e.preventDefault(); }
   });
@@ -2208,13 +2348,7 @@ button { font: inherit; color: inherit; }
     reveal(rev + d);
   }
   function syncNav() {
-    if (tab === 'revised') {
-      $('prev').disabled = rcur <= 0;
-      $('next').disabled = rcur >= RNAMES.length - 1;
-      $('next').classList.toggle('hint', rcur === 0);
-      $('now').innerHTML = `Revised · ${rcur} of ${RNAMES.length - 1}` + (rcur ? `<span class="now-beat">${RNAMES[rcur]}</span>` : '');
-      return;
-    }
+    if (tab === 'revised') { rsync(); return; }
     const r = tab === 'research';
     $('prev').disabled = r ? rev <= 0 : cur <= 0;
     $('next').disabled = r ? rev >= PAPERS.length && !peek : cur >= BEATS.length - 1;
@@ -2246,65 +2380,837 @@ button { font: inherit; color: inherit; }
     try { history.replaceState(null, '', '#' + (t === 'arch' ? 'architecture' : t)); } catch (err) { /* not allowed here */ }
   }
 
-  // ---------- Revised architecture: one component per step ----------
-  const RNAMES = ['', 'C1 · Dialogue manager & trip state', 'C2 · Candidate generation', 'C3 · Data feeds', 'C4 · Planner / optimizer',
-    'C5 · Booking search', 'C6 · Validator', 'C7 · Presentation & narration', 'C8 · Revision loop'];
-  // Wires on the revised canvas. `in` = the step that reveals them.
-  const RWIRES = [
-    { id: 'rw-in-c1',  from: 'r-input', to: 'c1', in: 1 },
-    { id: 'rw-c1-c2',  from: 'c1', to: 'c2', in: 2 },
-    { id: 'rw-c3-c2',  from: 'c3', to: 'c2', label: 'facts', side: true, in: 3 },
-    { id: 'rw-c2-c4',  from: 'c2', to: 'c4', label: 'ranked cities + POIs', side: true, in: 4 },
-    { id: 'rw-c4-c1',  from: 'c4', to: 'c1', both: true, dashed: true, label: 'critical input · trade-off call', side: true, in: 4 },
-    { id: 'rw-c4-c5',  from: 'c4', to: 'c5', label: 'top-K itineraries', side: true, in: 5 },
-    { id: 'rw-c5-c6',  from: 'c5', to: 'c6', in: 6 },
-    { id: 'rw-c6-c7',  from: 'c6', to: 'c7', label: 'scored', side: true, in: 7 },
-    { id: 'rw-c7-out', from: 'c7', to: 'r-output', in: 7 },
-    { id: 'rw-c8-c4',  from: 'c8', to: 'c4', label: 'partial re-plan', side: true, in: 8 },
+  // ---------- Revised architecture: one component in focus, the rest minimized ----------
+  // Small builders for the deep-dive content.
+  const ic = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+  const KIND = { llm: 'LLM', code: 'Code', data: 'Data', state: 'State' };
+  const kp = k => `<span class="kind ${k}">${KIND[k]}</span>`;
+  const TERM = { fit: 'Fit', cost: 'Cost', transit: 'Transit', stay: 'Stay', score: 'Trip score' };
+  const T = (k, s = TERM[k]) => `<span class="term ${k}">${s}</span>`;
+  const fx = s => `<div class="fx">${s}</div>`;
+  const nt = s => `<p class="fx-n">${s}</p>`;
+  const calc = s => `<p class="calc">${s}</p>`;
+  const pl = (s, k = '') => `<span class="pl ${k}">${s}</span>`;
+  const eh = s => `<p class="ex-h">${s}</p>`;
+  const yes = '<svg class="ic ok" aria-label="pass"><use href="#i-check"/></svg>';
+  const no = '<svg class="ic bad" aria-label="fail"><use href="#i-x"/></svg>';
+  const vars = a => `<dl class="vars">${a.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
+  function tb(head, rows, cls = '') {                     // a "#" before a heading makes that column numeric
+    const num = head.map(h => h[0] === '#');
+    const th = head.map((h, i) => `<th${num[i] ? ' class="n"' : ''}>${num[i] ? h.slice(1) : h}</th>`).join('');
+    const tr = rows.map(r => {
+      const c = Array.isArray(r) ? r : r.c, k = Array.isArray(r) ? '' : ` class="${r.cls}"`;
+      return `<tr${k}>${c.map((v, i) => `<td${num[i] ? ' class="n"' : ''}>${v}</td>`).join('')}</tr>`;
+    }).join('');
+    return `<div class="tbw"><table class="tb ${cls}"><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table></div>`;
+  }
+  const msg = (q, intent, type, p, to, patch) =>
+    `<div class="msg"><q>${q}</q><div class="cls">${pl(intent, 'acc')}<span>${type}</span><span class="p">P ${p}</span><span class="to">→ ${to}</span></div>${patch ? `<code>${patch}</code>` : ''}</div>`;
+  const dials = a => `<ul class="dls">${a.map(([n, v, s]) =>
+    `<li><span class="dn">${n}</span><i style="--v:${v}"></i><b>${v.toFixed(2)}</b><span class="src ${s}">${s}</span></li>`).join('')}</ul>`;
+  const json = o => `<pre class="json">{\n${Object.entries(o).map(([k, v]) =>
+    `  <span class="jk">"${k}"</span>: ${typeof v === 'string' ? `"${v}"` : v}`).join(',\n')}\n}</pre>`;
+  const rbars = a => `<ol class="rbars">${a.map(([n, v]) => `<li><span>${n}</span><i style="--v:${v}"></i><b>${v.toFixed(2)}</b></li>`).join('')}</ol>`;
+  function waterfall(rows) {                              // [label, from, to, term, text], drawn to one scale
+    const X = 96, W = 360, RH = 30, H = rows.length * RH + 20, x = v => X + v * W;
+    let s = `<svg class="chart" viewBox="0 0 ${X + W + 52} ${H}" role="img" aria-label="Trip score built up from its terms">`;
+    [0, .25, .5, .75, 1].forEach(t => {
+      s += `<line class="ch-grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${rows.length * RH}"/>`;
+      s += `<text class="ch-lab" x="${x(t)}" y="${H - 3}" text-anchor="middle">${t}</text>`;
+    });
+    rows.forEach(([lab, a, b, k, txt], i) => {
+      const y = i * RH + 6, lo = Math.min(a, b), hi = Math.max(a, b);
+      s += `<text class="ch-row" x="0" y="${y + 13}">${lab}</text>`;
+      s += `<rect class="wf ${k}" x="${x(lo)}" y="${y}" width="${x(hi) - x(lo)}" height="18" rx="4"/>`;
+      s += `<text class="ch-val" x="${x(hi) + 6}" y="${y + 13}">${txt}</text>`;
+      if (i < rows.length - 2) s += `<line class="ch-link" x1="${x(b)}" x2="${x(b)}" y1="${y + 18}" y2="${y + RH}"/>`;
+    });
+    return s + '</svg>';
+  }
+  function crowdChart() {                                 // Fushimi Inari by hour, 06:00 to 20:00
+    const N = [.05, .10, .20, .35, .50, .60, .60, .60, .58, .52, .42, .30, .20, .12, .08];
+    const G = N.map(v => Math.min(1, Math.round(v * 160) / 100));
+    const X0 = 30, X1 = 506, Y0 = 160, Y1 = 14;
+    const x = h => X0 + (h - 6) / 14 * (X1 - X0), y = v => Y0 - v * (Y0 - Y1);
+    const path = a => a.map((v, i) => `${i ? 'L' : 'M'}${x(6 + i).toFixed(1)} ${y(v).toFixed(1)}`).join('');
+    let s = '<svg class="chart" viewBox="0 0 520 184" role="img" aria-label="Crowd level at Fushimi Inari by hour: a normal weekday, and 3 May in Golden Week">';
+    [0, .5, 1].forEach(v => {
+      s += `<line class="ch-grid" x1="${X0}" x2="${X1}" y1="${y(v)}" y2="${y(v)}"/>`;
+      s += `<text class="ch-lab" x="${X0 - 7}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+    });
+    [6, 9, 12, 15, 18].forEach(h => { s += `<text class="ch-lab" x="${x(h)}" y="${Y0 + 18}" text-anchor="middle">${String(h).padStart(2, '0')}:00</text>`; });
+    s += `<path class="ch-line" d="${path(N)}"/><path class="ch-line gw" d="${path(G)}"/>`;
+    s += `<circle class="ch-dot good" cx="${x(7)}" cy="${y(G[1])}" r="5"/><text class="ch-note" x="${x(7) - 8}" y="${y(G[1]) - 8}" text-anchor="end">0.16</text>`;
+    s += `<circle class="ch-dot bad" cx="${x(11)}" cy="${y(G[5])}" r="5"/><text class="ch-note" x="${x(11)}" y="${y(G[5]) - 10}" text-anchor="middle">0.96</text>`;
+    return s + '</svg>';
+  }
+  const dayStrip = b => `<div class="dstrip">${b.map(([s, e, k]) =>
+    `<i class="${k}" style="left:${(s - 7) / 12 * 100}%;width:${(e - s) / 12 * 100}%"></i>`).join('')}</div>
+    <div class="dstrip-ax">${[7, 10, 13, 16, 19].map(h => `<span style="left:${(h - 7) / 12 * 100}%">${String(h).padStart(2, '0')}:00</span>`).join('')}</div>`;
+
+  // The eight components. Every example follows the same trip from the Architecture tab.
+  const RK = [
+    { id: 1, code: 'C1', name: 'Dialogue manager & trip state', short: 'Dialogue & trip state', kinds: ['llm', 'state'], cls: 'is-llm',
+      role: 'Understands the traveller and keeps one typed trip state.',
+      in: 'The trip form and every chat message',
+      out: 'Trip state → C2, C4 · questions and options → traveller · changes → C8',
+      subs: [
+        { tab: 'Understand', n: 'Understand the message', kind: 'llm',
+          lead: 'Classifies each message, then turns what it says into a typed patch.',
+          how: [
+            '<b>Classify the intent:</b> new trip, refine, change, question or out of scope.',
+            '<b>Pick the request type:</b> what the planner should do next.',
+            '<b>Extract a patch</b> for the trip state, as structured output against a schema.',
+            '<b>Route it:</b> new plan to C2, change to C8, question to C7.',
+          ],
+          math: fx('intent = argmax<sub>i</sub> P(i | message, trip state)') + nt('The LLM returns the label and its probability.')
+            + fx('act if P ≥ 0.75, else ask one question') + nt('A low-confidence guess never reaches the planner.')
+            + fx('patch must validate against the schema') + nt('Code checks every field. An unknown field or a bad value is rejected and asked again.'),
+          ex: `<div class="msgs">
+            ${msg('We’re vegetarian, one of us has a bad knee, we hate crowds…', 'New trip', 'plan', '0.97', 'C2', 'diet: vegetarian · max_walk_km: 4 · stairs: low · crowd_tolerance: low · residual: “feel like old Japan”')}
+            ${msg('Can day 6 be lighter?', 'Change', 'edit pace, day 6', '0.91', 'C8')}
+            ${msg('Why isn’t Kinkaku-ji in the plan?', 'Question', 'explain a choice', '0.88', 'C7')}
+            ${msg('Book the Kyoto hotel for us.', 'Out of scope', 'booking', '0.95', 'reply', 'We find and compare options. Booking happens on the provider’s site.')}
+          </div>` },
+        { tab: 'Trip state', n: 'Trip state', kind: 'state',
+          lead: 'One typed record that every component reads. The LLM proposes changes, and code accepts them.',
+          how: [
+            '<b>Hard constraints</b> must hold. They are never traded off.',
+            '<b>Soft preferences</b> are trip dials from 0 to 1. C4 trades them off.',
+            '<b>Trip context</b> says who is travelling, from where, for how long.',
+            '<b>Residual text</b> is whatever fits no field. It becomes an embedding for semantic search.',
+          ],
+          math: fx('dial = (value ∈ [0, 1], confidence, source)')
+            + fx('v = (c<sub>1</sub>·v<sub>1</sub> + c<sub>2</sub>·v<sub>2</sub>) / (c<sub>1</sub> + c<sub>2</sub>)') + nt('New evidence is merged by confidence.')
+            + calc('crowd_tolerance<br>default 0.5 (c 0.1) + “hate crowds” = low 0.1 (c 0.9)<br>= (0.1 × 0.5 + 0.9 × 0.1) / 1.0 = <b>0.14</b>')
+            + nt('The LLM picks a level. The PM’s catalog maps each level to a number.'),
+          ex: `<div class="ts4">
+            <div class="tsc"><p class="label">${ic('lock')}Hard constraints</p>
+              <ul class="kv"><li><span>Dates</span><b>28 Apr – 4 May</b></li><li><span>Diet</span><b>vegetarian, no dashi</b></li>
+              <li><span>Walking</span><b>≤ 4 km a day</b></li><li><span>Stairs</span><b>low</b></li><li><span>Budget</span><b>≤ ₹3.2 L, asked</b></li></ul></div>
+            <div class="tsc"><p class="label">${ic('sliders-horizontal')}Soft preferences · trip dials</p>
+              ${dials([['crowd_tolerance', .14, 'stated'], ['pace', .30, 'inferred'], ['temples', .80, 'stated'], ['food', .80, 'stated'], ['photography', .70, 'stated'], ['hidden_gem_share', .30, 'default']])}</div>
+            <div class="tsc"><p class="label">${ic('users')}Trip context</p>
+              <ul class="kv"><li><span>Who</span><b>2 adults</b></li><li><span>From</span><b>Bengaluru</b></li><li><span>Length</span><b>7 days, 6 nights</b></li><li><span>First visit</span><b>unknown</b></li></ul></div>
+            <div class="tsc"><p class="label">${ic('text-search')}Residual text</p>
+              <p class="res">“feel like old Japan”</p><p class="vec">→ embedding [0.12, −0.48, 0.07, …]</p>${nt('Matched against place descriptions in C2.')}</div>
+          </div>` },
+        { tab: 'Ask & offer', n: 'Ask, and offer options', kind: 'llm',
+          lead: 'Asks only the questions that would change the plan, and offers options when C4 needs a decision.',
+          how: [
+            '<b>List open questions:</b> missing fields and low-confidence dials.',
+            '<b>Score each one</b> by how much its answer would move the best plan.',
+            '<b>Ask the top one or two.</b> Use defaults for the rest, and say so.',
+            '<b>When C4 calls,</b> show two or three options and what each one costs.',
+          ],
+          math: fx('priority(q) = (1 − confidence<sub>q</sub>) × impact<sub>q</sub>')
+            + fx('impact<sub>q</sub> = |S(best | a) − S(best | b)|') + nt('S is the trip score. C4 re-solves the city plan for each likely answer a and b, which takes milliseconds.')
+            + fx('ask if priority ≥ 0.15, at most 2 per turn'),
+          ex: tb(['Open question', '#Conf.', '#Impact', '#Priority', 'Then'], [
+              { c: ['Total budget?', '0.0', '0.45', '<b>0.45</b>', pl('Ask', 'acc')], cls: 'hi' },
+              { c: ['Are about 100 steps OK for the knee?', '0.4', '0.30', '<b>0.18</b>', pl('Ask', 'acc')], cls: 'hi' },
+              ['A ryokan night?', '0.5', '0.12', '0.06', pl('Default: 1 night', 'mute')],
+              ['Early starts OK?', '0.6', '0.10', '0.04', pl('Default: yes', 'mute')],
+            ]) + `<div class="offer">
+              <p class="offer-h">${ic('scale')}<span><b>C4 needs a decision.</b> The traveller said ₹2.5 L, and Golden Week fares push every plan past it.</span></p>
+              <ol><li class="is-pick"><b>Raise to ₹3.2 L</b><span>Keeps Tokyo, Kanazawa and Kyoto</span></li>
+              <li><b>Keep ₹2.5 L</b><span>Travel 10–16 May, when fares are about 30% lower</span></li></ol>
+              ${nt('The traveller picks the first. “Budget ≤ ₹3.2 L” becomes a hard constraint.')}
+            </div>` },
+      ] },
+
+    { id: 2, code: 'C2', name: 'Candidate generation', short: 'Candidate generation', kinds: ['code'],
+      role: 'Turns the trip state into short ranked lists of cities and places.',
+      in: 'Trip state from C1 · places and cities from C3',
+      out: 'Ranked cities and POIs → C4',
+      subs: [
+        { tab: 'Universe', n: 'Plannable universe', kind: 'code',
+          lead: 'Hard constraints only. Anything that cannot be part of a valid trip leaves here.',
+          how: [
+            '<b>Compile</b> the hard constraints into exact filters. No LLM in this step.',
+            '<b>Filter places</b> by dates, access and diet.',
+            '<b>Keep cities</b> that still have enough valid places to fill a day.',
+            '<b>Unknown values</b> pass only with confidence ≥ 0.7. The rest are dropped, each with a reason.',
+          ],
+          math: fx('U = { p : open(p, dates) ∧ stairs(p) ≤ low<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧ (food(p) ⇒ veg_safe(p)) }')
+            + nt('A restaurant must be veg-safe. A garden has no food rule to pass.')
+            + fx('Cities = { c : |U ∩ c| ≥ 8 }')
+            + fx('keep p if confidence(attribute) ≥ 0.7'),
+          ex: `<div class="funnel">${[['Places in Japan', 1, '100k'], ['Open 28 Apr – 4 May', .38, '38k'], ['Knee-safe, stairs low', .14, '14k'], ['Veg-safe, or not food', .05, '5k']]
+              .map(([l, v, t]) => `<div class="fn"><span>${l}</span><i style="--v:${v}"></i><b>${t}</b></div>`).join('')}</div>
+            <div class="chips-row">${pl('Cities: 46 → 11', 'acc')}${pl('1.2k dropped: access unknown', 'mute')}</div>
+            ${nt('Bars are to scale. Five thousand valid places remain, out of a hundred thousand.')}` },
+        { tab: 'Rank', n: 'Rank by dials and text', kind: 'code',
+          lead: 'Scores every place in the universe. The soft dials set the weights.',
+          how: [
+            '<b>Match each dial</b> to a place attribute: interests, crowds, price, distance.',
+            '<b>Match the residual text</b> by cosine similarity of embeddings.',
+            '<b>Take the weighted sum</b>, one score per place.',
+          ],
+          math: fx('s(p) = Σ<sub>d</sub> w<sub>d</sub> · match<sub>d</sub>(p)')
+            + fx('old_japan(p) = cos(e<sub>text</sub>, e<sub>p</sub>)')
+            + fx('crowd_fit(p) = 1 − max(0, crowd(p) − tol) / (1 − tol)')
+            + calc('Kinkaku-ji in Golden Week: crowd 0.95, tol 0.14<br>crowd_fit = 1 − 0.81 / 0.86 = <b>0.06</b>'),
+          ex: tb(['Place', '#Interest<br>×.30', '#Old Japan<br>×.15', '#Quality<br>×.20', '#Price<br>×.10', '#Crowd<br>×.20', '#Dist.<br>×.05', '#Score'], [
+              ['Nishi Chaya teahouses', '.88', '.95', '.85', '.90', '.80', '.60', '<b>0.86</b>'],
+              ['Yanaka walk', '.77', '.90', '.75', '1.0', '.85', '.90', '<b>0.83</b>'],
+              ['Kinkaku-ji', '.80', '.65', '.90', '.60', '<span class="bad">.06</span>', '.50', '<b>0.61</b>'],
+            ])
+            + calc('Nishi Chaya: .30×.88 + .15×.95 + .20×.85 + .10×.90 + .20×.80 + .05×.60 = <b>0.86</b>')
+            + nt('Old Japan is the residual-text match. Crowd uses the trip dates, so Golden Week sinks Kinkaku-ji.') },
+        { tab: 'Hand off', n: 'Diversify and hand off', kind: 'code',
+          lead: 'Keeps variety and hidden gems, then hands short ranked lists to C4.',
+          how: [
+            '<b>Pick per city with MMR:</b> a high score, but unlike what is already picked.',
+            '<b>Reserve hidden-gem slots</b> from the hidden_gem_share dial.',
+            '<b>Roll places up</b> into city scores.',
+            '<b>Hand off</b> about 30 places per city, with hours, durations and crowd curves.',
+          ],
+          math: fx('MMR(p) = λ·s(p) − (1 − λ)·max<sub>q∈S</sub> sim(p, q)') + nt('λ = 0.7. S is the set picked so far.')
+            + fx('gem slots = ⌈0.30 · k⌉')
+            + fx('city(c) = 0.7 · mean(top 8 s) + 0.3 · coverage(c)') + nt('Coverage is the share of the traveller’s interests the city serves well.'),
+          ex: eh('Kyoto, after Fushimi Inari is picked') + tb(['Candidate', '#s(p)', '#Sim. to picked', '#MMR'], [
+              { c: ['Shojin lunch', '0.70', '0.15', '<b>0.45</b>'], cls: 'hi' },
+              ['Tofuku-ji', '0.74', '0.62', '0.33'],
+              ['Kennin-ji', '0.76', '0.80', '0.29'],
+            ]) + nt('Kennin-ji has the highest score on its own, but it is the most like what is already picked.')
+            + eh('Ranked cities → C4') + rbars([['Kanazawa', .81], ['Kyoto', .77], ['Tokyo', .72], ['Takayama', .70], ['Nara', .66]]) },
+      ] },
+
+    { id: 3, code: 'C3', name: 'Data feeds', short: 'Data feeds', kinds: ['data'], cls: 'is-data',
+      role: 'Facts with a source and a timestamp. Plans never rest on the LLM’s memory.',
+      in: 'Airlines, hotels, maps, places, events and crowd providers',
+      out: 'Places, times, crowds → C2, C4 · live fares → C5 · fresh facts → C6 · alerts → C8',
+      subs: [
+        { tab: 'Sources', n: 'Sources and freshness', kind: 'data',
+          lead: 'Two kinds of feed, split by how fast the truth changes.',
+          how: [
+            '<b>Live feeds</b> are queried when needed: fares, rooms, weather, disruptions.',
+            '<b>Periodic feeds</b> are ingested in batches: places, maps, events, crowds.',
+            '<b>Every fact carries</b> its source and an as-of time.',
+            '<b>Stale facts are fetched again</b> before use, never shown as current.',
+          ],
+          math: fx('usable(f) ⇔ now − f.as_of ≤ TTL(f.type)') + nt('One rule, applied in C2, C4, C5 and C6.')
+            + vars([['fares', '15 minutes'], ['rooms', '30 minutes'], ['weather', '3 hours'], ['events', '1 day'], ['hours', '7 days'], ['timetables', '30 days']]),
+          ex: tb(['Feed', 'Kind', 'Refresh', 'Read by'], [
+              ['Flights: fares, seats', pl('Live', 'acc'), 'each search', 'C5 · C6'],
+              ['Hotels: rates, rooms', pl('Live', 'acc'), 'each search', 'C5 · C6'],
+              ['Weather', pl('Live', 'acc'), 'hourly', 'C4 · C6'],
+              ['Disruptions', pl('Live', 'acc'), 'pushed', 'C8'],
+              ['Places: hours, access, prices', pl('Periodic'), 'weekly', 'C2 · C4 · C6'],
+              ['Maps and timetables', pl('Periodic'), 'monthly', 'C4 · C5'],
+              ['Festivals and events', pl('Periodic'), 'daily', 'C2 · C4'],
+              ['Crowd patterns', pl('Periodic'), 'weekly', 'C2 · C4'],
+            ]) },
+        { tab: 'Build', n: 'Build the repository', kind: 'data',
+          lead: 'Periodic feeds become one clean, queryable record per place.',
+          how: [
+            '<b>Ingest</b> on a schedule, stamped with source and time.',
+            '<b>Normalize</b> to one schema, and merge duplicates into one place ID.',
+            '<b>Enrich</b> with derived attributes, each with a confidence.',
+            '<b>Index</b> for filters, geo search, embeddings and city profiles.',
+          ],
+          math: fx('match(a, b) = 0.5·name + 0.3·geo + 0.2·category') + nt('Name uses aliases and translations. Geo is 1 within 150 m.')
+            + fx('merge if match ≥ 0.85'),
+          ex: eh('Three feeds, one place') + `<div class="er"><ul>
+              <li><b>Kinkaku-ji</b><span>places feed · 35.0394, 135.7292</span></li>
+              <li><b>Golden Pavilion</b><span>reviews feed · 35.0393, 135.7290</span></li>
+              <li><b>Rokuon-ji</b><span>maps feed · 35.0395, 135.7293</span></li></ul>
+              <div class="er-out">${pl('match 0.97', 'acc')}${ic('arrow-right')}<span><span class="rec-id">P-11320</span><br><b>Kinkaku-ji</b></span></div></div>`
+            + eh('An enriched record') + `<div class="record">
+              <div class="rec-h"><span class="rec-id">P-20418</span><b>Nishi Chaya teahouses</b><span>Kanazawa</span></div>
+              <div class="rec-tags"><span>historic street</span><span>stairs: none · 0.9</span><span>veg nearby: yes · 0.7</span><span>crowd, Golden Week 10:00: 0.31</span><span>gem: 0.62</span><span>places feed · 3 days ago</span></div></div>` },
+        { tab: 'Signals', n: 'Derived signals', kind: 'data',
+          lead: 'What the planner needs is rarely in a feed. It is computed, with a confidence.',
+          how: [
+            '<b>Crowd curve</b> per place, hour and date, holidays included.',
+            '<b>Hidden-gem score:</b> high quality, low fame.',
+            '<b>Knee-safe:</b> steps and slope, from access data and photos.',
+            '<b>Veg-safe:</b> a vegetarian menu with no fish stock (dashi), confirmed.',
+          ],
+          math: fx('crowd(p, d, h) = min(1, base(p, weekday, h) × holiday(d))') + nt('holiday(d) = 1.6 in Golden Week.')
+            + fx('gem(p) = z(rating) − z(log reviews)')
+            + fx('knee_ok(p) = steps ≤ 100 ∧ slope ≤ 8%'),
+          ex: eh('Fushimi Inari, crowd by hour') + crowdChart()
+            + '<div class="ch-leg"><span style="--k:var(--accent)">3 May, Golden Week</span><span style="--k:var(--edge)">A normal weekday</span></div>'
+            + nt('At 07:00 the crowd is 0.16. By 11:00 it is 0.96. C4 uses this curve to time the visit.') },
+      ] },
+
+    { id: 4, code: 'C4', name: 'Planner / optimizer', short: 'Planner / optimizer', kinds: ['code'],
+      role: 'Builds whole itineraries that maximize the trip score.',
+      in: 'Ranked lists from C2 · trip state from C1 · travel times from C3',
+      out: 'Top-K itineraries → C5 · trade-off log → C7 · decisions it needs → C1',
+      subs: [
+        { tab: 'Trip score', n: 'The trip score', kind: 'code', terms: ['score'],
+          lead: 'One number to compare any two itineraries. Hard constraints are not in it, because they are never broken.',
+          how: [
+            '<b>Fit</b> rewards keeping to the trip dials: interests, crowds, pace, old Japan, hidden gems.',
+            '<b>Cost, transit and stay</b> are penalties, each normalized.',
+            '<b>Weights come from the dials.</b> A bad knee doubles the transit weight.',
+            '<b>Each next step</b> improves some of these terms.',
+          ],
+          math: `<div class="eqn">S = ${T('fit')} − λ<sub>c</sub>·${T('cost')} − λ<sub>t</sub>·${T('transit')} − λ<sub>s</sub>·${T('stay')} − …</div>`
+            + vars([['Fit', 'Σ<sub>d</sub> w<sub>d</sub> · adherence<sub>d</sub>, from 0 to 1'], ['Cost', 'estimated ₹ ÷ budget'], ['Transit', 'hours moving, between and within cities'],
+                ['Stay', 'Σ max(0, n<sub>c</sub> − ideal<sub>c</sub>)² + 0.5 per one-night stop + 3 per hotel change'], ['…', 'overload hours, late finishes']])
+            + fx('λ<sub>c</sub> = 0.15<br>λ<sub>t</sub> = 0.008 × 2 = 0.016 per hour<br>λ<sub>s</sub> = 0.02'),
+          ex: eh('Plan A · Tokyo 2 · Kanazawa 2 · Kyoto 2') + waterfall([
+              ['Fit', 0, .88, 'fit', '+0.88'], ['Cost', .88, .74, 'cost', '−0.14'], ['Transit', .74, .59, 'transit', '−0.15'],
+              ['Stay', .59, .47, 'stay', '−0.12'], ['Trip score', 0, .47, 'score', '0.47']])
+            + calc('Cost 0.15 × 0.91 · Transit 0.016 × 9.5 h · Stay 0.02 × 6 (two hotel changes)') },
+        { tab: 'Cities', n: 'City selector', kind: 'code', terms: ['fit', 'transit', 'stay'],
+          lead: 'Which cities, in what order, for how many nights. Each move between cities is a leg.',
+          how: [
+            '<b>Take the top cities</b> from C2, plus the arrival and departure airports.',
+            '<b>Enumerate</b> orders of 2 to 4 cities and every split of the 6 nights.',
+            '<b>Score each</b> on city value, leg hours and the stay penalty.',
+            '<b>Keep the best 3</b> city plans for the next steps.',
+          ],
+          math: fx('max Σ<sub>c</sub> city(c)·g(n<sub>c</sub>) − λ<sub>t</sub>·legs − λ<sub>s</sub>·Stay')
+            + fx('g(n) = 1 − e<sup>−n/τ<sub>c</sub></sup>') + nt('Each extra night adds less. τ is the ideal stay: Tokyo 2, Kanazawa 2, Kyoto 3.')
+            + fx('Σ n<sub>c</sub> = 6 · start near arrival · end near departure') + nt('Six cities give under 2,000 orders, so an exact search with pruning is fast.'),
+          ex: eh('Plan A, leg by leg') + `<ol class="route">
+              <li class="stop">Tokyo <i>2 nights · land day 1</i></li>
+              <li class="leg">${ic('train-front')}<b>Shinkansen, 2 h 30</b> · day 3, 10:24</li>
+              <li class="stop">Kanazawa <i>2 nights</i></li>
+              <li class="leg">${ic('train-front')}<b>Via Tsuruga, 2 h 10</b> · day 5, 10:00</li>
+              <li class="stop">Kyoto <i>2 nights</i></li>
+              <li class="leg">${ic('train-front')}<b>Haruka to KIX, 1 h 20</b> · day 7, 08:40</li>
+              <li class="stop">Fly home <i>day 7</i></li></ol>`
+            + tb(['City plan', '#Value', '#Legs', '#Stay', '#Total'], [
+              { c: ['A · Tokyo 2 · Kanazawa 2 · Kyoto 2', '1.34', '−0.10', '−0.12', '<b>1.12</b>'], cls: 'hi' },
+              ['C · Tokyo 1 · Kanazawa 2 · Takayama 1 · Kyoto 2', '1.45', '−0.16', '−0.20', '1.09'],
+              ['B · Tokyo 2 · Kyoto 4', '1.02', '−0.06', '−0.08', '0.88'],
+            ]) },
+        { tab: 'POIs', n: 'POI selector', kind: 'code', terms: ['fit', 'transit'],
+          lead: 'Fills each city’s hours with the best set of places that fits.',
+          how: [
+            '<b>Set a time budget</b> per city from its days and the pace dial: about 6 active hours a day.',
+            '<b>Choose the set</b> with the highest total score that fits the budget.',
+            '<b>Apply quotas:</b> at most 2 temples a day, at least one veg meal stop.',
+            '<b>Add a cluster bonus</b> for places close together, so days need less transit.',
+          ],
+          math: fx('max Σ<sub>p</sub> s(p)·x<sub>p</sub> s.t. Σ<sub>p</sub> h<sub>p</sub>·x<sub>p</sub> ≤ H, x<sub>p</sub> ∈ {0, 1}') + nt('A 0/1 knapsack per city. h is visit time plus access time.')
+            + fx('H<sub>Kanazawa</sub> = 4 h on arrival day + 6 h = 10 h')
+            + fx('+0.05 if within 1 km of another chosen place'),
+          ex: eh('Kanazawa, H = 10 h') + tb(['Place', '#Hours', '#Score', ''], [
+              { c: ['Nishi Chaya teahouses', '1.5', '0.86', yes], cls: 'hi' },
+              { c: ['Higashi Chaya district', '2.0', '0.84', yes], cls: 'hi' },
+              { c: ['Kenroku-en garden', '2.0', '0.80', yes], cls: 'hi' },
+              { c: ['Nagamachi samurai lanes', '1.5', '0.78', yes], cls: 'hi' },
+              { c: ['D.T. Suzuki Museum', '1.5', '0.74', yes], cls: 'hi' },
+              { c: ['Veg lunch, dashi-free', '1.0', '0.70', yes], cls: 'hi' },
+              { c: ['21st Century Museum', '2.0', '0.66', no], cls: 'mute' },
+            ]) + calc('Chosen: 9.5 h of 10 h, total <b>4.72</b><br>Museum in, Suzuki out: 4.64, so the museum goes to the log') },
+        { tab: 'Base', n: 'Base locator', kind: 'code', terms: ['transit', 'cost'],
+          lead: 'Picks the neighbourhood to sleep in, close to where the days happen.',
+          how: [
+            '<b>List candidates:</b> neighbourhoods with rooms in budget and a lift.',
+            '<b>Add up travel</b> to every chosen place, and to the station with luggage.',
+            '<b>Add the room price</b> as a share of the budget.',
+            '<b>Pick the lowest penalty.</b> A ryokan earns a small old-Japan bonus.',
+          ],
+          math: fx('base = argmin<sub>b</sub> λ<sub>t</sub>·T(b) + λ<sub>c</sub>·price(b) / budget − bonus(b)')
+            + fx('T(b) = Σ<sub>p</sub> t(b, p) + 2 × 2 × t(b, station)') + nt('Trips to the station count double: luggage, and a bad knee.')
+            + calc('Gion: 0.016 × 4.07 h + 0.15 × ₹46k / ₹3.2 L − 0.02 = <b>0.067</b>'),
+          ex: eh('Kyoto, 2 nights') + tb(['Base', '#Travel', '#Station', '#Room a night', '#Penalty'], [
+              { c: ['Karasuma-Shijo', '2.8 h', '10 min', '₹15k', '<b>0.058</b>'], cls: 'hi' },
+              ['Kyoto Station', '2.9 h', '5 min', '₹14k', '0.060'],
+              ['Gion, ryokan', '4.1 h', '25 min', '₹23k', '0.067'],
+            ]) + nt('Gion loses by 0.009: 25 minutes from the station and ₹16k more for two nights. The miss goes to the trade-off log for C7.') },
+        { tab: 'Routes', n: 'Daily routes', kind: 'code', terms: ['fit', 'transit'],
+          lead: 'Orders each day around opening hours, crowd curves and the knee.',
+          how: [
+            '<b>Keep arrival and departure days light:</b> land, check in, one walk nearby.',
+            '<b>Order the stops</b> to cut transit, inside opening hours.',
+            '<b>Move crowded places</b> to their quiet hours, using the crowd curve from C3.',
+            '<b>Cap the day:</b> about 6 active hours and 4 km of walking, with a rest.',
+          ],
+          math: fx('max Σ<sub>p</sub> s(p)·(1 − γ·crowd(p, t<sub>p</sub>)) − λ<sub>t</sub>·travel') + nt('γ = 0.6 for “hate crowds”. A small orienteering problem with time windows, solved exactly per day.')
+            + fx('open<sub>p</sub> ≤ t<sub>p</sub>, t<sub>p</sub> + d<sub>p</sub> ≤ close<sub>p</sub>, Σ walk ≤ 4 km')
+            + calc('Fushimi Inari, s = 0.80<br>07:00 → 0.80 × (1 − 0.6 × 0.16) = <b>0.72</b><br>11:00 → 0.80 × (1 − 0.6 × 0.96) = <b>0.34</b>'),
+          ex: eh('Day 6 · 3 May · Kyoto') + dayStrip([[7, 8.5, 'visit'], [8.75, 10.25, 'visit'], [10.75, 12.25, 'meal'], [12.5, 15.5, 'rest'], [16.5, 18.5, 'visit']])
+            + tb(['Time', 'Stop', '#Crowd'], [
+              ['07:00–08:30', 'Fushimi Inari, lower gates', '0.16'],
+              ['08:45–10:15', 'Tofuku-ji', '0.30'],
+              ['10:45–12:15', 'Shojin lunch, dashi-free', '–'],
+              ['12:30–15:30', 'Rest at the hotel', '–'],
+              ['16:30–18:30', 'Gion lanes at golden hour', '0.55'],
+            ]) + `<div class="chips-row">${pl('Walking 3.6 of 4 km', 'ok')}${pl('Rest 3 h', 'ok')}${pl('Summit path skipped: steep stairs', 'bad')}</div>` },
+        { tab: 'Top-K', n: 'Top-K and the trade-off log', kind: 'code', terms: ['score'],
+          lead: 'Keeps the best few plans that really differ, and writes down every rejection.',
+          how: [
+            '<b>Assemble full plans</b> from city plans, places, bases and routes.',
+            '<b>Keep the top K = 3</b> by trip score, forced to differ.',
+            '<b>Log every rejection</b> with its stage, reason and cost.',
+            '<b>Call C1</b> when no plan is feasible, or the top two are within 0.02.',
+          ],
+          math: fx('Jaccard(I<sub>j</sub>, I<sub>k</sub>) ≤ 0.6 for any two kept plans') + nt('Measured on the places they visit.')
+            + fx('log entry = { item, stage, reason, rule, Δscore }')
+            + fx('ask C1 if |S<sub>1</sub> − S<sub>2</sub>| &lt; 0.02 or nothing is feasible'),
+          ex: eh('Top-K, K = 3') + tb(['Plan', 'Cities and nights', '#Score'], [
+              { c: ['A · Classic, slow', 'Tokyo 2 · Kanazawa 2 · Kyoto 2', '<b>0.47</b>'], cls: 'hi' },
+              ['B · Fewer moves', 'Tokyo 2 · Kyoto 4', '0.43'],
+              ['C · Mountain towns', 'Tokyo 1 · Kanazawa 2 · Takayama 1 · Kyoto 2', '0.35'],
+            ]) + eh('Trade-off log') + tb(['Item', 'Stage', 'Reason', 'Rule', '#Δ'], [
+              ['Kinkaku-ji', 'Rank', 'Golden Week crowds all day', pl('soft'), '−0.03'],
+              ['Inari summit', 'Routes', 'Steep stairs, bad knee', pl('hard', 'bad'), '–'],
+              ['Gion ryokan', 'Base', '₹16k more, far from station', pl('soft'), '−0.01'],
+              ['21st Century Museum', 'POIs', 'No hours left in Kanazawa', pl('soft'), '−0.01'],
+            ]) },
+      ] },
+
+    { id: 5, code: 'C5', name: 'Booking search', short: 'Booking search', kinds: ['code'],
+      role: 'Finds real options for every slot in each plan. Search only, no booking.',
+      in: 'Top-K itineraries from C4 · live fares and rooms from C3',
+      out: 'Each itinerary with ranked options per slot → C6',
+      subs: [
+        { tab: 'Slots', n: 'Slots from the itinerary', kind: 'code',
+          lead: 'Every bookable need in a plan becomes a typed search with a time window.',
+          how: [
+            '<b>Walk the plan</b> day by day: flights, nights, legs, timed tickets.',
+            '<b>Derive each window</b> from its neighbours, so day 1 is usable and trains leave after checkout.',
+            '<b>Carry the constraints</b> from the trip state: 2 adults, a lift, veg, the budget.',
+          ],
+          math: fx('slot = (type, where, window, constraints)')
+            + fx('flight lands ≤ 14:00 on day 1')
+            + fx('train departs ≥ checkout + 30 min')
+            + fx('at the airport ≥ 3 h before departure'),
+          ex: eh('Plan A, nine slots') + `<ul class="slots">${[
+              ['plane', 'BLR → Tokyo', 'lands 28 Apr, by 14:00', '2 adults'],
+              ['bed-double', 'Tokyo, Ueno', '28–30 Apr · 2 nights', 'lift'],
+              ['train-front', 'Tokyo → Kanazawa', '30 Apr · 09:30–11:30', 'reserved seats'],
+              ['bed-double', 'Kanazawa, Higashi Chaya', '30 Apr – 2 May', 'lift'],
+              ['train-front', 'Kanazawa → Kyoto', '2 May · 10:00–12:00', 'via Tsuruga'],
+              ['bed-double', 'Kyoto, Karasuma-Shijo', '2–4 May · 2 nights', 'lift'],
+              ['train-front', 'Kyoto → KIX', '4 May · at KIX by 10:25', 'Haruka'],
+              ['plane', 'KIX → BLR', '4 May · after 13:00', '2 adults'],
+              ['ticket', 'Shojin lunch', '3 May · 10:45', 'veg, dashi-free'],
+            ].map(([i, w, t, c]) => `<li>${ic(i)}<b>${w}</b><span>${t}</span><em>${c}</em></li>`).join('')}</ul>` },
+        { tab: 'Rank', n: 'Rank options per slot', kind: 'code', terms: ['cost', 'transit'],
+          lead: 'Price alone picks badly. Each option is ranked by money plus time.',
+          how: [
+            '<b>Query live</b> fares, rooms and seats for each slot.',
+            '<b>Drop</b> anything outside the window or the constraints.',
+            '<b>Rank by generalized cost:</b> price, plus time valued in rupees, plus penalties.',
+            '<b>Keep the top 3</b> per slot.',
+          ],
+          math: fx('g(o) = price(o) + VoT · hours(o) · travellers + penalties(o)')
+            + vars([['VoT', '₹1,200 an hour per person, from the budget dial'], ['penalty', '₹5k per connection, for the bad knee']])
+            + fx('buy the rail pass only if pass &lt; Σ fares it covers'),
+          ex: eh('BLR → Tokyo, 28 Apr, 2 adults') + tb(['Option', '#Price', '#Time', '#Time cost', '#Penalty', '#g(o)'], [
+              ['via Singapore', '₹82k', '11 h 40', '₹28.0k', '₹5k', '₹115.0k'],
+              ['via Delhi', '₹68k', '16 h 20', '₹39.2k', '₹5k', '₹112.2k'],
+              { c: ['via Bangkok', '₹71k', '12 h 30', '₹30.0k', '₹5k', '<b>₹106.0k</b>'], cls: 'hi' },
+            ]) + nt('Bangkok wins on total cost. Delhi is cheaper and Singapore is faster.')
+            + eh('Rail for Plan A, per person, approximate fares') + `<div class="cmp2"><div><span>7-day JR Pass</span><b>¥50,000</b></div>
+              <div class="is-pick"><span>Single tickets: ¥14.4k + ¥7.8k + ¥3.6k</span><b>≈ ¥25,800</b></div></div>` },
+        { tab: 'Bundle', n: 'Bundle per itinerary', kind: 'code', terms: ['cost', 'transit'],
+          lead: 'Combines slot options into consistent bundles, and keeps the best ones.',
+          how: [
+            '<b>Beam search</b> through the slots in time order, keeping the best 20 partial bundles.',
+            '<b>Check each link:</b> landing to check-in, checkout to train.',
+            '<b>Keep the top 3 bundles</b> per itinerary and pass them to C6.',
+          ],
+          math: fx('g(B) = Σ<sub>s</sub> g(o<sub>s</sub>)')
+            + fx('arrive(o<sub>s</sub>) + buffer ≤ depart(o<sub>s+1</sub>)') + nt('A beam of 20 keeps 9 slots × 3 options fast.'),
+          ex: eh('Plan A, top 3 bundles') + tb(['#', 'Flights', 'Kyoto base', '#Bookable', '#g(B)'], [
+              { c: ['1', 'via Bangkok, both ways', 'Karasuma-Shijo', '₹2.38 L', '<b>best</b>'], cls: 'hi' },
+              ['2', 'via Delhi', 'Kyoto Station', '₹2.31 L', '+₹4k'],
+              ['3', 'via Singapore', 'Karasuma-Shijo', '₹2.49 L', '+₹9k'],
+            ]) + eh('Bundle 1, ₹2.38 L bookable') + `<div class="stack" role="img" aria-label="Flights 1.15 lakh, hotels 0.88, rail 0.29, tickets 0.06">
+              <i style="flex:115;background:var(--accent)"></i><i style="flex:88;background:var(--accent-2)"></i><i style="flex:29;background:var(--t-transit)"></i><i style="flex:6;background:var(--amber)"></i></div>
+              <div class="stack-l"><span style="--k:var(--accent)">Flights <b>₹1.15 L</b></span><span style="--k:var(--accent-2)">Hotels <b>₹0.88 L</b></span><span style="--k:var(--t-transit)">Rail <b>₹0.29 L</b></span><span style="--k:var(--amber)">Tickets <b>₹0.06 L</b></span></div>`
+            + nt('With ₹0.77 L of daily spend, the trip comes to ₹3.15 L: 0.98 of the budget.') },
+      ] },
+
+    { id: 6, code: 'C6', name: 'Validator', short: 'Validator', kinds: ['code'],
+      role: 'Re-checks every plan on live data, then gives it a final score.',
+      in: 'Itineraries with options from C5 · fresh facts from C3',
+      out: 'Valid, scored plans → C7 · repairs → C4 · rejections → trade-off log',
+      subs: [
+        { tab: 'Checks', n: 'Hard checks on real data', kind: 'code',
+          lead: 'Every rule is code, run on the quoted times and prices.',
+          how: [
+            '<b>Time:</b> each stop inside its hours on that date, and legs connect with buffers.',
+            '<b>Body:</b> walking, stairs and active hours within limits.',
+            '<b>Food:</b> a veg, dashi-free meal near lunch and dinner every day.',
+            '<b>Money and facts:</b> total within budget, every fact within its TTL, rooms still free.',
+          ],
+          math: fx('valid(I) = ∧<sub>k</sub> check<sub>k</sub>(I)') + nt('One failed check fails the plan.')
+            + fx('land + 90 min + transfer ≤ first stop')
+            + fx('at the airport ≥ departure − 3 h'),
+          ex: tb(['Check', 'A', 'B', 'C'], [
+              ['Opening hours on the date', yes, yes, yes],
+              ['Connections and buffers', yes, yes, yes],
+              ['Walking ≤ 4 km a day', `${yes} 3.6`, `${no} 4.6, day 5`, yes],
+              ['Stairs low at every stop', yes, yes, yes],
+              ['Veg meal at lunch and dinner', yes, yes, yes],
+              ['Total ≤ ₹3.2 L', `${yes} 3.15`, `${yes} 2.69`, `${yes} 3.04`],
+              ['Facts within their TTL', yes, yes, yes],
+              ['Rooms and seats still free', yes, yes, `${no} Takayama`],
+              { c: ['<b>Result</b>', pl('Valid', 'ok'), pl('Repair', 'warn'), pl('Reject', 'bad')], cls: 'tot' },
+            ]) },
+        { tab: 'Repair', n: 'Reject or repair', kind: 'code',
+          lead: 'A failure is fixed locally by C4, or the plan is rejected with a reason.',
+          how: [
+            '<b>A local failure</b>, one day or one slot, goes back to C4 with the failing rule pinned.',
+            '<b>C4 re-solves only that day.</b> The plan is then checked again from scratch.',
+            '<b>A structural failure</b>, or two failed repairs, means reject.',
+            '<b>Every rejection</b> goes to the trade-off log for C7.',
+          ],
+          math: fx('repair if days affected ≤ 1 and rounds &lt; 2')
+            + fx('else reject → log { plan, check, reason }'),
+          ex: `<div class="cases">
+              <div class="case"><p class="case-h">${pl('Repair', 'warn')}<b>Plan B · day 5</b></p><p>Walking is 4.6 km, over the 4 km limit.</p>
+                <p class="case-fix">${ic('arrow-right')}<span>C4 swaps a 1.2 km walk for a 6-minute taxi. Walking drops to 3.4 km, for ₹1.2k.</span></p>
+                <p class="case-r">${pl('Valid', 'ok')}after one round</p></div>
+              <div class="case"><p class="case-h">${pl('Reject', 'bad')}<b>Plan C · Takayama</b></p><p>No rooms on 1 May. The nearest are 40 minutes away by bus.</p>
+                <p class="case-fix">${ic('arrow-right')}<span>That adds 1.3 h of transit and a new base, which is a structural change.</span></p>
+                <p class="case-r">Logged: <code>{ plan: C, check: rooms, reason: "sold out, 1 May" }</code></p></div>
+            </div>` },
+        { tab: 'Final score', n: 'Final trip score', kind: 'code', terms: ['score'],
+          lead: 'Scores each valid plan again with quoted prices and real times.',
+          how: [
+            '<b>Replace estimates</b> with quotes: cost from bundles, transit from timetables.',
+            '<b>Run the trip score</b> from C4 again, with the same weights.',
+            '<b>Re-rank.</b> If the order changes, that is logged too.',
+          ],
+          math: fx('S<sub>final</sub> = Fit − λ<sub>c</sub>·Cost<sub>quoted</sub> − λ<sub>t</sub>·Transit<sub>actual</sub> − λ<sub>s</sub>·Stay')
+            + calc('A: 0.88 − 0.15 − 0.15 − 0.12 = <b>0.46</b><br>B: 0.76 − 0.13 − 0.12 − 0.08 = <b>0.43</b>'),
+          ex: tb(['Plan', '#Estimate', '#Final', 'What changed'], [
+              { c: ['A · Classic, slow', '0.47', '<b>0.46</b>', 'Golden Week fares, ₹22k over the estimate'], cls: 'hi' },
+              ['B · Fewer moves', '0.43', '<b>0.43</b>', 'A cheaper Kyoto hotel, one taxi added'],
+              { c: ['C · Mountain towns', '0.35', '–', 'Rejected: no rooms'], cls: 'mute' },
+            ]) + nt('A stays first. Both valid plans go to C7.') },
+      ] },
+
+    { id: 7, code: 'C7', name: 'Presentation & narration', short: 'Presentation', kinds: ['llm'], cls: 'is-llm',
+      role: 'Explains the plans using only what is in them.',
+      in: 'Valid plans from C6 · trade-off log from C4 and C6 · trip state from C1',
+      out: 'Itinerary and narration → traveller · follow-ups → C1',
+      subs: [
+        { tab: 'Narrate', n: 'Narrate from the plan', kind: 'llm',
+          lead: 'The LLM writes the words. Every claim must point to a field in the plan.',
+          how: [
+            '<b>Input</b> is the plan as JSON, its scores and the top trade-offs.',
+            '<b>The LLM writes</b> a short story per plan, citing fields.',
+            '<b>A checker</b> pulls every number, name and time from the text and matches it to the JSON.',
+            '<b>A mismatch</b> means rewrite, twice at most, then fall back to a template.',
+          ],
+          math: fx('faithful = matched claims / all claims') + fx('publish only if faithful = 1'),
+          ex: `<div class="narr">Plan A keeps it slow: <mark>two nights each<sup>1</sup></mark> in Tokyo, Kanazawa and Kyoto, with <mark>6 hours<sup>2</sup></mark> on trains between cities. On <mark>3 May<sup>3</sup></mark> you reach Fushimi Inari at <mark>07:00<sup>4</sup></mark>, before the crowds, and walk the <mark>lower gates<sup>5</sup></mark>.</div>
+            <ol class="srcs"><li><code>cities[*].nights = 2</code>${yes}</li><li><code>legs.hours = 6.0</code>${yes}</li><li><code>days[6].date = "3 May"</code>${yes}</li>
+            <li><code>days[6].stops[0].start = "07:00"</code>${yes}</li><li><code>days[6].stops[0].part = "lower gates"</code>${yes}</li></ol>`
+            + calc('faithful = 5 / 5 = <b>1</b> → publish') },
+        { tab: 'Left out', n: 'What was left out, and why', kind: 'llm',
+          lead: 'Picks the trade-offs the traveller will notice, and explains each in a line.',
+          how: [
+            '<b>Read the trade-off log</b> from C4 and C6.',
+            '<b>Rank entries</b> by how much the traveller would notice them.',
+            '<b>Explain the top 3</b> in plain words, and offer to undo one.',
+          ],
+          math: fx('salience(e) = 0.6·fame(item) + 0.4·|Δ| / max|Δ|') + nt('A hard rule counts as the largest |Δ|. A famous place that was dropped comes first.'),
+          ex: tb(['Log entry', '#Fame', '#|Δ|', '#Salience'], [
+              { c: ['Kinkaku-ji', '0.98', '0.03', '<b>0.99</b>'], cls: 'hi' },
+              { c: ['Inari summit', '0.70', 'hard', '<b>0.82</b>'], cls: 'hi' },
+              { c: ['Gion ryokan', '0.65', '0.01', '<b>0.52</b>'], cls: 'hi' },
+              ['21st Century Museum', '0.60', '0.01', '0.49'],
+            ]) + `<ul class="says">
+              <li><b>Kinkaku-ji</b> is packed all day in Golden Week. Shoren-in, a quiet temple garden, takes its place.</li>
+              <li><b>Fushimi Inari’s summit</b> path is steep stairs. You walk the lower gates at 07:00 instead.</li>
+              <li><b>A Gion ryokan</b> costs ₹16k more for two nights and is far from the station. <span class="undo">Want it anyway? → C1</span></li></ul>` },
+        { tab: 'Compare', n: 'Compare and follow up', kind: 'llm',
+          lead: 'Shows the plans side by side, and sends every follow-up back through C1.',
+          how: [
+            '<b>Compare term by term:</b> fit, cost, transit, stay.',
+            '<b>Lead with the biggest difference,</b> in one sentence.',
+            '<b>Send follow-ups to C1.</b> Questions are answered from the plan. Changes go to C8.',
+          ],
+          math: fx('headline = argmax<sub>term</sub> |term(A) − term(B)|') + nt('Fit differs by 0.12, the most, so it leads.'),
+          ex: tb(['Term', '#A', '#B', 'Better'], [
+              ['Fit', '0.88', '0.76', 'A, by 0.12'],
+              ['Cost', '−0.15', '−0.13', 'B, ₹45k less'],
+              ['Transit', '−0.15', '−0.12', 'B, 2 h less'],
+              ['Stay', '−0.12', '−0.08', 'B, one move less'],
+              { c: ['<b>Trip score</b>', '<b>0.46</b>', '<b>0.43</b>', '<b>A</b>'], cls: 'tot' },
+            ]) + '<p class="say">“A suits you better, with Kanazawa’s quiet old streets. B is ₹45k cheaper and has one hotel change fewer.”</p>'
+            + `<ul class="fwd"><li><q>Can we add Nara?</q><span>C1: change</span><span>→ C8</span></li>
+              <li><q>Why Karasuma and not Gion?</q><span>C1: question</span><span>→ C7 reads the log</span></li></ul>` },
+      ] },
+
+    { id: 8, code: 'C8', name: 'Revision loop', short: 'Revision loop', kinds: ['llm', 'code'],
+      role: 'Changes the plan without starting over.',
+      in: 'Change requests from C1 · disruption alerts from C3',
+      out: 'A partial re-plan → C4, then C5, C6 and C7',
+      subs: [
+        { tab: 'Triggers', n: 'Triggers', kind: 'code',
+          lead: 'Change comes from two places: the traveller and the world.',
+          how: [
+            '<b>Traveller:</b> a change request, classified by C1.',
+            '<b>World:</b> live alerts from C3, such as a cancelled flight, a closure or a sold-out room.',
+            '<b>Match alerts</b> to the plan by ID. Only alerts that touch the plan trigger anything.',
+          ],
+          math: fx('trigger if alert.entity ∈ plan.entities<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧ severity ≥ medium') + nt('Thousands of alerts a day come down to a handful per plan.'),
+          ex: `<div class="trig">
+              <div class="tg"><p class="tg-h">${ic('user')}Traveller</p><q>Day 6 is too much for my knee.</q><p class="tg-r">C1: change · P 0.93 → C8</p></div>
+              <div class="tg"><p class="tg-h">${ic('zap')}World</p><p class="tg-q">Disruption feed: BLR → Tokyo via Bangkok, 28 Apr, cancelled. The next seat lands 29 Apr at 07:40.</p><p class="tg-r">Matches slot 1 of Plan A → C8</p></div>
+            </div>` },
+        { tab: 'Understand', n: 'Change understanding', kind: 'llm',
+          lead: 'Turns the change into a typed edit that code can apply.',
+          how: [
+            '<b>Classify the change:</b> constraint, preference, add, remove, swap or shift.',
+            '<b>Fill a typed edit:</b> target, operation, value and scope.',
+            '<b>Confirm with the traveller</b> if confidence is low or the edit is costly.',
+          ],
+          math: fx('apply if P ≥ 0.75 and the edit is small,<br>else confirm first') + nt('The same gate as C1. The LLM never edits the plan directly.'),
+          ex: `<div class="edit"><q>“Day 6 is too much for my knee.”</q>${json({ op: 'set', path: 'days[6].active_hours_max', value: 4, scope: 'day 6' })}
+              <p class="tg-r">P 0.93 · small edit → apply</p></div>
+            <div class="edit"><q>Flight cancelled. The next seat lands 29 Apr, 07:40.</q>${json({ op: 'shift', path: 'arrival', from: '28 Apr 07:40', to: '29 Apr 07:40' })}
+              <p class="tg-r">P 0.99 · loses a day → confirm with the traveller</p></div>` },
+        { tab: 'Impact', n: 'Impact analysis', kind: 'code',
+          lead: 'Finds the smallest part of the plan that the change touches.',
+          how: [
+            '<b>Treat the plan as a graph:</b> flights → days → stays → stops → slots.',
+            '<b>Start at the changed node</b> and follow its edges.',
+            '<b>Everything reached</b> is impacted. Everything else is frozen.',
+          ],
+          math: fx('impacted = descendants(changed)') + fx('frozen = plan − impacted'),
+          ex: eh('The cancelled flight') + `<ul class="tree">
+              <li><span>${ic('plane')}Arrival flight · 28 → 29 Apr</span>${pl('changed', 'warn')}
+                <ul><li><span>Day 1 · 28 Apr</span>${pl('lost', 'bad')}
+                    <ul><li><span>Yanaka walk, shojin lunch</span>${pl('move or drop', 'warn')}</li></ul></li>
+                  <li><span>Tokyo hotel · 2 → 1 night</span>${pl('changed', 'warn')}</li>
+                  <li><span>Day 2 · 29 Apr</span>${pl('re-plan', 'warn')}</li></ul></li>
+              <li class="frz"><span>Days 3–7 · Kanazawa, Kyoto</span>${pl('frozen', 'mute')}</li>
+              <li class="frz"><span>Legs, hotels and tickets from day 3</span>${pl('frozen', 'mute')}</li></ul>`
+            + calc('Impacted: <b>2 of 7 days</b>, 2 of 9 slots') },
+        { tab: 'Re-plan', n: 'Partial re-planning', kind: 'code', terms: ['score'],
+          lead: 'Re-solves only the impacted part, and prefers small changes.',
+          how: [
+            '<b>Re-run only the C4 steps needed:</b> here, POIs and routes for Tokyo.',
+            '<b>Add a stability term</b> so the new plan stays close to the old one.',
+            '<b>Then run C5</b> for changed slots, <b>C6</b> for every check and <b>C7</b> to explain what changed.',
+          ],
+          math: fx('max S(I′) − μ·Δ(I, I′) s.t. frozen(I′) = frozen(I)')
+            + fx('Δ = changed stops + 3 × changed stays · μ = 0.01')
+            + calc('Partial: 0.43 − 0.01 × 6 = <b>0.37</b><br>Full re-plan: 0.44 − 0.01 × 25 = 0.19'),
+          ex: `<div class="ba">
+              <div><p class="label">Before</p><ol><li><b>Day 1</b>Yanaka walk · shojin lunch</li><li><b>Day 2</b>Senso-ji at 07:30 · Kiyosumi garden</li></ol></div>
+              <div><p class="label">After</p><ol><li><b>Day 1</b><span class="gone">in the air</span></li><li><b>Day 2</b>Yanaka walk · shojin lunch · Kiyosumi garden</li></ol></div>
+            </div>`
+            + `<div class="chips-row">${pl('Senso-ji dropped, logged', 'warn')}${pl('Days 3–7 unchanged', 'ok')}${pl('2 slots searched again', 'acc')}${pl('Trip score 0.46 → 0.43', 'acc')}</div>`
+            + nt('A full re-plan scores 0.44 but changes 25 things. The partial one wins once stability counts.') },
+      ] },
   ];
-  const canvasR = $('canvas-r'), layerR = $('wire-layer-r');
-  let rcur = 0;
-  const rwires = RWIRES.map(w => {
+  const RSTEPS = [{ k: 0, s: 0 }];
+  RK.forEach(c => c.subs.forEach((x, s) => RSTEPS.push({ k: c.id, s })));
+  RSTEPS.push({ k: 9, s: 0 });
+  // Chip boxes [left, top, width, height]: a compact band while a component is open, a spread-out map at the end.
+  const RPOS = {
+    band: { in: [0, 0, 150, 40], 1: [186, 0, 220, 40], 8: [442, 0, 220, 40], 7: [954, 0, 220, 40], out: [1226, 0, 150, 40],
+            2: [186, 60, 220, 40], 4: [442, 60, 220, 40], 5: [698, 60, 220, 40], 6: [954, 60, 220, 40], 3: [186, 120, 988, 40] },
+    over: { in: [0, 52, 150, 160], 1: [186, 52, 220, 160], 8: [442, 52, 220, 160], 7: [954, 52, 220, 160], out: [1226, 52, 150, 160],
+            2: [186, 334, 220, 160], 4: [442, 334, 220, 160], 5: [698, 334, 220, 160], 6: [954, 334, 220, 160], 3: [186, 628, 988, 118] },
+  };
+  // Wires: `n` is the component that reveals them; `over` ones only show on the spread-out map, as do all labels.
+  const RW = [
+    { a: 'in', b: 1, n: 1 },
+    { a: 1, b: 2, n: 2, dx: -56, label: 'trip state' },
+    { a: 3, b: 2, n: 3, label: 'places, cities' },
+    { a: 2, b: 4, n: 4, label: 'ranked lists' },
+    { a: 3, b: 4, n: 4, label: 'travel times, crowds' },
+    { a: 4, b: 1, n: 4, over: 1, diag: 1, both: 1, dashed: 1, label: 'decisions' },
+    { a: 4, b: 5, n: 5, label: 'top-K plans' },
+    { a: 3, b: 5, n: 5, label: 'live fares, rooms' },
+    { a: 5, b: 6, n: 6, label: 'options' },
+    { a: 3, b: 6, n: 6, label: 'fresh facts' },
+    { a: 6, b: 7, n: 7, label: 'valid, scored' },
+    { a: 7, b: 'out', n: 7 },
+    { a: 7, b: 1, n: 7, over: 1, arc: 1, both: 1, dashed: 1, label: 'follow-ups' },
+    { a: 1, b: 8, n: 8 },
+    { a: 8, b: 4, n: 8, label: 'partial re-plan' },
+  ];
+  const rmap = $('rmap'), rlayer = $('wire-layer-r'), fk = $('fk');
+  let rcur = 0, rpeek = null;
+  const restart = (el, c) => { el.classList.remove(c); void el.offsetWidth; el.classList.add(c); };
+  const chips = {};
+  function addChip(key, k, cls, html) {
+    const el = document.createElement(k ? 'button' : 'div');
+    if (k) { el.type = 'button'; el.dataset.rk = k; }
+    el.className = 'rk off ' + cls;
+    el.innerHTML = html;
+    rmap.insertBefore(el, fk);
+    chips[key] = { k, el };
+  }
+  addChip('in', 0, '', `<span class="rk-h">${ic('user')}<span class="rk-name">Trip request</span></span>
+    <span class="rk-more"><span class="rk-role">Japan · 2 adults · 7 days · vegetarian · bad knee · no crowds</span></span>`);
+  RK.forEach(c => addChip(c.id, c.id, c.cls || '', `<span class="rk-h"><span class="rk-code">${c.code}</span><span class="rk-name">${c.short}</span></span>
+    <span class="rk-more"><span class="rk-kinds">${c.kinds.map(kp).join('')}</span><span class="rk-role">${c.role}</span>${c.id === 3
+      ? '<span class="rk-feeds"><b>Live</b><i>Flights</i><i>Hotels</i><i>Weather</i><i>Disruptions</i><b>Periodic</b><i>Places</i><i>Maps, timetables</i><i>Festivals</i><i>Crowd patterns</i></span>'
+      : `<span class="rk-subs">${c.subs.map(x => `<i>${x.tab}</i>`).join('')}</span>`}</span>`));
+  addChip('out', 0, 'is-out', `<span class="rk-h">${ic('scroll-text')}<span class="rk-name">Itinerary</span></span>
+    <span class="rk-more"><span class="rk-role">Top plans with narration, from C7</span></span>`);
+
+  const rwires = RW.map(w => {
     const p = document.createElementNS(SVG, 'path');
     p.setAttribute('class', 'wire off' + (w.dashed ? ' dashed' : ''));
     p.setAttribute('marker-end', 'url(#arrow-r)');
     if (w.both) p.setAttribute('marker-start', 'url(#arrow-r)');
-    layerR.appendChild(p);
-    let label = null;
+    rlayer.appendChild(p);
+    let l = null;
     if (w.label) {
-      label = document.createElement('span');
-      label.className = 'elabel off' + (w.side ? ' side' : '');
-      label.textContent = w.label;
-      canvasR.appendChild(label);
+      l = document.createElement('span');
+      l.className = 'elabel off';
+      l.textContent = w.label;
+      rmap.insertBefore(l, fk);
     }
-    return { w, p, label };
+    return { w, p, l };
   });
+  function rgeom(w) {
+    const A = box(chips[w.a].el, rmap), B = box(chips[w.b].el, rmap), g = 3;
+    if (w.arc) {                                          // over the top of the conversation lane
+      const x1 = A.x + 28, x2 = B.x + B.w - 28, top = Math.min(A.y, B.y) - 26, r = 10;
+      return { d: `M${x1} ${A.y - g}L${x1} ${top + r}Q${x1} ${top} ${x1 - r} ${top}L${x2 + r} ${top}Q${x2} ${top} ${x2} ${top + r}L${x2} ${B.y - g - 1}`,
+        lx: (x1 + x2) / 2, ly: top, side: false };
+    }
+    if (w.diag) {                                         // corner to corner, between lanes
+      const x1 = A.x + 16, y1 = A.y - g, x2 = B.x + B.w - 16, y2 = B.y + B.h + g + 1;
+      return { d: `M${x1} ${y1}L${x2} ${y2}`, lx: (x1 + x2) / 2, ly: (y1 + y2) / 2, side: false };
+    }
+    if (A.x + A.w <= B.x || B.x + B.w <= A.x) {           // side by side: label goes under the gap
+      const ltr = A.x + A.w <= B.x, y = Math.max(A.y, B.y) + Math.min(A.h, B.h) / 2;
+      const x1 = ltr ? A.x + A.w + g : A.x - g, x2 = ltr ? B.x - g - 1 : B.x + B.w + g + 1;
+      return { d: `M${x1} ${y}L${x2} ${y}`, lx: (x1 + x2) / 2, ly: Math.max(A.y + A.h, B.y + B.h) + 16, side: false };
+    }
+    const down = A.y + A.h <= B.y;                        // stacked: label beside the wire
+    const x = (Math.max(A.x, B.x) + Math.min(A.x + A.w, B.x + B.w)) / 2 + (w.dx || 0);
+    const y1 = down ? A.y + A.h + g : A.y - g, y2 = down ? B.y - g - 1 : B.y + B.h + g + 1;
+    return { d: `M${x} ${y1}L${x} ${y2}`, lx: x + 10, ly: (y1 + y2) / 2, side: true };
+  }
+  function rstate() {
+    const st = RSTEPS[rcur];
+    if (rpeek) return { mode: 'band', shown: st.k === 9 ? 8 : st.k, k: rpeek.k, s: rpeek.s };
+    if (st.k === 0) return { mode: 'start', shown: 0, k: 0, s: 0 };
+    if (st.k === 9) return { mode: 'over', shown: 8, k: 0, s: 0 };
+    return { mode: 'band', shown: st.k, k: st.k, s: st.s };
+  }
   function rlayout() {
     if (narrow.matches || tab !== 'revised') return;
-    rwires.forEach(({ w, p, label }) => {
-      const on = rcur >= w.in;
+    const S = rstate();
+    rwires.forEach(({ w, p, l }) => {
+      const on = S.mode !== 'start' && S.shown >= w.n && (!w.over || S.mode === 'over');
       p.classList.toggle('off', !on);
-      if (label) label.classList.toggle('off', !on);
+      if (l) l.classList.toggle('off', !on || S.mode !== 'over');
       if (!on) return;
-      const g = geom(w, canvasR);
+      const g = rgeom(w);
       p.setAttribute('d', g.d);
-      if (label) { label.style.left = (w.side ? g.mx + 12 : g.mx) + 'px'; label.style.top = g.my + 'px'; }
+      if (l) { l.classList.toggle('side', g.side); l.style.left = g.lx + 'px'; l.style.top = g.ly + 'px'; }
     });
   }
-  function rgo(n) {
-    n = Math.max(0, Math.min(RNAMES.length - 1, n));
-    if (n === rcur) return;
-    const prev = rcur;
-    rcur = n;
-    canvasR.querySelectorAll('[data-rin]').forEach(el => {
-      const k = +el.dataset.rin, on = k <= n;
+  let rUntil = 0;
+  function rfollow(ms) {                                  // keep wires attached while chips glide
+    const idle = !rUntil;
+    rUntil = performance.now() + ms;
+    if (!idle) return;
+    const tick = () => { rlayout(); if (performance.now() < rUntil) requestAnimationFrame(tick); else rUntil = 0; };
+    requestAnimationFrame(tick);
+  }
+  function subView(x) {
+    return `<div class="sv-h"><h4>${x.n}</h4>${kp(x.kind)}<span></span>${x.terms
+      ? `<span class="terms"><span class="label">Optimizes</span>${x.terms.map(k => T(k)).join('')}</span>` : ''}<p>${x.lead}</p></div>
+      <div class="sv-g">
+        <section class="sv-col"><p class="label">How it works</p><ol class="how">${x.how.map(h => `<li><span>${h}</span></li>`).join('')}</ol></section>
+        <section class="sv-col"><p class="label">The maths</p>${x.math}</section>
+        <section class="sv-col"><p class="label">Example</p>${x.ex}</section>
+      </div>`;
+  }
+  function renderFocus(S) {
+    const c = RK[S.k - 1];
+    if (fk.dataset.k !== String(S.k)) {
+      fk.dataset.k = S.k;
+      fk.dataset.s = '';
+      fk.innerHTML = `<header class="fk-h"><span class="fk-code">${c.code}</span>
+          <div class="fk-t"><h3>${c.name}${c.kinds.map(kp).join('')}</h3><p>${c.role}</p></div>
+          <dl class="fk-io"><div><dt>In</dt><dd>${c.in}</dd></div><div><dt>Out</dt><dd>${c.out}</dd></div></dl></header>
+        <div class="stabs" aria-label="Parts of ${c.code}">${c.subs.map((x, i) =>
+          `<button type="button" class="stab" data-sub="${i}"><i>${i + 1}</i>${x.tab}</button>`).join('')}<span class="stabs-r"></span></div>
+        <div class="sv"></div>`;
+      restart(fk, 'enter');
+    }
+    fk.querySelectorAll('.stab').forEach((b, i) => { b.classList.toggle('is-on', i === S.s); if (i === S.s) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    const st = RSTEPS[rcur];
+    fk.querySelector('.stabs-r').innerHTML = rpeek
+      ? `<button type="button" class="fk-back" data-rclose>${ic('chevron-left')}Back to ${st.k === 9 ? 'all components' : `${RK[st.k - 1].code} · ${RK[st.k - 1].subs[st.s].tab}`}</button>`
+      : 'Example trip: Japan, 28 Apr – 4 May · illustrative numbers';
+    const sv = fk.querySelector('.sv');
+    if (fk.dataset.s !== String(S.s)) { fk.dataset.s = S.s; sv.innerHTML = subView(c.subs[S.s]); restart(sv, 'enter'); }
+    const p = RPOS.band[S.k];
+    fk.style.setProperty('--cx', p[0] + p[2] / 2 + 'px');
+  }
+  function rrender() {
+    const S = rstate(), P = RPOS[S.mode === 'over' ? 'over' : 'band'];
+    rmap.classList.toggle('is-start', S.mode === 'start');
+    rmap.classList.toggle('is-band', S.mode === 'band');
+    rmap.classList.toggle('is-over', S.mode === 'over');
+    $('r-input').classList.toggle('off', S.mode !== 'start');
+    $('r-output').classList.toggle('off', S.mode !== 'start');
+    Object.entries(chips).forEach(([key, { k, el }]) => {
+      const on = S.mode !== 'start' && (!k || k <= S.shown), was = !el.classList.contains('off');
       el.classList.toggle('off', !on);
-      el.classList.toggle('is-new', k === n);
-      if (on && k > prev) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+      el.classList.toggle('is-focus', S.mode === 'band' && k === S.k);
+      if (k) el.setAttribute('aria-pressed', String(S.mode === 'band' && k === S.k));
+      const [x, y, w, h] = P[key];
+      Object.assign(el.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+      if (on && !was) restart(el, 'enter'); else if (!on) el.classList.remove('enter');
     });
-    rlayout();
+    if (S.mode === 'band') { renderFocus(S); fk.classList.remove('off'); } else fk.classList.add('off');
+    rfollow(900);
     syncNav();
   }
+  function rgo(i) {
+    i = Math.max(0, Math.min(RSTEPS.length - 1, i));
+    if (i === rcur && !rpeek) return;
+    rcur = i;
+    rpeek = null;
+    rrender();
+  }
+  function rstep(d) {
+    if (!rpeek) { rgo(rcur + d); return; }
+    const s = rpeek.s + d;
+    rpeek = s >= 0 && s < RK[rpeek.k - 1].subs.length ? { k: rpeek.k, s } : null;
+    rrender();
+  }
+  function rclick(t) {
+    const ch = t.closest('[data-rk]');
+    if (ch) {
+      const k = +ch.dataset.rk, S = rstate(), st = RSTEPS[rcur];
+      if (S.mode === 'start' || k > S.shown) return;
+      if (rpeek && rpeek.k === k) rpeek = null;          // clicking the open chip closes it
+      else if (!rpeek && S.mode === 'band' && S.k === k) return;
+      else rpeek = st.k === k ? null : { k, s: 0 };
+      rrender();
+      return;
+    }
+    const sb = t.closest('[data-sub]');
+    if (sb) {
+      const i = +sb.dataset.sub;
+      if (rpeek) rpeek = { k: rpeek.k, s: i };
+      else rcur = RSTEPS.findIndex(x => x.k === RSTEPS[rcur].k && x.s === i);
+      rrender();
+      return;
+    }
+    if (t.closest('[data-rclose]')) { rpeek = null; rrender(); }
+  }
+  function rsync() {
+    const S = rstate(), c = RK[S.k - 1];
+    $('prev').disabled = !rpeek && rcur <= 0;
+    $('next').disabled = !rpeek && rcur >= RSTEPS.length - 1;
+    $('next').classList.toggle('hint', !rpeek && rcur === 0);
+    $('now').innerHTML = S.mode === 'start' ? 'Revised · press next to start'
+      : S.mode === 'over' ? 'Revised · all components'
+      : `Revised · <span class="st-code">${c.code}</span>${c.name}<span class="now-beat">${S.s + 1} of ${c.subs.length} · ${c.subs[S.s].n}</span>`;
+  }
+  rrender();
 
   // ---------- Fit the stage to the screen ----------
   function fit() {
